@@ -10,7 +10,7 @@ defined('APPLICATION_PATH')
 
 // Define path to custom validators/decorators/filters
 defined('VDF_PATH')
-    || define('VDF_PATH', realpath(ROOT_PATH . '/VDF'));
+    || define('VDF_PATH', realpath(ROOT_PATH . '/Vdf'));
 
 // Define path to configs directory
 defined('CONFIGS_PATH')

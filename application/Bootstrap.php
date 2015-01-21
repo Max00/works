@@ -22,7 +22,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
     
     public function _initPluginLoaders() {
-        die('VDF_PATH is '.VDF_PATH);
         $loader = new Zend_Loader_PluginLoader(array(
             'Vdf' => VDF_PATH
         ));
