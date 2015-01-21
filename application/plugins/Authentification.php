@@ -8,7 +8,9 @@ class Application_Plugin_Authentification extends Zend_Controller_Plugin_Abstrac
         $def_actn = 'login';                                                    // Action de base
         $ctrl = $request->getControllerName();                                  // Controlleur courant
         $actn = $request->getActionName();                                      // Action courante
+        Zend_Registry::get('logger')->log('CTRL => ' . $ctrl . ', DEF CTRL => ' . $def_ctrl, 6);
         if($ctrl != $def_ctrl) {                                                // Si controleur de base
+        
             $auth = Zend_Auth::getInstance();
             if(!$auth->hasIdentity()) {                                         // Si on est pas identifié, on est redirigé sur le controleur de base
                 $this->getResponse()->setRedirect($request->getBaseUrl() . '/' . $def_ctrl . '/' . $def_actn);
