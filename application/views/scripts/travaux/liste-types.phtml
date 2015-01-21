@@ -1,0 +1,22 @@
+<section id="list-mode">
+    <a class="pure-button button-small button-secondary" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'prios')) ?>"><i class="fa fa-exclamation-triangle"></i> Priorités</a>
+    <a class="pure-button button-small button-secondary pure-button-active" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'types')) ?>"><i class="fa fa-ellipsis-v"></i> Types</a>
+</section>
+
+<?php foreach($this->works['types'] as $currentType) : ?>
+<?php if(!empty($currentType['priosWorks'])) : ?>
+<h3><?php echo $currentType['label_type'] ?></h3>
+<?php foreach($currentType['priosWorks'] as $currentPrioWorks): ?>
+<h4><?php echo $currentPrioWorks['prio_label'] ?></h4>
+<ul>
+    <?php foreach($currentPrioWorks['works'] as $currentWork) : ?>
+    <li>
+        <?php echo $currentWork['id'] ?> : <?php echo $currentWork['title'] ?><?php if($this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioWorks['prio_id']); endif; ?>
+        <?php if ($this->setWorkDone && $currentPrioWorks['prio_id'] != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
+        <?php if ($this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']); endif; ?>
+    </li>
+    <?php endforeach; ?>
+</ul>
+<?php endforeach; ?>
+<?php endif; ?>
+<?php endforeach; ?>

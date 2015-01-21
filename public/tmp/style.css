@@ -1,0 +1,65 @@
+/*
+ Theme Name:   Twenty Fourteen Child
+ Theme URI:    http://example.com/twenty-fourteen-child/
+ Description:  Twenty Fourteen Child Theme
+ Author:       John Doe
+ Author URI:   http://example.com
+ Template:     twentyfifteen
+ Version:      1.0.0
+ Tags:         light, dark, two-columns, right-sidebar, responsive-layout, accessibility-ready
+ Text Domain:  twentyfifteen-child
+*/
+
+body {
+	font-family: 'Oswald', sans-serif;
+}
+
+section#remaining {
+	margin:auto;
+	position:absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	bottom:0;
+	width:675px;
+	height:85px;
+	display:table-cell;
+	text-align:center;
+	vertical-align:center;
+}
+
+section#remaining p {
+	height:75px;
+	width:150px;
+	margin-left:6px;
+	margin-right:6px;
+	margin-top:0px;
+	margin-bottom:0px;
+	display:inline-block;
+}
+section#remaining p.figure {
+	line-height:60px;
+	vertical-align:middle;
+}
+
+section#remaining p.label {
+	color:#ddd;
+}
+
+p#days {
+	font-weight:bold;
+	font-size:60px;
+}
+
+p#hours {
+	font-size:40px;
+}
+
+p#minutes {
+	font-size:40px;
+}
+
+p#seconds {
+	font-size:40px;
+}

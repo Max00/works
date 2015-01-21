@@ -1,0 +1,18 @@
+<?php echo $this->doctype(); ?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+    <head>
+        <?php echo $this->headMeta() ?>
+        <?php echo $this->headTitle($this->title) ?>
+        <?php echo $this->headLink() ?>
+        <?php echo $this->jQuery() ?>
+        <?php echo $this->headScript() ?>
+    </head>
+    <body<?php if(isset($this->err)) echo ' class="error"' ?>>
+        <div id="content">
+            <?php if(isset($this->mail)) : echo $this->GetUserTile($this->mail, $this->roleName); endif; ?>
+            <div id="noticesContainer"><?php if(isset($this->noticeTemplate)) : echo $this->partial($this->noticeTemplate); endif; ?></div>
+            <?php if(isset($this->mainMenuTemplateFile)) echo $this->partial($this->mainMenuTemplateFile, array('page' => $this->page)); ?>
+            <?php echo $this->layout()->content ?>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,74 @@
+<section id="works-container">
+    <section id="list-mode">
+        <a class="pure-button button-small button-secondary pure-button-active" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'prios'), null, true) ?>"><i class="fa fa-exclamation-triangle"></i> Priorités</a>
+        <a class="pure-button button-small button-secondary" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'types'), null, true) ?>"><i class="fa fa-ellipsis-v"></i> Types</a>
+    </section>
+    <section id="works-list">
+        <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): ?>
+            <div class="prio prio-<?php echo $currentPrioId ?>">
+                <span class="prio-name"><?php echo $currentPrio['label_prio'] ?></span>
+                <?php foreach ($currentPrio['typesWorks'] as $currentType): ?>
+                    <?php if (isset($currentType['type'])) : ?>
+                        <p class="type"><?php echo $currentType['type']['name'] ?></p>
+                    <?php else : ?>
+                        <p class="type"><?php echo $this->noTypeLabel ?></p>
+                    <?php endif ?>
+                    <ul>
+                        <?php foreach ($currentType['works'] as $currentWork) : ?>
+                            <li data-workid="<?php echo $currentWork['id'] ?>">
+                                <div class="title">
+                                    <?php echo $currentWork['title'] ?>
+                                </div>
+                                <div class="location">
+                                    <?php if(!empty($currentWork['oeuvre_title'])) : echo $currentWork['oeuvre_title']; elseif(!empty($currentWork['coords_x'])): echo $currentWork['coords_x'] . ', ' . $currentWork['coords_y']; endif; ?>
+                                </div>
+                                <div class="work-options">
+                                    <?php if ($this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioId); endif; ?>
+                                    <?php if ($this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
+                                    <?php if ($this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']); endif; ?>
+                                </div>
+                            </li>
+                <?php endforeach ?>
+                    </ul>
+        <?php endforeach; ?>
+            </div>
+    <?php endforeach; ?>
+    </section>
+    <section id="middle">
+    </section>
+    <section id="work-view">
+        <div id="work-edit-container">
+            <a href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'edit', 'id' => '__ID__'), null, true) ?>" class="pure-button button-small button-edit"><i class="fa fa-pencil"></i> </a>
+        </div>
+        <input type="hidden" id="auth_token" value="<?php echo $this->auth_token ?>" />
+        <input type="hidden" id="work_id" />
+        <p id="help">Cliquez sur un travail pour plus d'informations</p>
+        <div id="work-details">
+            <div id="work-prio-container">
+                <div id="work-prio-1">Urgent</div>
+                <div id="work-prio-2">Normal</div>
+                <div id="work-prio-3">Déja effectué</div>
+            </div>
+            <p id="work-title"></p>
+            <div id="work-types"></div>
+            <p id="work-oeuvre-title"></p>
+            <p id="work-desc_emplact"></p>
+            <p id="work-coords_x"></p>
+            <p id="work-coords_y"></p>
+            <p id="work-description"></p>
+            <div id="work-frequency">
+                Fréquence: 
+                <div id="work-frequency-number"></div>
+                <div id="work-frequency-months-many">mois</div>
+                <div id="work-frequency-months-one">mois</div>
+                <div id="work-frequency-weeks-many">semaines</div>
+                <div id="work-frequency-weeks-one">semaine</div>
+                <div id="work-frequency-days-many">jours</div>
+                <div id="work-frequency-days-one">jour</div>
+            </div>
+            <p id="work-date_last_done-container">Effectué le <span id="work-date_last_done"></span></p>
+        </div>
+        <div id="work-view-map" class="hide">
+        </div>
+    </section>
+</section>

@@ -1,0 +1,4 @@
+<section id="main-menu">
+    <a class="pure-button pure-button-primary<?php if(isset($this->page) && 'list' == $this->page) : echo ' pure-button-active'; endif; ?>" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste'), null, true) ?>"><i class="fa fa-list"></i> Liste</a>
+    <a class="pure-button pure-button-primary<?php if(isset($this->page) && 'add-work' == $this->page) : echo ' pure-button-active'; endif; ?>" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'ajouter'), null, true) ?>"><i class="fa fa-plus-circle"></i> Ajouter</a>
+</section>
