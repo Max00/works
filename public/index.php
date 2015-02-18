@@ -38,7 +38,7 @@ set_include_path(implode(PATH_SEPARATOR, array(
     realpath(APPLICATION_PATH . '/../library'),
     realpath(ROOT_PATH),
     realpath(VDF_PATH),
-    get_include_path(),
+    //get_include_path(),
 )));
 
 /** Zend_Application */
@@ -49,5 +49,6 @@ $application = new Zend_Application(
     APPLICATION_ENV,
     APPLICATION_PATH . '/configs/application.ini'
 );
+
 $application->bootstrap()
             ->run();

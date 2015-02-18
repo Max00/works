@@ -240,7 +240,7 @@ $(document).ready(function() {
             loadWorkView($(this).attr('data-workid'), $(this).children('div.location').text());
         })
     }
-    else if ($('#formAddWork').length > 0) {
+    else if ($('.formWork').length > 0) {
         hideAddWMap();
         var wt = $('[name="worktype"][checked="checked"]').val();
         if ('question' === wt) {
@@ -249,6 +249,9 @@ $(document).ready(function() {
         }
         if (isCoordX(!$('#emplacement_coords_x').val()) || !isCoordY($('#emplacement_coords_y').val())) {
             hideAddWMap();
+        }
+        if($('#maponload').val() == 1) {
+            initMap();
         }
         $('input#oeuvre_emplact').autocomplete({
             source: function(request, response) {

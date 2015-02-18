@@ -37,15 +37,6 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->roleName = $role->label;
             $this->view->mail = $auth->getIdentity()->mail;
         }
-        
-        $this->_initGMaps();
-    }
-    
-    public function _initGMaps() {
-        if('ajouter' == $this->getRequest()->getActionName()) {
-            
-            
-        }
     }
     
     public function indexAction() {
@@ -118,6 +109,10 @@ class TravauxController extends Zend_Controller_Action {
                     }
                     case 'remove': {
                         $this->view->noticeTemplate = 'travaux/notices/confirmation-remove.phtml';
+                        break;
+                    }
+                    case 'edit': {
+                        $this->view->noticeTemplate = 'travaux/notices/confirmation-edit.phtml';
                         break;
                     }
                     default: {
@@ -306,6 +301,226 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->addWorkForm = $addWorkForm;
         } else {                                                                // Si on a pas la permission d'ajouter un travail
             $this->_redirect('/travaux/index');
+        }
+    }
+    
+    public function editerAction() {
+        $acl = Zend_Registry::get('acl');
+        $role = Zend_Auth::getInstance()->getIdentity()->role_id;
+        if($acl->isAllowed($role, 'edit_work')) {
+            $editWorkForm;
+            $workId;
+            if($this->getRequest()->has('id'))                                  // S'il manque l'ID du travail qu'on veut modifier...
+                $workId = $this->getRequest ()->getParam('id');
+            else
+                $this->_redirect ('/travaux/index');                            // ..Retour a l'index
+            if($this->_request->getPost()) {
+                $formData = $this->_request->getPost();
+                $editWorkForm = new Application_Form_EditWork();
+                if($editWorkForm->isValid($formData)) {                         // Si formulaire valide
+                    $travauxTable = new Application_Model_Travaux();
+                    // 1. Update works
+                    $workData = array(
+                        'date_update'                                           => date('Y-m-d'),
+                        'prio'                                                  => $this->getParam('prio'),
+                    );
+                    $worksTable = new Application_Model_Travaux();
+                    // Récupération des valeurs du formulaire
+                    $isQuestion = false;
+                    $title = $description = '';
+                    if($this->hasParam('title_question') &&
+                            !empty($this->getParam('title_question'))) {
+                        $isQuestion = true;
+                        $workData['question']                                   = 1;
+                    }
+                    if($isQuestion) {
+                        $title                                                  = $this->getParam('title_question');
+                        $description                                            = $this->getParam('description_question');
+                    } else {
+                        $title                                                  = $this->getParam('title');
+                        $description                                            = $this->getParam('description');
+                    }
+                    $workData['title']                                          = $title;
+                    $workData['description']                                    = $description;
+                    
+                    if($this->hasParam('emplacement_coords_x') &&
+                            !empty($this->getParam('emplacement_coords_x'))) {
+                        $workData['coords_x']                                   = $this->getParam('emplacement_coords_x');
+                        $workData['coords_y']                                   = $this->getParam('emplacement_coords_y');
+                    }
+                    if($this->hasParam('oeuvre_id') &&
+                            !empty($this->getParam('oeuvre_id'))) {
+                        $workData['oeuvre_id']                                  = $this->getParam('oeuvre_id');
+                        $workData['coords_x']                                   = NULL;
+                        $workData['coords_y']                                   = NULL;
+                    }
+                    if($this->hasParam('desc_emplacement') &&
+                            !empty($this->getParam('desc_emplacement'))) {
+                        $workData['desc_emplact']                               = $this->getParam('desc_emplacement');
+                    }
+                    if($this->hasParam('frequency_type') &&
+                            !empty($this->getParam('frequency_type')) &&
+                            $this->hasParam('frequency') &&
+                            !empty($this->getParam('frequency'))) {
+                        $frequency = $this->getParam('frequency');
+                        switch($this->getParam('frequency_type')) {
+                            case 'months': {
+                                $workData['frequency_months']                   = $frequency;
+                                $workData['frequency_weeks']                    = NULL;
+                                $workData['frequency_days']                     = NULL;
+                                break;
+                            }
+                            case 'weeks': {
+                                $workData['frequency_months']                   = NULL;
+                                $workData['frequency_weeks']                    = $frequency;
+                                $workData['frequency_days']                     = NULL;
+                                break;
+                            }
+                            case 'days': {
+                                $workData['frequency_months']                   = NULL;
+                                $workData['frequency_weeks']                    = NULL;
+                                $workData['frequency_days']                     = $frequency;
+                                break;
+                            }
+                            default : {
+                                break;
+                            }
+                        }
+                    }
+                    if($this->hasParam('worktype') && !empty($this->getParam('worktype'))) {
+                        switch($this->getParam('worktype')) {
+                            case 'normal': {
+                                $workData['markup']                             = NULL;
+                                $workData['question']                           = NULL;
+                                break;
+                            }
+                            case 'question': {
+                                $workData['markup']                             = NULL;
+                                $workData['question']                           = 1;
+                                break;
+                            }
+                            case 'markup': {
+                                $workData['markup']                             = 1;
+                                $workData['question']                           = NULL;
+                                break;
+                            }
+                        }
+                    }
+                    if($this->hasParam('date_last_done') && !empty($this->getParam('date_last_done'))) {
+                        $workData['date_last_done']                             = $this->getParam('date_last_done');
+                    }
+                    
+                    // 2. Update works_types
+                    $worksTypesTable = new Application_Model_TravauxTypes();
+                    $worksTypesTable->removeWorkTypesByWork($workId);
+                    // Si on a des types
+                    if($this->hasParam('types') && !empty($this->getParam('types'))) {
+                        $worksTypesAr = array();
+                        foreach($this->getParam('types') as $curTypeId) {
+                            $worksTypesTable->insert(array(
+                                'work_id' => $workId,
+                                'type_id' => $curTypeId,
+                                ));
+                        }
+                    }
+                    $worksTable->update($workData, 'id = ' . $workId);
+                    $noticeSession = new Zend_Session_Namespace('notice');
+                    $noticeSession->noticeType = 'confirmation';
+                    $noticeSession->confirmationType = 'edit';
+                    $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS); // Expiration par défaut
+                    $this->_redirect('/travaux/index');
+                }
+            } else {
+                $editWorkForm = new Application_Form_EditWork();
+                                                                                // Récupération des données du travail courant
+                $travauxTable = new Application_Model_Travaux();
+                $work = $travauxTable->getWorkById($workId);
+                $worktype;
+                if($work['markup']) {
+                    $worktype = 'markup';
+                } else if($work['question']) {
+                    $worktype = 'question';
+                } else {
+                    $worktype = 'normal';
+                }
+                $this->setFormElements($editWorkForm, array(
+                    'worktype' => $worktype,
+                    'prio' => $work['prio'],
+                ));
+                // Normal / Question: different fields
+                if(!empty($work['question']) && $work['question']) {
+                    $this->setFormElements($editWorkForm, array('title_question' => $work['title']));
+                    $this->setFormElements($editWorkForm, array('description_question' => $work['description']));
+                } else {
+                    $this->setFormElements($editWorkForm, array('title' => $work['title']));
+                    $this->setFormElements($editWorkForm, array('description' => $work['description']));
+                }
+                if(!empty($work['oeuvre_id'])) {                                // Si on a une oeuvre associee
+                    $oeuvreTable = new Application_Model_Oeuvres();
+                    $oeuvre = $oeuvreTable->getOeuvreBasics($work['oeuvre_id']);
+                    $this->setFormElements($editWorkForm, array(
+                        'emplacement' => $oeuvre['title'],
+                        'emplacement_coords_x'                                  => $oeuvre['coords_x'],
+                        'emplacement_coords_y'                                  => $oeuvre['coords_y'],
+                        'oeuvre_id'                                             => $work['oeuvre_id'],
+                        ));
+                    if(!empty($oeuvre['coords_x'])) {
+                        $this->setFormElements($editWorkForm, array(
+                            'maponload'                                         => true,
+                        ));
+                    }
+                } else if(!empty($work['coords_x'])) {
+                    $this->setFormElements($editWorkForm, array(
+                        'emplacement_coords_x'                                  => $work['coords_x'],
+                        'emplacement_coords_y'                                  => $work['coords_y'],
+                        'maponload'                                             => true ));
+                }
+                // Recuperer les types
+                $travauxTypesTable = new Application_Model_TravauxTypes();
+                $workRow = $travauxTable->find($work['id'])->current();
+                $rs = $workRow->findDependentRowset('Application_Model_TravauxTypes');
+                // Cocher les types associés
+                $checkedTypes = array();
+                foreach($rs as $curTravType) {
+                    $checkedTypes[]= $curTravType['type_id'];
+                }
+                $this->setFormElements($editWorkForm, array(
+                    'types' => $checkedTypes,
+                ));
+                // Frequence
+                $freqUnit = $freqNumber = '';
+                if(!empty($work['frequency_months'])) {
+                    $freqUnit                                                   = 'months';
+                    $freqNumber                                                 = $work['frequency_months'];
+                }
+                if(!empty($work['frequency_weeks'])) {
+                    $freqUnit                                                   = 'weeks';
+                    $freqNumber                                                 = $work['frequency_weeks'];
+                }
+                if(!empty($work['frequency_days'])) {
+                    $freqUnit                                                   = 'days';
+                    $freqNumber                                                 = $work['frequency_days'];
+                }
+                if(!empty($freqUnit)) {
+                    $this->setFormElements($editWorkForm, array(
+                        'frequency'                                             => $freqNumber,
+                        'frequency_type'                                        => $freqUnit
+                    ));
+                }
+                // Token
+                $editWorkForm->initToken();
+            }
+            $this->view->title = 'Éditer le travai';
+            $this->view->page = 'edit-work';
+            $this->view->editWorkForm = $editWorkForm;
+        } else {
+            $this->_redirect('/travaux/index');
+        }
+    }
+    
+    protected function setFormElements(Zend_Form &$form, array $elements) {
+        foreach($elements as $key => $value) {
+            $form->getElement($key)->setValue($value);
         }
     }
     
