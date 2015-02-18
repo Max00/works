@@ -37,6 +37,13 @@ class Application_Model_Oeuvres extends Zend_Db_Table_Abstract {
         return $this->_db->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
     }
     
+    public function getOeuvreBasics($oeuvreId) {
+        $select = $this->_db->select()
+                ->from(array('o'=>'oeuvres'), array('o.title', 'o.coords_x', 'o.coords_y'))
+                ->where('o.id=?', $oeuvreId);
+        return $this->_db->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
+    }
+    
     public function getOeuvreAttrs($oeuvreId, $fields) {
         foreach($fields as $field) {
             if(!in_array($field, $this->_fields)) {

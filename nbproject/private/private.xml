@@ -26,6 +26,7 @@
             <file>file:/C:/wamp/www/works/application/models/Types.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/index/notices/confirmation-default.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/liste-types.phtml</file>
+            <file>file:/C:/wamp/www/works/application/configs/formEditWork.ini</file>
             <file>file:/C:/wamp/www/works/application/views/helpers/BaseUrl.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/error-remove.phtml</file>
             <file>file:/C:/wamp/www/works/library/Zend/Loader/PluginLoader.php</file>
@@ -42,6 +43,7 @@
             <file>file:/C:/wamp/www/works/application/views/helpers/SetWorkDoneButton.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/types/notices/create-error-form.phtml</file>
             <file>file:/C:/wamp/www/works/application/forms/AddWork.php</file>
+            <file>file:/C:/wamp/www/works/application/forms/EditWork.php</file>
             <file>file:/C:/wamp/www/works/application/logs/log.htm</file>
             <file>file:/C:/wamp/www/works/Vdf/Blob.php</file>
             <file>file:/C:/wamp/www/works/library/Zend/Db/Adapter/Abstract.php</file>
@@ -50,6 +52,7 @@
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/ajouter.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/types/notices/create-info-exists.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/cancel-work-done.phtml</file>
+            <file>file:/C:/wamp/www/works/application/configs/formAddWork.ini</file>
             <file>file:/C:/wamp/www/works/public/.htaccess</file>
             <file>file:/C:/wamp/www/works/public/css/site.css</file>
             <file>file:/C:/wamp/www/works/application/layouts/main-menu-worker.phtml</file>
