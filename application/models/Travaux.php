@@ -91,7 +91,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
      */
     public function getAllByTypes() {
         $typesTable = new Application_Model_Types();
-        $types = $typesTable->fetchAll();
+        $types = $typesTable->fetchAll(null, 'name');
         $typesWorksA = array();
         $typesWorksA['types'] = array();
         $tIdx = 0;
