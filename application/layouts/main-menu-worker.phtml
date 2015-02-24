@@ -1,5 +1,5 @@
-<br/>
-<ul>
-<li><a href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste')) ?>">Tous les travaux</a></li>
-<li><a href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste-perso')) ?>">Ma liste</a></li>
-</ul>
+
+<section id="main-menu">
+    <a class="pure-button pure-button-primary<?php if(isset($this->page) && 'list' == $this->page) : echo ' pure-button-active'; endif; ?>" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste'), null, true) ?>"><i class="fa fa-list"></i> Tous les travaux</a>
+    <a class="pure-button pure-button-primary<?php if(isset($this->page) && 'my-list' == $this->page) : echo ' pure-button-active'; endif; ?>" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste-perso'), null, true) ?>"><i class="fa fa-user"></i> Ma liste</a>
+</section>
