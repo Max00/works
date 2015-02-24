@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
+        <file>
+            <url>application/controllers/TravauxController.php</url>
+            <bookmark id="3">
+                <name/>
+                <line>281</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>application/configs/formAddWork.ini</url>
             <bookmark id="1">
@@ -15,7 +23,7 @@
             <file>file:/C:/wamp/www/works/application/layouts/main-menu-supervisor.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/yes-no-remove.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/index/notices/error-cancel.phtml</file>
-            <file>file:/C:/wamp/www/works/application/configs/db.ini</file>
+            <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/confirmation-add.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/types/notices/create-success.phtml</file>
             <file>file:/C:/wamp/www/works/application/layouts/layout.phtml</file>
             <file>file:/C:/wamp/www/works/application/controllers/IndexController.php</file>
@@ -24,6 +32,7 @@
             <file>file:/C:/wamp/www/works/application/configs/formLogin.ini</file>
             <file>file:/C:/wamp/www/works/public/js/site.js</file>
             <file>file:/C:/wamp/www/works/application/models/Types.php</file>
+            <file>file:/C:/wamp/www/works/application/configs/_db.ini</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/index/notices/confirmation-default.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/liste-types.phtml</file>
             <file>file:/C:/wamp/www/works/application/configs/formEditWork.ini</file>
@@ -40,6 +49,7 @@
             <file>file:/C:/wamp/www/works/application/controllers/ErrorController.php</file>
             <file>file:/C:/wamp/www/works/application/logs/log.txt</file>
             <file>file:/C:/wamp/www/works/application/controllers/AuthController.php</file>
+            <file>file:/C:/wamp/www/works/application/views/scripts/travaux/editer.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/helpers/SetWorkDoneButton.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/types/notices/create-error-form.phtml</file>
             <file>file:/C:/wamp/www/works/application/forms/AddWork.php</file>

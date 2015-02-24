@@ -238,6 +238,7 @@ $(document).ready(function() {
         })
         $('section#works-list li').click(function(){
             loadWorkView($(this).attr('data-workid'), $(this).children('div.location').text());
+            $('div#noticesContainer dialog').hide();
         })
     }
     else if ($('.formWork').length > 0) {

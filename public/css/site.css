@@ -39,11 +39,15 @@ section#list-mode { margin-bottom:0.5em; }
 /* WORKS LIST */
 section#works-list { width:58%; background-color:#fafafa; display:inline-block; }
 section#works-list div.prio span.prio-name { font-family: 'Bevan', cursive; font-size: 160%; padding:0 5em 0 0.5em; }
+section#works-list div.prio-small span.prio-name { font-family: 'Bevan', cursive; font-size: 120%; padding:0 5em 0 0.5em; }
+
 section#works-list div.prio-1 span.prio-name { background-color:Red; color: White; }
-section#works-list div.prio-2 span.prio-name { background-color:#ccc; color:White; }
+section#works-list div.prio-2 span.prio-name { background-color:#B3D6E4; color:White; }
 section#works-list div.prio-3 span.prio-name { background-color:#ccc; color:White; }
+section#works-list div.type {  }
 section#works-list div.prio-1 { border-left: solid 0.4em Red; }
-section#works-list div.prio p.type { margin: 0.5em 0 0 1em; font-weight:normal; font-size:120%; color:#6DB37D; }
+section#works-list p.type { margin: 0.5em 0 0 1em; font-weight:normal; font-size:120%; color:#6DB37D; }
+section#works-list p.type-big { margin: 0.5em 0 0.4em 1em; font-weight:bold; font-size:160%; color:#6DB37D; }
 section#works-list ul { padding-left:1em; }
 section#works-list li { list-style-type: none; padding-left:0.5em; }
 section#works-list li:hover { background-color:#f0f0f0; cursor: pointer; }

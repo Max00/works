@@ -115,6 +115,10 @@ class TravauxController extends Zend_Controller_Action {
                         $this->view->noticeTemplate = 'travaux/notices/confirmation-edit.phtml';
                         break;
                     }
+                    case 'add': {
+                        $this->view->noticeTemplate = 'travaux/notices/confirmation-add.phtml';
+                        break;
+                    }
                     default: {
                         $this->view->noticeTemplate = 'index/notices/confirmation-default.phtml';
                         break;
@@ -275,11 +279,11 @@ class TravauxController extends Zend_Controller_Action {
                 if($addWorkForm->isValid($formData)) {
                     $travauxTable = new Application_Model_Travaux();
                     $result = $travauxTable->addWork($formData);
-                    if($result) {
-                        die ('Okay');
-                    } else {
-                        die( 'Nope');
-                    }
+                    $noticeSession = new Zend_Session_Namespace('notice');
+                    $noticeSession->noticeType = 'confirmation';
+                    $noticeSession->confirmationType = 'add';
+                    $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS); // Expiration par défaut
+                    $this->_redirect('/travaux/index');
                 } else {
                     $worktype = $this->_request->getParam('worktype');          // On vide les champs qui ne sont plus nécessaires
                     if('normal' == $worktype) {
