@@ -27,6 +27,7 @@
                             <?php if ($this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioWorks['prio_id']); endif; ?>
                             <?php if ($this->setWorkDone && $currentPrioWorks['prio_id'] != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
                             <?php if ($this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']); endif; ?>
+                            <?php if (isset($this->addWorkToUserList) && $this->addWorkToUserList && !isset($currentWork['added']) && Application_Model_Travaux::$PRIORITIES['Déjà effectué'] != $currentPrioId) : echo ' ' . $this->AddWorkToUserListButton($currentWork['id'], Zend_Auth::getInstance()->getIdentity()->id); endif; ?>
                         </div>
                     </li>
                         

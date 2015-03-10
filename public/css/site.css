@@ -61,11 +61,13 @@ section#works-list a.move-up,
 section#works-list a.move-down,
 section#works-list a.set-done,
 section#works-list a.add-ulist,
+section#works-list a.remove-ulist,
 section#works-list a.remove { color:Black; }
 section#works-list a.move-up:hover,
 section#works-list a.move-down:hover,
 section#works-list a.set-done:hover,
 section#works-list a.add-ulist:hover,
+section#works-list a.remove-ulist:hover,
 section#works-list a.remove:hover { color:#3C4FA6; }
 section#works-list a.move-down { margin-left:2px; }
 

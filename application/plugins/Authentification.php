@@ -18,7 +18,7 @@ class Application_Plugin_Authentification extends Zend_Controller_Plugin_Abstrac
             else {
                 $front = Zend_Controller_Front::getInstance();
                 $view = $front->getParam('bootstrap')->getResource('view');     // Bootstrap View
-                $acl = $front->getParam('bootstrap')->getResource('acl');     // Bootstrap View
+                $acl = $front->getParam('bootstrap')->getResource('acl');       // Bootstrap View
                 //$acl = Zend_Registry::get('acl');
                 $role = Zend_Auth::getInstance()->getIdentity()->role_id;
                 if(Application_Model_Roles::$ROLE_SUPERVISOR == $role)

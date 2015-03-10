@@ -455,7 +455,7 @@ INSERT INTO `works_types` (`work_id`, `type_id`) VALUES
 CREATE TABLE IF NOT EXISTS `works_workers` (
   `work_id` int(11) NOT NULL DEFAULT '0',
   `user_id` int(11) NOT NULL DEFAULT '0',
-  `date_added` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_added` datetime NOT NULL,
   `date_done` datetime DEFAULT NULL,
   PRIMARY KEY (`work_id`,`user_id`,`date_added`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

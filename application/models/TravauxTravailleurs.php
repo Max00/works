@@ -64,6 +64,15 @@ class Application_Model_TravauxTravailleurs extends Zend_Db_Table_Abstract {
         $this->delete($where);
     }
     
+    public function deleteFromUserList($userId, $workId) {
+        $where = array();
+        $where[]= $this->getAdapter()->quoteInto('user_id = ?', $userId);
+        $where[]= $this->getAdapter()->quoteInto('work_id = ?', $workId);
+        $where[]= 'date_done IS NULL';
+        $where[]= 'date_added IS NOT NULL';
+        $this->delete($where);
+    }
+    
     public function getCountForUser($userId) {
         $count = count($this->fetchAll('user_id = ' . $userId . ' AND date_done IS NULL'));
         return $count;
