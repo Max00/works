@@ -7,10 +7,10 @@ class Zend_View_Helper_GetUserTile {
         $this->_view = $view;
     }
     
-    public function GetUserTile($mail, $roleName) {
+    public function GetUserTile($fname, $lname, $roleName) {
         return<<<EOT
-<section id="user-tile"><span class="user">{$mail} ({$roleName})</span>
-<a class="pure-button button-small discon" href="{$this->_view->url(array('controller'=>'auth', 'action'=>'deconnecter'))}">Déconnexion</a>
+<section id="user-tile"><span class="user">{$fname} {$lname} ({$roleName})</span>
+<a class="pure-button button-small discon" href="{$this->_view->url(array('controller'=>'auth', 'action'=>'deconnecter'), null, true)}">Déconnexion</a>
 </section>
 EOT;
     }

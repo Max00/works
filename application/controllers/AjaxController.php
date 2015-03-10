@@ -166,6 +166,14 @@ class AjaxController extends Zend_Controller_Action {
                                                                                 // Récupération des types pour le travail en cours
                 $types = $work->findManyToManyRowset('Application_Model_Types', 'Application_Model_TravauxTypes');
                 $workAr['types'] = $types->toArray();
+                                                                                // Si un utilisateur a ajouté le travail dans sa liste, on renvoie son nom + prenom
+                $wwTable = new Application_Model_TravauxTravailleurs();
+                $userId = $wwTable->getUserIdForWorkNotDone($workId);
+                if($userId) {
+                    $usersTable = new Application_Model_Users();
+                    $userRow = $usersTable->getUserBasics($userId);
+                    $workAr['user_add'] = $userRow['fname'] . ' ' . $userRow['lname'];
+                }
                 echo json_encode($workAr);
                 return;
             }

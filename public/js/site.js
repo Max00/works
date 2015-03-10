@@ -137,6 +137,9 @@ function addViewWorkType(id, name, color) {
     $('#work-view #work-types div[data-id="'+id+'"]').css('background-color', '#'+color)
 }
 function loadWorkView(workId, locationLabel) {
+    $('#work-view span#work-title').hide();
+    $('#work-view span#user-add-label').hide();
+    $('#work-view span#user-add').hide();
     $('#work-view div#work-details *').hide();
     $('#work-view p#help').hide();
     $('#work-view #work-edit-container').show();
@@ -156,14 +159,18 @@ function loadWorkView(workId, locationLabel) {
             fw = response.frequency_weeks;
             fd = response.frequency_days;
             
-            $('p#work-title').html(response.title).show();
+            $('p#work-wrapper').show();
+            $('span#work-title').html(response.title).show();
             if(fm || fw || fd) {
                 $('div#work-frequency').show();
             }
             initViewWorkMap(response.coords_x, response.coords_y, locationLabel);
-            
             if(response.oeuvre_title) {
                 $('p#work-oeuvre-title').html(response.oeuvre_title).show();
+            }
+            if(response.user_add) {
+                $('span#user-add-label').show();
+                $('span#user-add').html(response.user_add).show();
             }
             if(response.description) {
                 $('p#work-description').html(response.description).show();

@@ -15,7 +15,10 @@
                     <?php endif ?>
                     <ul>
                         <?php foreach ($currentType['works'] as $currentWork) : ?>
-                            <li data-workid="<?php echo $currentWork['id'] ?>">
+                            <li data-workid="<?php echo $currentWork['id'] ?>"<?php if(isset($currentWork['added'])): ?> class="added"<?php endif; ?>>
+                                <?php if(isset($currentWork['cur_user'])): ?>
+                                <span class="in-cur-user-list"><i class="fa fa-thumb-tack"></i></span>
+                                <?php endif; ?>
                                 <div class="title">
                                     <?php echo $currentWork['title'] ?>
                                 </div>
@@ -26,6 +29,7 @@
                                     <?php if ($this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioId); endif; ?>
                                     <?php if ($this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
                                     <?php if ($this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']); endif; ?>
+                                    <?php if ($this->addWorkToUserList && !isset($currentWork['added'])) : echo ' ' . $this->AddWorkToUserListButton($currentWork['id'], Zend_Auth::getInstance()->getIdentity()->id); endif; ?>
                                 </div>
                             </li>
                 <?php endforeach ?>
@@ -49,7 +53,7 @@
                 <div id="work-prio-2">Normal</div>
                 <div id="work-prio-3">Déja effectué</div>
             </div>
-            <p id="work-title"></p>
+            <p id="work-wrapper"><span id="work-title"></span><span id="user-add-label">Dans la liste de </span><span id="user-add"></span></p>
             <div id="work-types"></div>
             <p id="work-oeuvre-title"></p>
             <p id="work-desc_emplact"></p>

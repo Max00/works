@@ -16,9 +16,11 @@ class TravauxController extends Zend_Controller_Action {
         $acl->addResource(new Zend_Acl_Resource('change_work_prio'));
         $acl->addResource(new Zend_Acl_Resource('set_work_done'));
         $acl->addResource(new Zend_Acl_Resource('remove_work'));
+        $acl->addResource(new Zend_Acl_Resource('add_work_to_user_list'));
         $acl->allow(Application_Model_Roles::$ROLE_WORKER, array(
             'list_works',
-            'set_work_done'
+            'set_work_done',
+            'add_work_to_user_list',
             ));                                                                 // Attribution des privileges
         $acl->allow(Application_Model_Roles::$ROLE_SUPERVISOR, array(
             'list_works',
@@ -35,7 +37,10 @@ class TravauxController extends Zend_Controller_Action {
             $rolesTable = new Application_Model_Roles();
             $role = $rolesTable->getRoleName($roleId);                          // Passage des informations utilisateur a la vue
             $this->view->roleName = $role->label;
-            $this->view->mail = $auth->getIdentity()->mail;
+            $usersTable = new Application_Model_Users();
+            $user = $usersTable->getUserBasics($auth->getIdentity()->id);
+            $this->view->lname = $user['lname'];
+            $this->view->fname = $user['fname'];
         }
     }
     
@@ -73,6 +78,7 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->removeWork = $acl->isAllowed($role, 'remove_work');
             $this->view->changeWorkPrio = $acl->isAllowed($role, 'change_work_prio');
             $this->view->setWorkDone = $acl->isAllowed($role, 'set_work_done');
+            $this->view->addWorkToUserList = $acl->isAllowed($role, 'add_work_to_user_list');
             $this->view->workDonePrio = Application_Model_Travaux::$PRIORITIES['Déjà effectué'];
             $authNS = new Zend_Session_Namespace('authToken');
             $authNS->setExpirationSeconds(TOKEN_EXPIRATION_SECS);
@@ -88,11 +94,16 @@ class TravauxController extends Zend_Controller_Action {
                 switch($cancelOperation) {
                     case 'set_work_done' : {
                         $oldWorkSession = new Zend_Session_Namespace('oldWork');
-                        $workId = $oldWorkSession->id;
-                        $workPrio = $oldWorkSession->prio;
+                    //    $workId = $oldWorkSession->id;
+                    //    $workPrio = $oldWorkSession->prio;
                         if(!empty($workId) && !empty($workPrio)) {
                             $this->view->noticeTemplate = 'travaux/notices/cancel-work-done.phtml';
                         }
+                        break;
+                    }
+                    case 'add_work_to_ulist' : {
+                        $wWToDeleteSession = new Zend_Session_Namespace('wwToDel');
+                        $this->view->noticeTemplate = 'travaux/notices/cancel-work-added-ulist.phtml';
                         break;
                     }
                     default: {
@@ -119,6 +130,10 @@ class TravauxController extends Zend_Controller_Action {
                         $this->view->noticeTemplate = 'travaux/notices/confirmation-add.phtml';
                         break;
                     }
+                    case 'cancel-add-ulist': {
+                        $this->view->noticeTemplate = 'travaux/notices/confirmation-cancel-add-ulist.phtml';
+                        break;
+                    }
                     default: {
                         $this->view->noticeTemplate = 'index/notices/confirmation-default.phtml';
                         break;
@@ -134,6 +149,10 @@ class TravauxController extends Zend_Controller_Action {
                     }
                     case 'remove': {
                         $this->view->noticeTemplate = 'travaux/notices/error-remove.phtml';
+                        break;
+                    }
+                    case 'work-already-added': {
+                        $this->view->noticeTemplate = 'travaux/notices/error-work-already-added.phtml';
                         break;
                     }
                     default: {
@@ -168,14 +187,15 @@ class TravauxController extends Zend_Controller_Action {
             // l'autorisation de lister les travaux
         }
         
+        $userId = Zend_Auth::getInstance()->getIdentity()->id;
         if('types' == $mode) {
             $viewDefaults->worksListMode = 'types';
-            $this->view->works = $travauxTable->getAllByTypes();
+            $this->view->works = $travauxTable->getAllByTypes($userId);
             $this->_helper->viewRenderer('liste-types');
         }
         else if ('prios' == $mode || self::$DEFAULT_LIST_ACTION == $mode) {
             $viewDefaults->worksListMode = 'prios';
-            $this->view->works = $travauxTable->getAllByPrios();
+            $this->view->works = $travauxTable->getAllByPrios($userId);
             $this->_helper->viewRenderer('liste-prios');
         }
     }
@@ -203,9 +223,12 @@ class TravauxController extends Zend_Controller_Action {
         $workId = (int)$this->_request->getParam('id');
         if($acl->isAllowed($role, 'set_work_done') && !empty($workId)) {
             try {
+                                                                                // Marquer le travail comme effectué (prio 3)
                 $worksTable = new Application_Model_Travaux();
                 $oldPrio = $worksTable->getWorkPrio($workId);
                 $worksTable->setWorkDone($workId);
+                                                                                // Mettre a jour la table WORKS_WORKERS
+                $worksWorkersTable = new Application_Model_TravauxTravailleurs();
                 $noticeSession = new Zend_Session_Namespace('notice');
                 $oldWorkSession = new Zend_Session_Namespace('oldWork');
                 $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);   // Expiration par défaut
@@ -552,5 +575,72 @@ class TravauxController extends Zend_Controller_Action {
         } else {
             $this->_redirect('/travaux/index');
         }
+    }
+    
+    public function cancelAddWorkToUListAction() {
+        $wWToDeleteSession = new Zend_Session_Namespace('wwToDel');
+        $noticeSession = new Zend_Session_Namespace('notice');
+        $userId = $wWToDeleteSession->userId ;                                  // PK: user_id, work_id, date_added
+        $workId = $wWToDeleteSession->workId;
+        $dateAdded = $wWToDeleteSession->dateAdded;
+                                                                                // Suppression du dernier enregistrement par sa clé primaire
+        $wwTable = new Application_Model_TravauxTravailleurs();
+        $wwTable->deleteById($userId, $workId, $dateAdded);
+        $noticeSession->noticeType = 'confirmation';
+        $noticeSession->confirmationType = 'cancel-add-ulist';
+        $this->_redirect('travaux/index');
+    }
+    
+    public function ajouterListePersoAction() {
+        $acl = Zend_Registry::get('acl');
+        $role = Zend_Auth::getInstance()->getIdentity()->role_id;
+        if($acl->isAllowed($role, 'add_work_to_user_list')) {
+            $userId = $workId = null;
+            if($this->getRequest()->has('operateur') && $this->getRequest()->has('travail')) {
+                $userId = $this->getRequest()->getParam ('operateur');
+                $workId = $this->getRequest()->getParam ('travail');            // Recuperation des parametres : operateur et travail
+            } else {
+                $this->_redirect('/travaux/index');
+            }
+            try {
+                $worksWorkersTable = new Application_Model_TravauxTravailleurs();
+                                                                                // Vérifier si l'enregistrement n'existe pas déjà, avec une date antérieure
+                if($worksWorkersTable->alreadyExists($userId, $workId)) {
+                    $noticeSession = new Zend_Session_Namespace('notice');
+                    $noticeSession->noticeType = 'error';
+                    $noticeSession->errorType = 'work-already-added';
+                    $this->_redirect('travaux/index');
+                }
+                
+                $dateAdded = date('Y-m-d H:i:s');                               // Date d'ajout                
+                $worksWorkersTable->insert(array('user_id' => $userId, 'work_id' => $workId, 'date_added' => $dateAdded));
+                                                                                // Insertion d'une ligne: ajout a la liste perso
+                
+                $noticeSession = new Zend_Session_Namespace('notice');          // Possibilité d'annuler
+                $wWToDeleteSession = new Zend_Session_Namespace('wwToDel');
+                $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);   // Expiration par défaut
+                $wWToDeleteSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS); // Expiration par défaut
+                $noticeSession->noticeType = 'cancel';
+                $noticeSession->cancelOperation = 'add_work_to_ulist';
+                $wWToDeleteSession->userId = $userId;                           // PK: user_id, work_id, date_added
+                $wWToDeleteSession->workId = $workId;
+                $wWToDeleteSession->dateAdded = $dateAdded;
+                $this->_redirect('/travaux/index');
+            } catch (Exception $ex) {
+                echo $ex->getTraceAsString();
+            }
+        } else {
+            $this->_redirect('/travaux/index');
+        }
+    }
+    
+    static function getWorksListCount($userId) {
+        $wwTable = new Application_Model_TravauxTravailleurs();
+        return $wwTable->getCountForUser($userId);
+    }
+    
+    public function listePersoAction() {
+        $this->view->title = 'Ma liste';
+        $this->view->page = 'liste-perso';
     }
 }

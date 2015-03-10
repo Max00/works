@@ -8,6 +8,6 @@ class Zend_View_Helper_SetWorkDoneButton {
     }
     
     public function SetWorkDoneButton($workId) {
-        return '<a class="set-done" href="' . $this->_view->url(array('controller' => 'travaux', 'action' => 'marquer-fait', 'id' => $workId)) . '"><i class="fa fa-flag"></i></a>';
+        return '<a class="set-done" href="' . $this->_view->url(array('controller' => 'travaux', 'action' => 'marquer-fait', 'id' => $workId), null, true) . '"><i class="fa fa-flag"></i></a>';
     }
 }

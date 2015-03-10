@@ -72,7 +72,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     /*
      * Retourne l'ensemble des travaux ordonnés par priorité, puis par type, sous forme d'un tableau
      */
-    public function getAllByPrios() {
+    public function getAllByPrios($userId) {
         $typesTable = new Application_Model_Types();
         $worksTable = new Application_Model_Travaux();
         $priosWorksA = array();
@@ -81,7 +81,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
             // Tous les travaux par priorité, triés par type
             $priosWorksA['prios'][$currentPriorityId] = array();
             $priosWorksA['prios'][$currentPriorityId]['label_prio'] = $currentPriorityLabel;
-            $priosWorksA['prios'][$currentPriorityId]['typesWorks'] = $this->getWorksByPrioOrderTypesArray((int) $currentPriorityId);
+            $priosWorksA['prios'][$currentPriorityId]['typesWorks'] = $this->getWorksByPrioOrderTypesArray((int) $currentPriorityId, $userId);
         }
         return $priosWorksA;
     }
@@ -89,7 +89,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     /*
      * Retourne l'ensemble des travaux ordonnés par type, puis par priorité, sous forme d'un tableau
      */
-    public function getAllByTypes() {
+    public function getAllByTypes($userId) {
         $typesTable = new Application_Model_Types();
         $types = $typesTable->fetchAll(null, 'name');
         $typesWorksA = array();
@@ -98,19 +98,19 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
         foreach($types as $currentType) {
             $typesWorksA['types'][$tIdx] = array();
             $typesWorksA['types'][$tIdx]['label_type'] = $currentType->name;
-            $typesWorksA['types'][$tIdx]['priosWorks'] = $this->getWorksByTypeOrderByPriosArray((int) $currentType->id);
+            $typesWorksA['types'][$tIdx]['priosWorks'] = $this->getWorksByTypeOrderByPriosArray($userId, (int) $currentType->id);
             $tIdx++;
         }
         $typesWorksA['types'][$tIdx] = array();                                 // Oeuvres sans type
         $typesWorksA['types'][$tIdx]['label_type'] = self::$NOTYPE;
-        $typesWorksA['types'][$tIdx]['priosWorks'] = $this->getWorksByTypeOrderByPriosArray();
+        $typesWorksA['types'][$tIdx]['priosWorks'] = $this->getWorksByTypeOrderByPriosArray($userId);
         return $typesWorksA;
     }
     
     /*
      * Retourne une liste de travaux d'un certain type, ordonnés par priorités, sous forme d'un tableau
      */
-    private function getWorksByTypeOrderByPriosArray($typeId = null) {
+    private function getWorksByTypeOrderByPriosArray($userId, $typeId = null) {
         if(isset($typeId))
             $worksRows = $this->getWorksByTypeOrderByPrios($typeId);
         else
@@ -120,29 +120,38 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
         $wIdx = -1;
         $currentPrioId = 0;
         foreach($worksRows as $currentWork) {                                   // Pour chaque travail ordonné par type
+                                                                                // On a une ligne pour chaque travail-type
             if($currentPrioId != $currentWork['prio']) {                        // Si on est plus dans la meme priorité que le travail précédent
-                $pIdx++;
-                $wIdx = 0;
-                $currentPrioId = $currentWork['prio'];
-                $priosWorksA[$pIdx] = array();
+                $pIdx++;                                                        // Indice prio ++
+                $wIdx = 0;                                                      // Reset indice Works
+                $currentPrioId = $currentWork['prio'];  
+                $priosWorksA[$pIdx] = array();                                  // Nouveau tableau de prios
                 $prio_label = array_search($currentWork['prio'], self::$PRIORITIES);
-                $priosWorksA[$pIdx]['prio_label'] = $prio_label;
+                $priosWorksA[$pIdx]['prio_label'] = $prio_label;                // Précisions sur les prios
                 $priosWorksA[$pIdx]['prio_id'] = $currentWork['prio'];
-                $priosWorksA[$pIdx]['works'] = array();
+                $priosWorksA[$pIdx]['works'] = array();                         // Tableau de travaux
                 $priosWorksA[$pIdx]['works'][$wIdx] = array();
             } else {
                 $wIdx++;
             }
+                                                                                // Remplir le travail
             $priosWorksA[$pIdx]['works'][$wIdx]['id'] = $currentWork['id'];
             $priosWorksA[$pIdx]['works'][$wIdx]['title'] = $currentWork['title'];
             $priosWorksA[$pIdx]['works'][$wIdx]['date_creation'] = $currentWork['date_creation'];
-            if(!empty($currentWork['oeuvre_id'])) {                         // On a une oeuvre
+            if(!empty($currentWork['oeuvre_id'])) {                             // On a une oeuvre
                 $oeuvresTable = new Application_Model_Oeuvres();
                 $oeuvreBasic = $oeuvresTable->getOeuvreBasics($currentWork['oeuvre_id']);
                 $priosWorksA[$pIdx]['works'][$wIdx]['oeuvre_title'] = $oeuvreBasic['title'];
             } else if(!empty($currentWork['coords_x']) && !empty($currentWork['coords_y'])) {
                 $priosWorksA[$pIdx]['works'][$wIdx]['coords_x'] = $currentWork['coords_x'];
                 $priosWorksA[$pIdx]['works'][$wIdx]['coords_y'] = $currentWork['coords_y'];
+            }
+                                                                                // Association avec un user
+            if(empty($currentWork['date_done']) && !empty($currentWork['date_added'])) { // Travail dans la liste d'un utilisateur: ADDED but not DONE
+                $priosWorksA[$pIdx]['works'][$wIdx]['added'] = true;
+                if($currentWork['user_id'] == $userId) {                     // Travail associé à l'utilisateur courant
+                    $priosWorksA[$pIdx]['works'][$wIdx]['cur_user'] = true;
+                }
             }
         }
         /*
@@ -172,7 +181,10 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
         $subSelect = $this->_db->select()
                 ->from(array('wt' => 'works_types'), array('wt.work_id'));
         $req = $this->_db->select()
-                ->from(array('w' => 'works', 'wt' => 'works_types'), array('w.id', 'w.title', 'w.date_creation', 'w.prio', 'w.coords_x', 'w.coords_y', 'w.oeuvre_id'))
+                ->from(array('w' => 'works', 'wt' => 'works_types'), array(
+                    'w.id', 'w.title', 'w.date_creation', 'w.prio', 'w.coords_x', 'w.coords_y', 'w.oeuvre_id',
+                    'ww.date_added as date_added', 'ww.date_done as date_done', 'ww.user_id as user_id'))
+                ->joinLeft(array('ww' => 'works_workers'), 'w.id = ww.work_id', array())
                 ->where('w.id NOT IN ?', $subSelect)
                 ->order('w.prio');
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
@@ -184,8 +196,11 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     private function getWorksByTypeOrderByPrios($typeId) {
         $typeId = $this->_db->quote($typeId);
         $req = $this->_db->select()
-                ->from(array('wt' => 'works_types'), array('w.id', 'w.title', 'w.date_creation', 'w.prio', 'w.coords_x', 'w.coords_y', 'w.oeuvre_id'))
+                ->from(array('wt' => 'works_types'), array(
+                    'w.id', 'w.title', 'w.date_creation', 'w.prio', 'w.coords_x', 'w.coords_y', 'w.oeuvre_id',
+                    'ww.date_added as date_added', 'ww.date_done as date_done', 'ww.user_id as user_id'))
                 ->join(array('w' => 'works'), 'w.id = wt.work_id', array())
+                ->joinLeft(array('ww' => 'works_workers'), 'w.id = ww.work_id', array())
                 ->where('type_id = ?', $typeId)
                 ->order('w.prio');
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
@@ -193,15 +208,17 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     
     /*
      * Retourne un tableau de travaux d'une certaine priorité, ordonnés par type
+     * Pas de factorisation, pour plus de clarté
      */
-    private function getWorksByPrioOrderTypesArray($prioId) {
+    private function getWorksByPrioOrderTypesArray($prioId, $userId) {
         // Toi qui entres ici, abandonnes tout espoir
         $typesWorksA = array();
         $oeuvresTable = new Application_Model_Oeuvres();
+        $wwTable = new Application_Model_TravauxTravailleurs();
         $worksRows = $this->getWorksByPrioOrderTypes($prioId);
         $currentTypeId = -1;
         $tIdx = -1;                                                             // Commencera a zero et ne sera jamais réinitialisé
-        $wIdx = -1;                                                              // Sera remis a zero a chaque nouveau type
+        $wIdx = -1;                                                             // Sera remis a zero a chaque nouveau type
         foreach($worksRows as $currentWorkRow) {
             $workId = $currentWorkRow['work_id'];
             if($currentWorkRow['type_id'] != $currentTypeId) {                  // On parcourt un nouveau type
@@ -224,6 +241,12 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title'] = $currentWorkRow['oeuvre_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_x'] = $currentWorkRow['coords_x'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_y'] = $currentWorkRow['coords_y'];
+                if(empty($currentWorkRow['date_done']) && !empty($currentWorkRow['date_added'])) { // Travail dans la liste d'un utilisateur
+                    $typesWorksA[$tIdx]['works'][$wIdx]['added'] = true;
+                    if($currentWorkRow['user_id'] == $userId) {                 // Travail associé à l'utilisateur courant
+                        $typesWorksA[$tIdx]['works'][$wIdx]['cur_user'] = true;
+                    }
+                }
                 $wIdx++;
             } else {                                                            // On ajoute le travail dans le type existant
                 $wIdx++;
@@ -233,6 +256,12 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title'] = $currentWorkRow['oeuvre_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_x'] = $currentWorkRow['coords_x'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_y'] = $currentWorkRow['coords_y'];
+                if(empty($currentWorkRow['date_done']) && !empty($currentWorkRow['date_added'])) { // Travail dans la liste d'un utilisateur
+                    $typesWorksA[$tIdx]['works'][$wIdx]['added'] = true;
+                    if($currentWorkRow['user_id'] == $userId) {                 // Travail associé à l'utilisateur courant
+                        $typesWorksA[$tIdx]['works'][$wIdx]['cur_user'] = true;
+                    }
+                }
             }
         }
         return $typesWorksA;
@@ -244,12 +273,19 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     private function getWorksByPrioOrderTypes($prioId) {
         $prioId = $this->_db->quote($prioId);
         $req = $this->_db->select()
-                ->from(array('w' => 'works'), array('w.id as work_id', 'w.title as work_title', 'w.date_creation', 'w.coords_x', 'w.coords_y', 't.id as type_id', 't.name as type_name', 'o.title as oeuvre_title'))
+                ->from(array('w' => 'works'), array(
+                    'w.id as work_id', 'w.title as work_title', 'w.date_creation', 'w.coords_x', 'w.coords_y',
+                    't.id as type_id', 't.name as type_name',
+                    'o.title as oeuvre_title',
+                    'ww.date_added as date_added', 'ww.date_done as date_done', 'ww.user_id as user_id'))
                 ->joinLeft(array('wt' => 'works_types'), 'w.id = wt.work_id', array())
                 ->joinLeft(array('t' => 'types'), 't.id = wt.type_id', array())
                 ->joinLeft(array('o' => 'oeuvres'), 'o.id = w.oeuvre_id', array())
+                ->joinLeft(array('ww' => 'works_workers'), 'ww.work_id = w.id', array())
                 ->where('w.prio = ?', $prioId)
                 ->order(new Zend_Db_Expr('case when type_name is null then 1 else 0 end, type_name'));
+        //echo $req;
+        //die();
         // LEFT JOIN pour récupérer les travaux qui n'ont pas de type
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
     }
@@ -263,7 +299,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     
     /*
      * Définit le travail comme effectué
-     */
+     */ 
     public function setWorkDone($workId) {
         $this->update(array('date_last_done' => date('Y-m-d'),'prio' => Application_Model_Travaux::$PRIORITIES['Déjà effectué']), $this->_db->quoteInto('id = ?', $workId));
     }

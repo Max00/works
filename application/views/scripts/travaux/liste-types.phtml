@@ -13,19 +13,22 @@
                 
                 <ul>
                     <?php foreach ($currentPrioWorks['works'] as $currentWork) : ?>
-                        <li data-workid="<?php echo $currentWork['id'] ?>">
-                            <div class="title">
-                                <?php echo $currentWork['title'] ?>
-                            </div>
-                            <div class="location">
-                                <?php if(!empty($currentWork['oeuvre_title'])) : echo $currentWork['oeuvre_title']; elseif(!empty($currentWork['coords_x'])): echo $currentWork['coords_x'] . ', ' . $currentWork['coords_y']; endif; ?>
-                            </div>
-                            <div class="work-options">
-                                <?php if ($this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioWorks['prio_id']); endif; ?>
-                                <?php if ($this->setWorkDone && $currentPrioWorks['prio_id'] != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
-                                <?php if ($this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']); endif; ?>
-                            </div>
-                        </li>
+                    <li data-workid="<?php echo $currentWork['id'] ?>"<?php if(isset($currentWork['added'])): ?> class="added"<?php endif; ?>>
+                        <?php if(isset($currentWork['cur_user'])): ?>
+                        <span class="in-cur-user-list"><i class="fa fa-thumb-tack"></i></span>
+                        <?php endif; ?>
+                        <div class="title">
+                            <?php echo $currentWork['title'] ?>
+                        </div>
+                        <div class="location">
+                            <?php if(!empty($currentWork['oeuvre_title'])) : echo $currentWork['oeuvre_title']; elseif(!empty($currentWork['coords_x'])): echo $currentWork['coords_x'] . ', ' . $currentWork['coords_y']; endif; ?>
+                        </div>
+                        <div class="work-options">
+                            <?php if ($this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioWorks['prio_id']); endif; ?>
+                            <?php if ($this->setWorkDone && $currentPrioWorks['prio_id'] != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
+                            <?php if ($this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']); endif; ?>
+                        </div>
+                    </li>
                         
                         <?php /*
                         <li>
@@ -60,7 +63,7 @@
                 <div id="work-prio-2">Normal</div>
                 <div id="work-prio-3">Déja effectué</div>
             </div>
-            <p id="work-title"></p>
+            <p id="work-wrapper"><span id="work-title"></span><span id="user-add-label">Dans la liste de </span><span id="user-add"></span></p>
             <div id="work-types"></div>
             <p id="work-oeuvre-title"></p>
             <p id="work-desc_emplact"></p>

@@ -9,7 +9,7 @@
     </head>
     <body<?php if(isset($this->err)) echo ' class="error"' ?>>
         <div id="content">
-            <?php if(isset($this->mail)) : echo $this->GetUserTile($this->mail, $this->roleName); endif; ?>
+            <?php if(isset($this->lname) && isset($this->fname)) : echo $this->GetUserTile($this->fname, $this->lname, $this->roleName); endif; ?>
             <div id="noticesContainer"><?php if(isset($this->noticeTemplate)) : echo $this->partial($this->noticeTemplate); endif; ?></div>
             <?php if(isset($this->mainMenuTemplateFile)) echo $this->partial($this->mainMenuTemplateFile, array('page' => $this->page)); ?>
             <?php echo $this->layout()->content ?>
