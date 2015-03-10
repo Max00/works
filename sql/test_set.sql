@@ -1,3 +1,12 @@
+-- phpMyAdmin SQL Dump
+-- version 4.1.14
+-- http://www.phpmyadmin.net
+--
+-- Client :  127.0.0.1
+-- Généré le :  Mar 10 Mars 2015 à 12:53
+-- Version du serveur :  5.6.17
+-- Version de PHP :  5.5.12
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -10,6 +19,24 @@ SET time_zone = "+00:00";
 --
 -- Base de données :  `works`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `oeuvres`
+--
+
+CREATE TABLE IF NOT EXISTS `oeuvres` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `artist` varchar(255) NOT NULL,
+  `numero` varchar(10) DEFAULT NULL,
+  `date_realisation` varchar(8) DEFAULT NULL,
+  `coords_x` varchar(20) DEFAULT NULL,
+  `coords_y` varchar(20) DEFAULT NULL,
+  `coords_z` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=190 ;
 
 --
 -- Contenu de la table `oeuvres`
@@ -206,6 +233,18 @@ INSERT INTO `oeuvres` (`id`, `title`, `artist`, `numero`, `date_realisation`, `c
 (188, 'Globe', 'Maarten V. Eynde', '184', '', '', '', ''),
 (189, 'Cartouche', 'Marion Verboom', '185', '', '', '', '');
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `roles`
+--
+
+CREATE TABLE IF NOT EXISTS `roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `label` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
 --
 -- Contenu de la table `roles`
 --
@@ -213,6 +252,19 @@ INSERT INTO `oeuvres` (`id`, `title`, `artist`, `numero`, `date_realisation`, `c
 INSERT INTO `roles` (`id`, `label`) VALUES
 (1, 'Opérant'),
 (2, 'Superviseur');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `types`
+--
+
+CREATE TABLE IF NOT EXISTS `types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `color` varchar(6) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=138 ;
 
 --
 -- Contenu de la table `types`
@@ -257,13 +309,58 @@ INSERT INTO `types` (`id`, `name`, `color`) VALUES
 (105, 'Erer', 'e1e6ff'),
 (104, 'Zaza', 'e1e6ff');
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fname` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `lname` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `mail` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `pass` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `date_last_conx` date DEFAULT NULL,
+  `role_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
 --
 -- Contenu de la table `users`
 --
 
-INSERT INTO `users` (`id`, `mail`, `pass`, `date_last_conx`, `role_id`) VALUES
-(1, 'mk@bwets.net', 'hashed', NULL, 2),
-(2, 'worker@ventdesforets.org', 'hashed', NULL, 1);
+INSERT INTO `users` (`id`, `fname`, `lname`, `mail`, `pass`, `date_last_conx`, `role_id`) VALUES
+(1, 'Maxime', 'Kieffer', 'mk@bwets.net', 'hashed', NULL, 2),
+(2, 'Grégory', 'Sommeil', 'worker@ventdesforets.org', 'hashed', NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `works`
+--
+
+CREATE TABLE IF NOT EXISTS `works` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8_unicode_ci,
+  `date_creation` date NOT NULL,
+  `date_update` date NOT NULL,
+  `desc_emplact` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `coords_x` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `coords_y` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `coords_z` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `prio` int(11) NOT NULL,
+  `markup` tinyint(1) DEFAULT NULL,
+  `question` tinyint(1) DEFAULT NULL,
+  `answer` text COLLATE utf8_unicode_ci,
+  `frequency_months` int(11) DEFAULT NULL,
+  `frequency_weeks` int(11) DEFAULT NULL,
+  `frequency_days` int(11) DEFAULT NULL,
+  `date_last_done` date DEFAULT NULL,
+  `oeuvre_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=84 ;
 
 --
 -- Contenu de la table `works`
@@ -282,7 +379,7 @@ INSERT INTO `works` (`id`, `title`, `description`, `date_creation`, `date_update
 (11, 'Nom du travail', 'Description du travail', '2014-12-01', '0000-00-00', 'Desc emplacement', NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0),
 (12, 'Nom du travail', 'Description du travail', '2014-12-01', '0000-00-00', 'Desc emplacement', 'E5 21 22.6', 'N48 55 04.5', NULL, 2, NULL, NULL, NULL, NULL, 3, NULL, NULL, 0),
 (17, 'Nom du travail 2', 'Desc travail', '2014-12-02', '2014-12-02', 'ewr wer werwer', NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, 53, NULL, 2),
-(33, 'srdf ', '', '2014-12-02', '2014-12-02', '', NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0),
+(33, 'srdf ', '', '2014-12-02', '2014-12-02', '', NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, NULL, NULL, '2015-03-06', 0),
 (35, 'srdf ', '', '2014-12-02', '2014-12-02', '', NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0),
 (65, 'lk', '', '2014-12-02', '2014-12-02', '', NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0),
 (66, 'Question 1', 'Desc question', '2014-12-02', '2014-12-02', '', NULL, NULL, NULL, 3, NULL, 1, NULL, NULL, NULL, NULL, NULL, 0),
@@ -298,9 +395,21 @@ INSERT INTO `works` (`id`, `title`, `description`, `date_creation`, `date_update
 (77, 'Test 4', '', '2015-01-12', '2015-01-12', '', NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0),
 (78, 'Travail test', 'Lorem ipsum dolor sit amet, et eliptir consec demagos', '2015-01-12', '2015-01-12', '', NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, 3, NULL, NULL, 0),
 (79, 'Travail 4', '', '2015-01-12', '2015-01-12', '', NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0),
-(81, 'Une question ?', 'Desc\r\n', '2015-01-19', '2015-02-18', '', NULL, NULL, NULL, 1, NULL, 1, NULL, NULL, 2, NULL, NULL, 117),
-(82, 'iuhubjy', 'fvtfvhjtfytvhtf\r\n]yjbybyjf\r\n', '2015-01-25', '2015-01-25', '', 'E 5° 23'' 17.57''''', 'N 48° 55'' 34.01''''', NULL, 1, NULL, NULL, NULL, 6, NULL, NULL, NULL, 0),
+(81, 'Une question ?', 'Desc\r\n', '2015-01-19', '2015-02-18', '', NULL, NULL, NULL, 3, NULL, 1, NULL, NULL, 2, NULL, '2015-03-06', 117),
+(82, 'iuhubjy', 'fvtfvhjtfytvhtf\r\n]yjbybyjf\r\n', '2015-01-25', '2015-01-25', '', 'E 5° 23'' 17.57''''', 'N 48° 55'' 34.01''''', NULL, 3, NULL, NULL, NULL, 6, NULL, NULL, '2015-03-06', 0),
 (83, 'Test 123', '', '2015-02-23', '2015-02-23', '', NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 17);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `works_types`
+--
+
+CREATE TABLE IF NOT EXISTS `works_types` (
+  `work_id` int(11) NOT NULL DEFAULT '0',
+  `type_id` int(11) NOT NULL,
+  PRIMARY KEY (`work_id`,`type_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Contenu de la table `works_types`
@@ -337,23 +446,34 @@ INSERT INTO `works_types` (`work_id`, `type_id`) VALUES
 (83, 3),
 (83, 136);
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `works_workers`
+--
+
+CREATE TABLE IF NOT EXISTS `works_workers` (
+  `work_id` int(11) NOT NULL DEFAULT '0',
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `date_added` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_done` datetime DEFAULT NULL,
+  PRIMARY KEY (`work_id`,`user_id`,`date_added`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 --
 -- Contenu de la table `works_workers`
 --
 
-INSERT INTO `works_workers` (`work_id`, `user_id`, `done`) VALUES
-(1, 3, 1),
-(2, 2, 1),
-(2, 3, 2),
-(3, 2, 1),
-(4, 3, 1),
-(5, 2, 1),
-(5, 3, 2),
-(6, 2, 1),
-(7, 2, 1),
-(8, 3, 1),
-(9, 2, 1),
-(10, 2, 1);
+INSERT INTO `works_workers` (`work_id`, `user_id`, `date_added`, `date_done`) VALUES
+(75, 2, '2015-03-09 11:09:05', NULL),
+(68, 2, '2015-03-06 17:33:13', NULL),
+(11, 2, '2015-03-06 17:33:09', '2015-04-03 17:33:00'),
+(82, 2, '2015-03-06 11:23:52', NULL),
+(81, 2, '2015-03-06 11:33:12', NULL),
+(33, 2, '2015-03-06 11:22:53', NULL),
+(76, 2, '2015-03-06 11:22:49', NULL),
+(77, 2, '2015-03-08 22:25:46', NULL),
+(82, 2, '2015-03-06 11:22:42', NULL);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
