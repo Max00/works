@@ -90,14 +90,18 @@ function initMap() {
     })
     /* Draggable marker -> change coords */
     google.maps.event.addListener(marker, 'drag', function(e) {
-        $('#emplacement_coords_y').val(LocationFormatter.decimalLatToDMS(e.latLng.lat()))
-        $('#emplacement_coords_x').val(LocationFormatter.decimalLongToDMS(e.latLng.lng()))
+//        $('#emplacement_coords_y').val(LocationFormatter.decimalLatToDMS(e.latLng.lat()))
+//        $('#emplacement_coords_x').val(LocationFormatter.decimalLongToDMS(e.latLng.lng()))
+        $('#emplacement_coords_y').val(e.latLng.lat())
+        $('#emplacement_coords_x').val(e.latLng.lng())
         $('#oeuvre_emplact').val('');
         $('#oeuvre_id').val('');
     })
     google.maps.event.addListener(marker, 'dragend', function(e) {
-        $('#emplacement_coords_y').val(LocationFormatter.decimalLatToDMS(e.latLng.lat()))
-        $('#emplacement_coords_x').val(LocationFormatter.decimalLongToDMS(e.latLng.lng()))
+//        $('#emplacement_coords_y').val(LocationFormatter.decimalLatToDMS(e.latLng.lat()))
+//        $('#emplacement_coords_x').val(LocationFormatter.decimalLongToDMS(e.latLng.lng()))
+        $('#emplacement_coords_y').val(e.latLng.lat())
+        $('#emplacement_coords_x').val(e.latLng.lng())
         $('#oeuvre_emplact').val('');
         $('#oeuvre_id').val('');
     })
