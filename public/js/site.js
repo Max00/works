@@ -58,10 +58,12 @@ LocationFormatter.DMSToDecimal = function(degrees, minutes, seconds, hemisphere)
     return LocationFormatter.roundToDecimal(ddVal, 5);
 };
 function isCoordX(coord) {
-    return /([EW][\s]*[0-1]?\d{1,2}°[\s]+[0-5]?\d'[\s]+[0-5]?\d?\.?\d*'')|([EW][\s]*[0-1]?\d{1,2}[\s]+[0-5]?\d[\s]+[0-5]?\d?\.?\d*)/.test(coord);
+//    return /([EW][\s]*[0-1]?\d{1,2}°[\s]+[0-5]?\d'[\s]+[0-5]?\d?\.?\d*'')|([EW][\s]*[0-1]?\d{1,2}[\s]+[0-5]?\d[\s]+[0-5]?\d?\.?\d*)/.test(coord);
+    return /[-]?\d+[.]?\d*/.test(coord);
 }
 function isCoordY(coord) {
-    return /([NS][\s]*\d{1,2}°[\s]+[0-5]?\d'[\s]+[0-5]?\d?\.?\d*'')|([NS][\s]*\d{1,2}[\s]+[0-5]?\d[\s]+[0-5]?\d?\.?\d*)/.test(coord);
+//    return /([NS][\s]*\d{1,2}°[\s]+[0-5]?\d'[\s]+[0-5]?\d?\.?\d*'')|([NS][\s]*\d{1,2}[\s]+[0-5]?\d[\s]+[0-5]?\d?\.?\d*)/.test(coord);
+    return /[-]?\d+[.]?\d*/.test(coord);
 }
 function initMap() {
     // init GMap
@@ -112,7 +114,7 @@ function initViewWorkMap(x, y, locationLabel) {
 //        xAr = xAr.map(parseFloat);
 //        yD = LocationFormatter.DMSToDecimal(yAr[2], yAr[3], yAr[4], yCard);
 //        xD = LocationFormatter.DMSToDecimal(xAr[2], xAr[3], xAr[4], xCard);
-    if(x && y) {
+    if (isCoordX(x) && isCoordY(y)) {
         var latlon = new google.maps.LatLng(y, x);
         var mapOptions = {
             center: latlon,
@@ -189,7 +191,7 @@ function loadWorkView(workId, locationLabel) {
             if (response.desc_emplact) {
                 $('p#work-desc_emplact').html(response.desc_emplact).show();
             }
-            if (response.coords_x && response.coords_y) {
+            if (isCoordX(response.coords_x) && isCoordY(response.coords_y)) {
                 $('p#work-coords_x').html(response.coords_x).show();
                 $('p#work-coords_y').html(response.coords_y).show();
             }
