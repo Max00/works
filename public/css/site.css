@@ -95,6 +95,11 @@ section#work-view div#work-frequency div { display:inline-block; }
 section#work-view div#work-types { margin-bottom:1em; }
 section#work-view div#work-types div { font-weight: bold; font-size: 80%; padding: 0.3em; display: inline-block; padding: 0.2em 0.4em; margin-right:0.5em; border-radius:0.2em }
 section#work-view p#work-date_last_done-container { color: #ccc; font-size: 80%; }
+section#work-view div#additional-workers-label { width: 170px; float: left; }
+section#work-view div#additional-workers span { margin-left:5px; margin-right: 5px; }
+
+/* WORK SUGGEST */
+section#work-suggest { width:38%; background-color: #fafafa; display:inline-block; float:right; position:fixed; }
 
 /* ADD WORK */
 form.formWork input[type="text"], form.formWork input[type="textarea"] { padding:0.5em; }
@@ -105,9 +110,15 @@ form.formWork fieldset { border:none; }
 form.formWork legend { font-size:150%; }
 form.formWork input#title, form.formWork input#title_question { width:500px; }
 form.formWork textarea#description, form.formWork textarea#description_question { padding:0.5em; width:500px; }
+form.formWork textarea#tools { padding:0.5em; width:500px; height:100px; }
 form.formWork dd#types-element label { display:block; }
 form.formWork dd#types-element label input { margin-right: 0.3em; margin-bottom: 0.5em; }
-form.formWork #fieldset-titleDesc, form.formWork #fieldset-titleDescQuestion { float:left; }
+form.formWork #fieldset-titleDesc, form.formWork #fieldset-titleDescQuestion, form.formWork #fieldset-toolsG, form.formWork #fieldset-additional_workersG { float:left; clear:left; }
+form.formWork #fieldset-toolsG, #fieldset-additional_workersG { padding-top:0; }
+form.formWork #fieldset-toolsG dl, #fieldset-additional_workersG dl { margin-top:0; }
+form.formWork #fieldset-toolsG dl dt, #fieldset-additional_workersG dl dt { display:none; }
+form.formWork #fieldset-additional_workersG .additional_worker { display:block; width:500px; }
+form.formWork #fieldset-additional_workersG #add_additional_worker { margin-top:5px; }
 form.formWork dd#titleDescQuestion-element, form.formWork dd#titleDesc-element { margin: 0; }
 form.formWork dd#worktype-element, form.formWork dd#prio-element { display: block; width: 130px; }
 form.formWork dd#worktype-element input, form.formWork dd#prio-element input { margin-right: 0.3em; vertical-align: middle; }

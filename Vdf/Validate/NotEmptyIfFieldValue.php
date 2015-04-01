@@ -16,7 +16,7 @@ class Vdf_Validate_NotEmptyIfFieldValue {
         if(empty($value)) {
             foreach($this->fieldValues as $value) {
                 if($context[$this->field] == $value) {
-                    $this->messages[] = 'Renseignez ce champ';
+                    $this->messages[] = 'De quoi s\'agit-il ?';
                     return false;
                 }
             }

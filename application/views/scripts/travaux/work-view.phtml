@@ -1,0 +1,42 @@
+<section id="work-view">
+    <div id="work-edit-container">
+        <input type="hidden" id="work_edit_link" value="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'editer', 'id' => '__ID__'), null, true) ?>" />
+        <a class="pure-button button-small button-edit"><i class="fa fa-pencil"></i> </a>
+    </div>
+    <input type="hidden" id="auth_token" value="<?php echo $this->auth_token ?>" />
+    <input type="hidden" id="work_id" />
+    <p id="help">Cliquez sur un travail pour plus d'informations</p>
+    <div id="work-details">
+        <div id="work-prio-container">
+            <div id="work-prio-1">Urgent</div>
+            <div id="work-prio-2">Normal</div>
+            <div id="work-prio-3">Déja effectué</div>
+        </div>
+        <p id="work-wrapper"><span id="work-title"></span><span id="user-add-label">Dans la liste de </span><span id="user-add"></span></p>
+        <div id="work-types"></div>
+        <p id="work-oeuvre-title-wrapper">
+            <span id="work-oeuvre-numero"></span> - <span id="work-oeuvre-title"></span>
+        </p>
+        <p id="work-desc_emplact"></p>
+        <p id="work-coords_x"></p>
+        <p id="work-coords_y"></p>
+        <p id="work-description"></p>
+        <p id="work-tools-wrapper">Outils: <span id="work-tools"></span></p>
+        <div id="additional-workers-label">Intervenants extérieurs: </div><div id="additional-workers"></div>
+        <p id="work-additional-workers"></p>
+        <div id="work-frequency">
+            Fréquence: 
+            <div id="work-frequency-number"></div>
+            <div id="work-frequency-months-many">mois</div>
+            <div id="work-frequency-months-one">mois</div>
+            <div id="work-frequency-weeks-many">semaines</div>
+            <div id="work-frequency-weeks-one">semaine</div>
+            <div id="work-frequency-days-many">jours</div>
+            <div id="work-frequency-days-one">jour</div>
+        </div>
+        <p id="work-date_last_done-container">Effectué le <span id="work-date_last_done"></span></p>
+    </div>
+    <div id="work-view-map" class="hide">
+    </div>
+    <div id="work-nearby-container"></div>
+</section>

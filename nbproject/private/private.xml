@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="11">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="13">
         <file>
             <url>application/controllers/TravauxController.php</url>
             <bookmark id="9">
                 <name/>
-                <line>130</line>
+                <line>134</line>
                 <key/>
             </bookmark>
             <bookmark id="10">
                 <name/>
-                <line>575</line>
+                <line>600</line>
                 <key/>
             </bookmark>
             <bookmark id="11">
                 <name/>
-                <line>605</line>
+                <line>630</line>
                 <key/>
             </bookmark>
         </file>
@@ -26,10 +26,16 @@
                 <line>8</line>
                 <key/>
             </bookmark>
+            <bookmark id="12">
+                <name/>
+                <line>52</line>
+                <key/>
+            </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/wamp/www/works/Vdf/Validate/NotEmptyIfFieldValue.php</file>
             <file>file:/C:/wamp/www/works/public/index.php</file>
             <file>file:/C:/wamp/www/works/application/layouts/main-menu-supervisor.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/yes-no-remove.phtml</file>
@@ -50,11 +56,13 @@
             <file>file:/C:/wamp/www/works/application/configs/formEditWork.ini</file>
             <file>file:/C:/wamp/www/works/application/models/Users.php</file>
             <file>file:/C:/wamp/www/works/library/Zend/Loader/PluginLoader.php</file>
+            <file>file:/C:/wamp/www/works/application/views/scripts/travaux/work-view.phtml</file>
             <file>file:/C:/wamp/www/works/application/models/Roles.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/index/index.phtml</file>
             <file>file:/C:/wamp/www/works/application/controllers/AjaxController.php</file>
             <file>file:/C:/wamp/www/works/application/plugins/Authentification.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/index/notices/yes-no-default.phtml</file>
+            <file>file:/C:/wamp/www/works/Vdf/Form/Decorator/CoordsXYWrapper.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/index/notices/error-default.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/index/notices/error-form.phtml</file>
             <file>file:/C:/wamp/www/works/application/logs/log.txt</file>
@@ -64,7 +72,8 @@
             <file>file:/C:/wamp/www/works/application/views/scripts/types/notices/create-error-form.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/error-work-already-added.phtml</file>
             <file>file:/C:/wamp/www/works/application/forms/AddWork.php</file>
-            <file>file:/C:/wamp/www/works/application/views/helpers/getUserWorksListCount.php</file>
+            <file>file:/C:/wamp/www/works/application/forms/EditWork.php</file>
+            <file>file:/C:/wamp/www/works/.gitignore</file>
             <file>file:/C:/wamp/www/works/application/logs/log.htm</file>
             <file>file:/C:/wamp/www/works/Vdf/Blob.php</file>
             <file>file:/C:/wamp/www/works/library/Zend/Db/Adapter/Abstract.php</file>
@@ -75,6 +84,7 @@
             <file>file:/C:/wamp/www/works/application/views/scripts/types/notices/create-info-exists.phtml</file>
             <file>file:/C:/wamp/www/works/application/configs/formAddWork.ini</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/cancel-work-done.phtml</file>
+            <file>file:/C:/wamp/www/works/application/views/helpers/GetWorkView.php</file>
             <file>file:/C:/wamp/www/works/public/.htaccess</file>
             <file>file:/C:/wamp/www/works/public/css/site.css</file>
             <file>file:/C:/wamp/www/works/application/layouts/main-menu-worker.phtml</file>
@@ -84,6 +94,7 @@
             <file>file:/C:/wamp/www/works/sql/test_set.sql</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/confirmation-cancel-add-ulist.phtml</file>
             <file>file:/C:/wamp/www/works/.htaccess</file>
+            <file>file:/C:/wamp/www/works/Vdf/Validate/NotEmptyIfFieldEmpty.php</file>
             <file>file:/C:/wamp/www/works/application/models/Travaux.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/confirmation-remove.phtml</file>
             <file>file:/C:/wamp/www/works/application/models/TravauxTypes.php</file>
@@ -91,10 +102,12 @@
             <file>file:/C:/wamp/www/works/library/Zend/Form/Element.php</file>
             <file>file:/C:/wamp/www/works/application/views/helpers/RemoveWorkButton.php</file>
             <file>file:/C:/wamp/www/works/application/controllers/TravauxController.php</file>
+            <file>file:/C:/wamp/www/works/application/views/scripts/travaux/liste-perso.phtml</file>
             <file>file:/C:/wamp/www/works/Vdf/Validate/BothOrNone.php</file>
             <file>file:/C:/wamp/www/works/application/models/TravauxTravailleurs.php</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/liste-prios.phtml</file>
             <file>file:/C:/wamp/www/works/application/views/scripts/travaux/notices/confirmation-edit.phtml</file>
+            <file>file:/C:/wamp/www/works/application/views/helpers/GetUserWorksListCount.php</file>
             <file>file:/C:/wamp/www/works/application/models/Oeuvres.php</file>
         </group>
     </open-files>

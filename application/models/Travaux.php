@@ -56,7 +56,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
      */
     public function getWorkById($workId) {
         $select = $this->_db->select()
-                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.question', 'w.answer', 'w.frequency_months', 'w.frequency_weeks', 'w.frequency_days', 'date_last_done'))
+                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.question', 'w.answer', 'w.frequency_months', 'w.frequency_weeks', 'w.frequency_days', 'date_last_done'))
                 ->where('w.id = ?', $workId);
         return $this->_db->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
     }
@@ -156,6 +156,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 $oeuvresTable = new Application_Model_Oeuvres();
                 $oeuvreBasic = $oeuvresTable->getOeuvreBasics($currentWork['oeuvre_id']);
                 $priosWorksA[$pIdx]['works'][$wIdx]['oeuvre_title'] = $oeuvreBasic['title'];
+                $priosWorksA[$pIdx]['works'][$wIdx]['oeuvre_numero'] = $oeuvreBasic['numero'];
             } else if(!empty($currentWork['coords_x']) && !empty($currentWork['coords_y'])) {
                 $priosWorksA[$pIdx]['works'][$wIdx]['coords_x'] = $currentWork['coords_x'];
                 $priosWorksA[$pIdx]['works'][$wIdx]['coords_y'] = $currentWork['coords_y'];
@@ -253,6 +254,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 $typesWorksA[$tIdx]['works'][$wIdx]['title'] = $currentWorkRow['work_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['date_creation'] = $currentWorkRow['date_creation'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title'] = $currentWorkRow['oeuvre_title'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_numero'] = $currentWorkRow['oeuvre_numero'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_x'] = $currentWorkRow['coords_x'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_y'] = $currentWorkRow['coords_y'];
                 if(empty($currentWorkRow['date_done']) && !empty($currentWorkRow['date_added'])) { // Travail dans la liste d'un utilisateur
@@ -268,6 +270,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 $typesWorksA[$tIdx]['works'][$wIdx]['title'] = $currentWorkRow['work_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['date_creation'] = $currentWorkRow['date_creation'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title'] = $currentWorkRow['oeuvre_title'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_numero'] = $currentWorkRow['oeuvre_numero'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_x'] = $currentWorkRow['coords_x'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_y'] = $currentWorkRow['coords_y'];
                 if(empty($currentWorkRow['date_done']) && !empty($currentWorkRow['date_added'])) { // Travail dans la liste d'un utilisateur
@@ -309,6 +312,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 $typesWorksA[$tIdx]['works'][$wIdx]['title'] = $currentWorkRow['work_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['date_creation'] = $currentWorkRow['date_creation'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title'] = $currentWorkRow['oeuvre_title'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_numero'] = $currentWorkRow['oeuvre_numero'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_x'] = $currentWorkRow['coords_x'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['coords_y'] = $currentWorkRow['coords_y'];
                 $wIdx++;
@@ -334,7 +338,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 ->from(array('w' => 'works'), array(
                     'w.id as work_id', 'w.title as work_title', 'w.date_creation', 'w.coords_x', 'w.coords_y',
                     't.id as type_id', 't.name as type_name',
-                    'o.title as oeuvre_title',
+                    'o.title as oeuvre_title', 'o.numero as oeuvre_numero',
                     'ww.date_added as date_added', 'ww.date_done as date_done', 'ww.user_id as user_id'))
                 ->joinLeft(array('wt' => 'works_types'), 'w.id = wt.work_id', array())
                 ->joinLeft(array('t' => 'types'), 't.id = wt.type_id', array())
@@ -370,7 +374,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
 SELECT
 `w`.`id` AS `work_id`, `w`.`title` AS `work_title`, `w`.`date_creation`, `w`.`coords_x`, `w`.`coords_y`,
 `t`.`id` AS `type_id`, `t`.`name` AS `type_name`,
-`o`.`title` AS `oeuvre_title`,
+`o`.`title` AS `oeuvre_title`, `o`.`numero` AS `oeuvre_numero`,
 `ww`.`date_added`
 FROM `works_workers` AS `ww`,`works` AS `w`
 LEFT JOIN `works_types` AS `wt` ON w.id = wt.work_id
@@ -428,6 +432,9 @@ EOT;
             }
             else
                 throw new Exception('Work type error');
+            if(!empty($workData['tools'])) {
+                $data['tools'] = $workData['tools'];
+            }
             if(!empty($workData['frequency'])) {
                 $freqTypeAr = explode('frequency_', $workData['frequency_type']);
                 $freqType = $freqTypeAr[0];
@@ -443,9 +450,17 @@ EOT;
             }
             $workId = $this->insert($data);
                                                                                 // Ajout des types
-            $types = $workData['types'];
-            $travauxTypesTable = new Application_Model_TravauxTypes();
-            $travauxTypesTable->addWorkTypes($types, $workId);
+            if(isset($workData['types'])) {
+                $types = $workData['types'];
+                $travauxTypesTable = new Application_Model_TravauxTypes();
+                $travauxTypesTable->addWorkTypes($types, $workId);
+            }
+                                                                                // Ajout des intervenant externes
+            if(isset($workData['additional-workers'])) {
+                $additionalWorkers = $workData['additional-workers'];
+                $travauxIE = new Application_Model_IntervenantsExterieurs();
+                $travauxIE->addAdditionalWorkers($additionalWorkers, $workId);
+            }
         } catch (Exception $ex) {
             echo $ex->getMessage();
             die();

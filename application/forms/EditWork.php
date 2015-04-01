@@ -29,6 +29,8 @@ class Application_Form_EditWork extends Zend_Form {
         $this->getElement('emplacement_coords_x')->addDecorator($coordWrapperX);
         $this->getElement('emplacement_coords_y')->addDecorator($coordWrapperY);
         
+        $this->getElement('tools')->removeDecorator('DtDdWrapper');
+        $this->getElement('tools')->removeDecorator('Label');
         $this->getElement('maponload')->removeDecorator('DtDdWrapper');
         $this->getElement('maponload')->removeDecorator('Label');
         $this->getElement('oeuvre_id')->removeDecorator('DtDdWrapper');

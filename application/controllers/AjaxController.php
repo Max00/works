@@ -22,7 +22,7 @@ class AjaxController extends Zend_Controller_Action {
             foreach ($oeuvres as $currentOeuvre) {
                 $oeuvresArray[] = array(
                     'Value' => $currentOeuvre['id'],
-                    'Text' => $currentOeuvre['title']
+                    'Text' => $currentOeuvre['numero'] . ' - ' . $currentOeuvre['title']
                 );
             }
             echo json_encode($oeuvresArray);
@@ -77,16 +77,16 @@ class AjaxController extends Zend_Controller_Action {
             $oeuvreId = $this->getRequest()->getParam('oeuvreId');
             if (!empty($oeuvreId)) {
                 $coordsAr = array();
-                $coordsAr['coords_x'] = '';
-                $coordsAr['coords_y'] = '';
                 $oeuvresTable = new Application_Model_Oeuvres();
                 $coords = $oeuvresTable->getOeuvreCoords($oeuvreId);
-                if(!empty($coords['coords_x']) && !empty($coords['coords_y'])) {
-                    $xExplode = explode(' ', $coords['coords_x']);
-                    $yExplode = explode(' ', $coords['coords_y']);
-                    $coordsAr['coords_x'] = substr($xExplode[0], 0, 1) . ' ' . substr($xExplode[0], 1, 2) . '° ' . $xExplode[1] . "' " . $xExplode[2] . "''";
-                    $coordsAr['coords_y'] = substr($yExplode[0], 0, 1) . ' ' . substr($yExplode[0], 1, 2) . '° ' . $yExplode[1] . "' " . $yExplode[2] . "''";
-                }
+                $coordsAr['coords_x'] = $coords['coords_x'];
+                $coordsAr['coords_y'] = $coords['coords_y'];
+//                if(!empty($coords['coords_x']) && !empty($coords['coords_y'])) {
+//                    $xExplode = explode(' ', $coords['coords_x']);
+//                    $yExplode = explode(' ', $coords['coords_y']);
+//                    $coordsAr['coords_x'] = substr($xExplode[0], 0, 1) . ' ' . substr($xExplode[0], 1, 2) . '° ' . $xExplode[1] . "' " . $xExplode[2] . "''";
+//                    $coordsAr['coords_y'] = substr($yExplode[0], 0, 1) . ' ' . substr($yExplode[0], 1, 2) . '° ' . $yExplode[1] . "' " . $yExplode[2] . "''";
+//                }
                 echo json_encode($coordsAr);
                 return;
             }
@@ -139,6 +139,7 @@ class AjaxController extends Zend_Controller_Action {
                 $workAr = array(
                     'title' => $work['title'],
                     'description' => $work['description'],
+                    'tools' => $work['tools'],
                     'desc_emplact' => $work['desc_emplact'],
                     'coords_x' => $work['coords_x'],
                     'coords_y' => $work['coords_y'],
@@ -154,13 +155,21 @@ class AjaxController extends Zend_Controller_Action {
                 if(!empty($work['oeuvre_id'])) {
                     $workAr['oeuvre_id'] = $work['oeuvre_id'];
                     $oeuvresTable = new Application_Model_Oeuvres();
-                    $oeuvre = $oeuvresTable->getOeuvreAttrs($work['oeuvre_id'], array('title', 'coords_x', 'coords_y'));
+                    $oeuvre = $oeuvresTable->getOeuvreBasics($work['oeuvre_id']);
                     $workAr['oeuvre_title'] = $oeuvre['title'];
+                    $workAr['oeuvre_numero'] = $oeuvre['numero'];
+
+//                    
+//                    if(!empty($oeuvre['coords_x']) && !empty($oeuvre['coords_y'])) {
+//                        $xExplode = explode(' ', $oeuvre['coords_x']);
+//                        $yExplode = explode(' ', $oeuvre['coords_y']);
+//                        $workAr['coords_x'] = substr($xExplode[0], 0, 1) . ' ' . substr($xExplode[0], 1, 2) . '° ' . $xExplode[1] . "' " . $xExplode[2] . "''";
+//                        $workAr['coords_y'] = substr($yExplode[0], 0, 1) . ' ' . substr($yExplode[0], 1, 2) . '° ' . $yExplode[1] . "' " . $yExplode[2] . "''";
+//                    }
+                    
                     if(!empty($oeuvre['coords_x']) && !empty($oeuvre['coords_y'])) {
-                        $xExplode = explode(' ', $oeuvre['coords_x']);
-                        $yExplode = explode(' ', $oeuvre['coords_y']);
-                        $workAr['coords_x'] = substr($xExplode[0], 0, 1) . ' ' . substr($xExplode[0], 1, 2) . '° ' . $xExplode[1] . "' " . $xExplode[2] . "''";
-                        $workAr['coords_y'] = substr($yExplode[0], 0, 1) . ' ' . substr($yExplode[0], 1, 2) . '° ' . $yExplode[1] . "' " . $yExplode[2] . "''";
+                        $workAr['coords_x'] = $oeuvre['coords_x'];
+                        $workAr['coords_y'] = $oeuvre['coords_y'];
                     }
                 }
                                                                                 // Récupération des types pour le travail en cours
@@ -174,6 +183,16 @@ class AjaxController extends Zend_Controller_Action {
                     $userRow = $usersTable->getUserBasics($userId);
                     $workAr['user_add'] = $userRow['fname'] . ' ' . $userRow['lname'];
                 }
+                
+                                                                                // Récupération des intervenants extérieurs
+                $additionalWorkersTable = new Application_Model_IntervenantsExterieurs();
+                $workers = $additionalWorkersTable->getAllByWork($workId);
+                $workersToWorkAr = array();
+                foreach($workers as $curAW) {
+                    $workersToWorkAr []= $curAW['label'];
+                }
+                $workAr['additional_workers'] = $workersToWorkAr;
+                
                 echo json_encode($workAr);
                 return;
             }

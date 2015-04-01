@@ -65,15 +65,15 @@ function isCoordY(coord) {
 }
 function initMap() {
     // init GMap
-    yAr = $('#emplacement_coords_y').val().split(/([NS])[\s]*(\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-    xAr = $('#emplacement_coords_x').val().split(/([EW])[\s]*([0-1]?\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-    yCard = yAr[1];
-    xCard = xAr[1];
-    yAr = yAr.map(parseFloat);
-    xAr = xAr.map(parseFloat);
-    yD = LocationFormatter.DMSToDecimal(yAr[2], yAr[3], yAr[4], yCard);
-    xD = LocationFormatter.DMSToDecimal(xAr[2], xAr[3], xAr[4], xCard);
-    var latlon = new google.maps.LatLng(yD, xD);
+    //yAr = $('#emplacement_coords_y').val().split(/([NS])[\s]*(\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
+    //xAr = $('#emplacement_coords_x').val().split(/([EW])[\s]*([0-1]?\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
+    //yCard = yAr[1];
+    //xCard = xAr[1];
+    //yAr = yAr.map(parseFloat);
+    //xAr = xAr.map(parseFloat);
+    //yD = LocationFormatter.DMSToDecimal(yAr[2], yAr[3], yAr[4], yCard);
+    //xD = LocationFormatter.DMSToDecimal(xAr[2], xAr[3], xAr[4], xCard);
+    var latlon = new google.maps.LatLng( $('#emplacement_coords_y').val(),  $('#emplacement_coords_x').val());
     var mapOptions = {
         center: latlon,
         zoom: 15
@@ -97,22 +97,23 @@ function initMap() {
         $('#emplacement_coords_y').val(LocationFormatter.decimalLatToDMS(e.latLng.lat()))
         $('#emplacement_coords_x').val(LocationFormatter.decimalLongToDMS(e.latLng.lng()))
         $('#oeuvre_emplact').val('');
-         $('#oeuvre_id').val('');
+        $('#oeuvre_id').val('');
     })
     map.initialize;
 }
 function initViewWorkMap(x, y, locationLabel) {
-    if(isCoordX(x) && isCoordY(y)) {
+  //  if (isCoordX(x) && isCoordY(y)) {
         // init GMAP
-        yAr = y.split(/([NS])[\s]*(\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-        xAr = x.split(/([EW])[\s]*([0-1]?\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-        yCard = yAr[1];
-        xCard = xAr[1];
-        yAr = yAr.map(parseFloat);
-        xAr = xAr.map(parseFloat);
-        yD = LocationFormatter.DMSToDecimal(yAr[2], yAr[3], yAr[4], yCard);
-        xD = LocationFormatter.DMSToDecimal(xAr[2], xAr[3], xAr[4], xCard);
-        var latlon = new google.maps.LatLng(yD, xD);
+//        yAr = y.split(/([NS])[\s]*(\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
+//        xAr = x.split(/([EW])[\s]*([0-1]?\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
+//        yCard = yAr[1];
+//        xCard = xAr[1];
+//        yAr = yAr.map(parseFloat);
+//        xAr = xAr.map(parseFloat);
+//        yD = LocationFormatter.DMSToDecimal(yAr[2], yAr[3], yAr[4], yCard);
+//        xD = LocationFormatter.DMSToDecimal(xAr[2], xAr[3], xAr[4], xCard);
+    if(x && y) {
+        var latlon = new google.maps.LatLng(y, x);
         var mapOptions = {
             center: latlon,
             zoom: 15
@@ -133,8 +134,8 @@ function hideAddWMap() {
     $('#add-work-map').addClass('hide');
 }
 function addViewWorkType(id, name, color) {
-    $('#work-view #work-types').append('<div data-id="'+id+'">'+name+'</div>')
-    $('#work-view #work-types div[data-id="'+id+'"]').css('background-color', '#'+color)
+    $('#work-view #work-types').append('<div data-id="' + id + '">' + name + '</div>')
+    $('#work-view #work-types div[data-id="' + id + '"]').css('background-color', '#' + color)
 }
 function loadWorkView(workId, locationLabel) {
     $('#work-view span#work-title').hide();
@@ -142,85 +143,100 @@ function loadWorkView(workId, locationLabel) {
     $('#work-view span#user-add').hide();
     $('#work-view div#work-details *').hide();
     $('#work-view p#help').hide();
+    $('#work-view div#additional-workers-container').hide();
     $('#work-view #work-edit-container').show();
     $('#work-view div#work-details').show();
     $('#work-view #work_id').val(workId);
-    $('div#work-edit-container a').attr('href', $('div#work-edit-container a').attr('href').replace('__ID__', $('#work-view #work_id').val()));
+    $('div#work-edit-container a').attr('href', $('#work-view #work_edit_link').val().replace('__ID__', $('#work-view #work_id').val()));
     // $('#work-view p#work-location').html(locationLabel).show();
     $.ajax({
         type: "POST",
         url: "/index.php/ajax/get-work-details",
         data: {
-            workId:workId,
+            workId: workId,
             auth_token: $('#auth_token').val(),
         },
         success: function(response) {
             fm = response.frequency_months;
             fw = response.frequency_weeks;
             fd = response.frequency_days;
-            
+
             $('p#work-wrapper').show();
             $('span#work-title').html(response.title).show();
-            if(fm || fw || fd) {
+            if (fm || fw || fd) {
                 $('div#work-frequency').show();
             }
             initViewWorkMap(response.coords_x, response.coords_y, locationLabel);
-            if(response.oeuvre_title) {
-                $('p#work-oeuvre-title').html(response.oeuvre_title).show();
+            if (response.oeuvre_title) {
+                $('p#work-oeuvre-title-wrapper').show();
+                $('span#work-oeuvre-numero').html(response.oeuvre_numero).show();
+                $('span#work-oeuvre-title').html(response.oeuvre_title).show();
             }
-            if(response.user_add) {
+            if (response.user_add) {
                 $('span#user-add-label').show();
                 $('span#user-add').html(response.user_add).show();
             }
-            if(response.description) {
+            if (response.description) {
                 $('p#work-description').html(response.description).show();
             }
-            if(response.desc_emplact) {
+            if (response.tools) {
+                $('p#work-tools-wrapper').show();
+                $('span#work-tools').html(response.tools).show();
+            }
+            if (response.desc_emplact) {
                 $('p#work-desc_emplact').html(response.desc_emplact).show();
             }
-            if(response.desc_emplact) {
+            if (response.desc_emplact) {
                 $('p#work-desc_emplact').html(response.desc_emplact).show();
             }
-            if(response.coords_x && response.coords_y) {
+            if (response.coords_x && response.coords_y) {
                 $('p#work-coords_x').html(response.coords_x).show();
                 $('p#work-coords_y').html(response.coords_y).show();
             }
-            if(response.prio) {
+            if (response.prio) {
                 $('div#work-prio-container').show();
                 $('div#work-prio-' + response.prio).show();
             }
-            if(fm && fm > 0) {
+            if(response.additional_workers.length) {
+                $('div#additional-workers-label').show();
+                $('div#additional-workers').show();
+                console.log(response.additional_workers)
+                $.each(response.additional_workers, function(idx, elt){
+                    $('div#additional-workers').append('<span>'+elt+'</span>');
+                })
+            }
+            if (fm && fm > 0) {
                 $('div#work-frequency-number').html(response.frequency_months).show();
-                if(fm > 1) {
+                if (fm > 1) {
                     $('div#work-frequency-months-many').show();
                 } else {
                     $('div#work-frequency-months-one').show();
                 }
-            } else if(fw && fw > 0) {
+            } else if (fw && fw > 0) {
                 $('div#work-frequency-number').html(response.frequency_weeks).show();
-                if(fw > 1) {
+                if (fw > 1) {
                     $('div#work-frequency-weeks-many').show();
                 } else {
                     $('div#work-frequency-weeks-one').show();
                 }
-            } else if(fd && fd > 0) {
+            } else if (fd && fd > 0) {
                 $('div#work-frequency-number').html(response.frequency_days).show();
-                if(fd > 1) {
+                if (fd > 1) {
                     $('div#work-frequency-days-many').show();
                 } else {
                     $('div#work-frequency-days-one').show();
                 }
             }
-            if(response.types) {
+            if (response.types) {
                 $('div#work-types').html('');
-                $(response.types).each(function(i, elt){    
+                $(response.types).each(function(i, elt) {
                     $('div#work-types').show();
                     addViewWorkType(elt.id, elt.name, elt.color)
                 })
             }
-            if(response.date_last_done) {
+            if (response.date_last_done) {
                 $('p#work-date_last_done-container').show()
-                $('span#work-date_last_done').show().html($.format.date(response.date_last_done+' 00:00:00.0', 'dd/MM/yyyy'));
+                $('span#work-date_last_done').show().html($.format.date(response.date_last_done + ' 00:00:00.0', 'dd/MM/yyyy'));
             }
         },
         error: function(response) {
@@ -230,20 +246,20 @@ function loadWorkView(workId, locationLabel) {
     })
 }
 $(document).ready(function() {
-    if($('section#works-list').length > 0) {
+    if ($('section#works-list').length > 0) {
         $('div.work-options').hide();
         $('#work-view div#work-details').hide();
         $('#work-view div#work-details p').hide();
         $('#work-view #work-edit-container').hide();
-        $('section#works-list li').hover(function(){
+        $('section#works-list li').hover(function() {
             $($(this).children('div.work-options')[0]).show();
-        },function(){
+        }, function() {
             $($(this).children('div.work-options')[0]).hide();
         })
-        $('section#works-list div.work-options').click(function(e){
+        $('section#works-list div.work-options').click(function(e) {
             e.stopPropagation();
         })
-        $('section#works-list li').click(function(){
+        $('section#works-list li').click(function() {
             loadWorkView($(this).attr('data-workid'), $(this).children('div.location').text());
             $('div#noticesContainer dialog').hide();
         })
@@ -255,12 +271,41 @@ $(document).ready(function() {
             $('#fieldset-titleDesc').addClass('hide')
             $('#fieldset-titleDescQuestion').removeClass('hide')
         }
-        if (isCoordX(!$('#emplacement_coords_x').val()) || !isCoordY($('#emplacement_coords_y').val())) {
+        if (!isCoordX($('#emplacement_coords_x').val()) || !isCoordY($('#emplacement_coords_y').val())) {
             hideAddWMap();
-        }
-        if($('#maponload').val() == 1) {
+        } else {
             initMap();
         }
+        if ($('#maponload').val() == 1) {
+            initMap();
+        }
+        $('.prevAddWorker').each(function(idx, elt) {
+            var curIdx = 'additional-worker-' + ($('.additional_worker').length + 1);
+            var adW = $('#additional_worker_template')
+                    .clone()
+                    .prop('id', 'additional-workers[]')
+                    .prop('name', 'additional-workers[]')
+            adW.removeClass('hide')
+                    .addClass('additional_worker')
+                    .val(elt.value)
+                    .insertBefore('#add_additional_worker')
+                    .keyup(function() {
+                        var hasEmptyValues = false;
+                        for (var i = 0; i < $('.additional_worker').length; i++) {
+                            console.log($('.additional_worker')[i].value);
+                            if ($('.additional_worker')[i].value === '') {
+                                hasEmptyValues = true;
+                                break;
+                            }
+                        }
+                        if (!hasEmptyValues) {
+                            $('#add_additional_worker').show();
+                        } else {
+                            $('#add_additional_worker').hide();
+                        }
+                    });
+        })
+        $('.prevAddWorker').remove();
         $('input#oeuvre_emplact').autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -295,7 +340,7 @@ $(document).ready(function() {
                         auth_token: $('#auth_token').val(),
                     },
                     success: function(response) {
-                        if (isCoordX(response.coords_x) && isCoordY(response.coords_y)) {
+                        if (response.coords_x && response.coords_y) {
                             $('#emplacement_coords_x').val(response.coords_x);
                             $('#emplacement_coords_y').val(response.coords_y);
                             initMap();
@@ -344,6 +389,43 @@ $(document).ready(function() {
                 $(el).css('background-color', '#' + hex);
                 $(el).colpickHide();
             }});
+        $('#add_additional_worker').click(function() {
+            var curIdx = 'additional-worker-' + ($('.additional_worker').length + 1);
+            var adW = $('#additional_worker_template')
+                    .clone()
+                    .prop('id', 'additional-workers[]')
+                    .prop('name', 'additional-workers[]')
+            adW.removeClass('hide')
+                    .addClass('additional_worker')
+                    .insertBefore('#add_additional_worker')
+                    .keyup(function() {
+                        var hasEmptyValues = false;
+                        for (var i = 0; i < $('.additional_worker').length; i++) {
+                            console.log($('.additional_worker')[i].value);
+                            if ($('.additional_worker')[i].value === '') {
+                                hasEmptyValues = true;
+                                break;
+                            }
+                        }
+                        console.log(hasEmptyValues)
+                        if (!hasEmptyValues) {
+                            $('#add_additional_worker').show();
+                        } else {
+                            $('#add_additional_worker').hide();
+                        }
+                    });
+            $(this).hide();
+        })
+        /*
+         $('#add_additional_worker').click(function(){
+         $.ajax({
+         type:"POST",
+         url:"/index.php/ajax/add-additional-worker",
+         data:{
+         
+         }
+         })
+         })*/
         $('#add_type_btn').click(function() {
             $.ajax({
                 type: "POST",

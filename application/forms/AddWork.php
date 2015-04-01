@@ -29,6 +29,9 @@ class Application_Form_AddWork extends Zend_Form {
         $this->getElement('emplacement_coords_x')->addDecorator($coordWrapperX);
         $this->getElement('emplacement_coords_y')->addDecorator($coordWrapperY);
         
+        $this->getElement('tools')->removeDecorator('DtDdWrapper');
+        $this->getElement('tools')->removeDecorator('Label');
+
         $this->getElement('oeuvre_id')->removeDecorator('DtDdWrapper');
         $this->getElement('oeuvre_id')->removeDecorator('Label');
         $this->getElement('frequency_type')->removeDecorator('DtDdWrapper');
