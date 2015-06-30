@@ -1,0 +1,8 @@
+<?php
+    $hrefPrios = $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'prios'), null, true);
+    $hrefTypes = $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'types'), null, true);
+?>
+<div class="ui item">
+    <a id="setViewPrios" class="ui mini button<?php if($this->viewMode == 'prios') : echo ' positive'; endif ?>" href="<?php echo $hrefPrios ?>"><i class="warning sign icon"></i></a>
+    <a id="setViewTypes" class="ui mini button<?php if($this->viewMode == 'types') : echo ' positive'; endif ?>" href="<?php echo $hrefTypes ?>"><i class="list layout icon"></i></a>
+</div>

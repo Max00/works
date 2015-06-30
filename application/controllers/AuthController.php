@@ -6,6 +6,7 @@ class AuthController extends Zend_Controller_Action {
         $this->view->title = 'Connexion';
         $auth = Zend_Auth::getInstance();
         $loginForm = new Application_Form_Login();                              // formLogin.ini
+        $loginForm->getElement('title')->removeDecorator('label');
         $this->view->formLogin = $loginForm;                                    // Passage du formulaire a la vue
         if($this->_request->getPost()) {                                        // Si on a bien recu un $_POST...
             $formData = $this->_request->getPost();

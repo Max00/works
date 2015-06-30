@@ -1,44 +1,132 @@
+<section id="sidebar">- Sidebar -</section>
+<section id="content">
+
+    <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): 
+        $curUserId = Zend_Auth::getInstance()->getIdentity()->id; ?>
+        <?php echo $currentPrio['label_prio'] ?>
+        <table class="ui table works_table" id="works_<?php echo $currentPrioId ?>">
+            <tbody>
+                <?php foreach ($currentPrio['works'] as $workId => $curWork): ?>
+                    <tr<?php
+                    if(!empty($curWork['user_id'])) {
+                        echo ' title="';
+                        $this->PrintInUserListMessage($curUserId, $curWork['user_id'], $curWork['user_fname'], $curWork['user_lname']);
+                        echo '"';
+                        
+                    } ?>>
+                        <td class="item" data-workid="<?php echo $workId; ?>">
+                            <?php if(!empty($curWork['user_id'])) {
+                                if($curWork['user_id'] == $curUserId) {
+                                    echo '<i class="ui icon pin"></i>';
+                                } else {
+                                    echo '<i class="ui icon lock"></i>';
+                                }
+                            }
+                            if (!empty($curWork['types']) && count($curWork['types'])) {
+                                foreach ($curWork['types'] as $typeId => $typeAr) :
+                                    echo '<div class="ui label" style="background-color:#' . $typeAr['color'] . '">' . $typeAr['name'] . '</div>';
+                                endforeach;
+                            }
+                            if (!empty($curWork['title'])) {
+                                echo '<span class="work_title"> ' . $curWork['title'] . '</span>';
+                            } else if (!empty($curWork['oeuvre_numero'])) {
+                                echo '<span class="work_title"> ' . '#' . $curWork['oeuvre_numero'] . ' - ' . $curWork['oeuvre_title'] . '</span>';
+                            } else {
+                                echo '<span class="work_title"> ' . Application_Model_Travaux::$UNTITLED_WORK . '</span>';
+                            }
+                            ?>
+                            </td>
+                        <td class="options">
+                            <div class="tiny icon ui buttons">
+                                <?php if (isset($this->changeWorkPrio) && $this->changeWorkPrio) : echo $this->ChangePrioButtons($workId, $currentPrioId);
+                                endif; ?>
+                                <?php if (isset($this->setWorkDone) && $this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo $this->SetWorkDoneButton($workId);
+                                endif; ?>
+                                <?php if (isset($this->removeWork) && $this->removeWork) : echo $this->RemoveWorkButton($workId);
+                                endif; ?>
+                                <?php if (isset($this->editWork) && $this->editWork) : echo $this->EditWorkButton($workId);
+                                endif; ?>
+                                <?php
+                                $alreadyDoneCode = Application_Model_Travaux::$PRIORITIES['Déjà effectué'];
+                                if (isset($this->addWorkToUserList) && $this->addWorkToUserList && $alreadyDoneCode != $currentPrioId) {
+                                    if(!isset($curWork['added']))              // Personne ne l'a ajouté
+                                        echo $this->AddWorkToUserListButton($workId, $curUserId);
+                                    else if(isset($curWork['cur_user'])) // C'est l'utilisateur courant qui l'a ajouté
+                                        echo $this->RemoveWorkFromUserListButton($workId, $curUserId);
+                                }
+                                ?>
+                            </div>
+                        </td>
+                    </tr>
+    <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php endforeach; ?>
+    <?php echo $this->partial('travaux/modals.phtml'); ?>
+    <?php echo $this->partial('travaux/work-view.phtml'); ?>
+    <?php if($this->workViewId) : ?>
+        
+    <?php endif; ?>
+</section>
+
+            <?php goto end; ?>
 <section id="works-container">
-    <section id="list-mode">
-        <a class="pure-button button-small button-secondary pure-button-active" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'prios'), null, true) ?>"><i class="fa fa-exclamation-triangle"></i> Priorités</a>
-        <a class="pure-button button-small button-secondary" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste', 'mode' => 'types'), null, true) ?>"><i class="fa fa-ellipsis-v"></i> Types</a>
-    </section>
     <section id="works-list">
-        <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): ?>
+            <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): ?>
             <div class="prio prio-<?php echo $currentPrioId ?>">
                 <span class="prio-name"><?php echo $currentPrio['label_prio'] ?></span>
                 <?php foreach ($currentPrio['typesWorks'] as $currentType): ?>
-                    <?php if (isset($currentType['type'])) : ?>
+                        <?php if (isset($currentType['type'])) : ?>
                         <p class="type"><?php echo $currentType['type']['name'] ?></p>
-                    <?php else : ?>
+                            <?php else : ?>
                         <p class="type"><?php echo $this->noTypeLabel ?></p>
-                    <?php endif ?>
+                            <?php endif ?>
                     <ul>
-                        <?php foreach ($currentType['works'] as $currentWork) : ?>
-                            <li data-workid="<?php echo $currentWork['id'] ?>"<?php if(isset($currentWork['added'])): ?> class="added"<?php endif; ?>>
-                                <?php if(isset($currentWork['cur_user'])): ?>
-                                <span class="in-cur-user-list"><i class="fa fa-thumb-tack"></i></span>
-                                <?php endif; ?>
+                                <?php foreach ($currentType['works'] as $currentWork) : ?>
+                            <li data-workid="<?php echo $currentWork['id'] ?>"<?php if (isset($currentWork['added'])): ?> class="added"<?php endif; ?>>
+            <?php if (isset($currentWork['cur_user'])): ?>
+                                    <span class="in-cur-user-list"><i class="fa fa-thumb-tack"></i></span>
+                                    <?php endif; ?>
                                 <div class="title">
                                     <?php echo $currentWork['title'] ?>
                                 </div>
                                 <div class="location">
-                                    <?php if(!empty($currentWork['oeuvre_title'])) : echo $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title']; elseif(!empty($currentWork['coords_x'])): echo $currentWork['coords_x'] . ', ' . $currentWork['coords_y']; endif; ?>
+            <?php
+            if (!empty($currentWork['oeuvre_title'])) : echo $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title'];
+            elseif (!empty($currentWork['coords_x'])): echo $currentWork['coords_x'] . ', ' . $currentWork['coords_y'];
+            endif;
+            ?>
                                 </div>
                                 <div class="work-options">
-                                    <?php if (isset($this->changeWorkPrio) && $this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioId); endif; ?>
-                                    <?php if (isset($this->setWorkDone) && $this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
-                                    <?php if (isset($this->removeWork) && $this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']); endif; ?>
-                                    <?php if (isset($this->addWorkToUserList) && $this->addWorkToUserList && !isset($currentWork['added']) && Application_Model_Travaux::$PRIORITIES['Déjà effectué'] != $currentPrioId) : echo ' ' . $this->AddWorkToUserListButton($currentWork['id'], Zend_Auth::getInstance()->getIdentity()->id); endif; ?>
+                                    <?php
+                                    if (isset($this->changeWorkPrio) && $this->changeWorkPrio) : echo ' ' . $this->ChangePrioButtons($currentWork['id'], $currentPrioId);
+                                    endif;
+                                    ?>
+                                    <?php
+                                    if (isset($this->setWorkDone) && $this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']);
+                                    endif;
+                                    ?>
+                            <?php
+                            if (isset($this->removeWork) && $this->removeWork) : echo ' ' . $this->RemoveWorkButton($currentWork['id']);
+                            endif;
+                            ?>
+                    <?php
+                    if (isset($this->addWorkToUserList) && $this->addWorkToUserList && !isset($currentWork['added']) && Application_Model_Travaux::$PRIORITIES['Déjà effectué'] != $currentPrioId) : echo ' ' . $this->AddWorkToUserListButton($currentWork['id'], Zend_Auth::getInstance()->getIdentity()->id);
+                    endif;
+                    ?>
                                 </div>
                             </li>
-                <?php endforeach ?>
+            <?php endforeach ?>
                     </ul>
-        <?php endforeach; ?>
-            </div>
     <?php endforeach; ?>
+            </div>
+<?php endforeach; ?>
     </section>
     <section id="middle">
     </section>
-    <?php $paths = $this->getScriptPaths(); require_once $paths[0] . '/travaux/work-view.phtml' ?>
+<?php
+$paths = $this->getScriptPaths();
+require_once $paths[0] . '/travaux/work-view.phtml'
+?>
 </section>
+<?php end: ?>

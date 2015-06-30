@@ -1,15 +1,140 @@
-body { font-family: 'Open Sans', sans-serif; font-size:14px; }
+html {
+    padding:0;
+    margin:0;
+}
+body {
+    padding:0;
+    margin:0;
+    font-family: 'Open Sans', sans-serif;
+    font-size:14px;
+    min-width:1000px;
+}
+a#setViewPrios,
+a#setViewTypes {
+    padding-right:1em;
+}
+section#container {
+    margin-right:20px;
+    margin-left:20px;
+}
+section#content {
+    margin-left:20%;
+}
+section#sidebar {
+    float:left;
+    width:20%;
+}
+.ui.table:first-child {
+    margin-top : 1em !important;
+}
+table#works_1 {
+    border-left-color: #EB4747;
+    border-left-width: thick;
+}
+table.works_table td {
+    height: 3em;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+}
+table.works_table td.item:hover {
+    cursor:pointer;
+}
+table.works_table td.options {
+    width:20%;
+    text-align: right;
+    padding-right:0.3em;
+}
+dd {
+    margin-left:0;
+}
+#formLogin {
+    width:300px;
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+}
+div#noticesContainer .message {
+    width:80%;
+    position:fixed;
+    margin-left:10%;
+}
+form#formAddWork {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    min-width:900px;
+    max-width:900px;
+}
+#main_form {
+    width:60%;
+    float:left;
+    border-right: solid 1px rgba(0, 0, 0, 0.1);
+}
+#right_column_form {
+    width:40%;
+    float:left;
+}
+#right_column_form .first {
+    padding-bottom:0;
+}
+#right_column_form .second {
+    padding-top:0;
+}
 
-/* COLORPICKER DEFAULT */
+/* BEGIN Form elements */
+#tools {
+    height:5em !important;
+}
+dd#types-element label { display:block; }
+dd#types-element label input { margin-right: 0.3em; margin-top: 0.1em; }
+dd#types-element {
+    margin-top:1em;
+}
+dt#types-label label {
+    color:rgba(0, 0, 0, 0.4);
+    font-size: 90%;
+}
+#frequency_type {
+    width:8em;
+    display:inline;
+}
+#frequency {
+    width:3em;
+}
+div.message {
+    z-index:99;
+}
+
+/* Conserver ? */
+form.formWork legend {
+    padding-right: 15px; padding-left: 15px;
+}
+form.formWork fieldset {
+    padding:20px;
+    border-color:rgba(216, 216, 216, 0.8);
+    border-radius: 0.2857rem;
+}
+.hide {
+    display: none;
+}
+dd#worktype-element input,
+dd#prio-element input {
+    margin-right: 6px;
+}
+/* END Form elements
+
+
+/*
+ COLORPICKER DEFAULT 
 .colorpicker { background-color:#e1e6ff; }
 
-/* NOTICES */
+ NOTICES 
 #noticesContainer dialog { position:fixed; border-radius: 0.5em; border-style: none; font-size: 80%;}
 #noticesContainer dialog.success { background-color:#cec; }
 #noticesContainer dialog.error { background-color:#d88; }
 #noticesContainer dialog.info { background-color:#eec; }
 
-/* GENERAL */
+ GENERAL 
 a, a:visited, a:link, a:active {  }
 a:hover {  }
 .hide{ display: none; }
@@ -21,22 +146,22 @@ a:hover {  }
 .button-secondary { color: white; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); background: rgb(66, 184, 221); }
 .button-edit { color: white; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); background: #99dcf2; }
 
-/* USER TILE */
+ USER TILE 
 section#user-tile { display:inline-block; position:absolute; right:0; top:0; text-align:right; margin:0.5em 0.5em 0 0; padding:0.5em; }
 section#user-tile span.user { font-size: 85%; }
 section#user-tile a.discon:hover { color:Grey; }
 
-/* MAIN MENU */
+ MAIN MENU 
 section#main-menu { margin:2em 0 0.3em 5em; }
 section#main-menu a { margin-right: 0.1em; }
 
-/* WORKS CONTAINER */
+ WORKS CONTAINER 
 section#works-container { padding:0 5em; }
 
-/* LIST MODE */
+ LIST MODE 
 section#list-mode { margin-bottom:0.5em; }
 
-/* WORKS LIST */
+ WORKS LIST 
 section#works-list { width:58%; background-color:#fafafa; display:inline-block; }
 section#works-list div.prio span.prio-name { font-family: 'Bevan', cursive; font-size: 160%; padding:0 5em 0 0.5em; }
 section#works-list div.prio-small span.prio-name { font-family: 'Bevan', cursive; font-size: 120%; padding:0 5em 0 0.5em; }
@@ -71,10 +196,10 @@ section#works-list a.remove-ulist:hover,
 section#works-list a.remove:hover { color:#3C4FA6; }
 section#works-list a.move-down { margin-left:2px; }
 
-/* SECTION MIDDLE */
+ SECTION MIDDLE 
 section#middle { width:3%; display:inline-block; }
 
-/* WORK VIEW */
+ WORK VIEW 
 section#work-view { width:38%; background-color: #fafafa; display:inline-block; float:right; position:fixed; }
 section#work-view div#work-edit-container { text-align: right; float:right; }
 section#work-view div#work-view-map { width:100%; height:400px; margin:0 auto 0 auto; }
@@ -98,10 +223,10 @@ section#work-view p#work-date_last_done-container { color: #ccc; font-size: 80%;
 section#work-view div#additional-workers-label { width: 170px; float: left; }
 section#work-view div#additional-workers span { margin-left:5px; margin-right: 5px; }
 
-/* WORK SUGGEST */
+ WORK SUGGEST 
 section#work-suggest { width:38%; background-color: #fafafa; display:inline-block; float:right; position:fixed; }
 
-/* ADD WORK */
+ ADD WORK 
 form.formWork input[type="text"], form.formWork input[type="textarea"] { padding:0.5em; }
 form.formWork ul.errors { padding-left:0; }
 form.formWork ul.errors li { color:#d88; font-size:80%; list-style-type: none; }
@@ -123,7 +248,7 @@ form.formWork dd#titleDescQuestion-element, form.formWork dd#titleDesc-element {
 form.formWork dd#worktype-element, form.formWork dd#prio-element { display: block; width: 130px; }
 form.formWork dd#worktype-element input, form.formWork dd#prio-element input { margin-right: 0.3em; vertical-align: middle; }
 form.formWork dd#worktype-element label, form.formWork dd#prio-element label { line-height:2em; }
-form.formWork fieldset#fieldset-workType { /*float:left;*/ }
+form.formWork fieldset#fieldset-workType { float:left; }
 form.formWork dd#prio-element label:first-child { color:Red; font-weight: bold; }
 form.formWork dd#prio-element label:nth-child(3) { color:Black; font-weight: bold; }
 form.formWork dd#prio-element label:nth-child(5) { color:#ccc; font-weight: bold; }
@@ -149,4 +274,4 @@ form.formWork dd#frequency_type-element { line-height: 2em; }
 form.formWork dd#frequency_type-element select { margin-left: 1em; }
 form.formWork dt#add_type_label-label { line-height: 2em; float: left; }
 form.formWork dd#add_type_label-element input { margin-left: 1em; float:left; }
-form.formWork button#add_type_color_btn { line-height: 2em; margin-left: 1em; }
+form.formWork button#add_type_color_btn { line-height: 2em; margin-left: 1em; }*/

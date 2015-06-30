@@ -1,7 +1,32 @@
+<div class="ui modal" id="work_view">
+    <i class="close icon"></i>
+    <div class="header">
+        Modal Title
+    </div>
+    <div class="content">
+        <div class="image">
+            An image can appear on left or an icon
+        </div>
+        <div class="description">
+            A description can appear on the right
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui button">Cancel</div>
+        <div class="ui button">OK</div>
+    </div>
+</div>
+
+<?php goto end; ?>
+
 <section id="work-view">
     <div id="work-edit-container">
-        <input type="hidden" id="work_edit_link" value="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'editer', 'id' => '__ID__'), null, true) ?>" />
-        <a class="pure-button button-small button-edit"><i class="fa fa-pencil"></i> </a>
+        <?php if (isset($this->editWork) && $this->editWork) : ?>
+            <input type="hidden" id="a_editWork_model" data-url="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'editer', 'id' => '__WID__'), null, true) ?>" />
+            <span class="pure-button button-small button-edit" id="a_editWork" data-url="">
+                <i class="fa fa-pencil"></i> </span>
+        <?php endif; ?>
+
     </div>
     <input type="hidden" id="auth_token" value="<?php echo $this->auth_token ?>" />
     <input type="hidden" id="work_id" />
@@ -38,5 +63,7 @@
     </div>
     <div id="work-view-map" class="hide">
     </div>
-    <div id="work-nearby-container"></div>
+    <div id="nearby-label">A proximité : </div><div id="nearby"></div>
 </section>
+
+<?php end:  ?>

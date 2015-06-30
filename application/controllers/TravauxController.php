@@ -9,19 +9,23 @@ class TravauxController extends Zend_Controller_Action {
     private static $DEFAULT_LIST_ACTION = 'prios';
     protected static $CURRENT_LIST_ACTION = '';
 
+    /*
+     * Convertir les coordonnées DMS en XY
+     */
+
     public function convertAction() {
         $oeuvresTable = new Application_Model_Oeuvres();
         $oeuvres = $oeuvresTable->fetchAll();
 
-        foreach($oeuvres as $oeuvre) {
+        foreach ($oeuvres as $oeuvre) {
             $coords_x = explode(' ', $oeuvre['coords_x']);
             $coords_y = explode(' ', $oeuvre['coords_y']);
-            
-            if(count($coords_x) > 1 && count($coords_y) > 1) {
+
+            if (count($coords_x) > 1 && count($coords_y) > 1) {
                 // On part de l'hypothese que toutes les mesures sont en EAST et NORTH
-                $dd_coords_x = substr($coords_x[0], 1) + ((($coords_x[1]*60)+($coords_x[2]))/3600);
-                $dd_coords_y = substr($coords_y[0], 1) + ((($coords_y[1]*60)+($coords_y[2]))/3600);
-                    
+                $dd_coords_x = substr($coords_x[0], 1) + ((($coords_x[1] * 60) + ($coords_x[2])) / 3600);
+                $dd_coords_y = substr($coords_y[0], 1) + ((($coords_y[1] * 60) + ($coords_y[2])) / 3600);
+
 //                    var_dump($coords_x);
 //                    var_dump($coords_y);
 //                    var_dump($dd_coords_x);
@@ -32,11 +36,16 @@ class TravauxController extends Zend_Controller_Action {
                 $oeuvre->save();
             }
         }
-        
+
         die();
     }
-    
+
+    /*
+     * Initialisation du controller
+     */
+
     public function init() {
+        // Roles
         $acl = new Zend_Acl();
         Zend_Registry::set('acl', $acl);
         $acl->addRole(new Zend_Acl_Role(Application_Model_Roles::$ROLE_WORKER)); // Roles
@@ -68,6 +77,7 @@ class TravauxController extends Zend_Controller_Action {
             'set_work_done',
         ));
 
+        // Récupération de l'identité pour la view
         $auth = Zend_Auth::getInstance();
         if ($auth->hasIdentity()) {
             $roleId = $auth->getIdentity()->role_id;
@@ -78,8 +88,13 @@ class TravauxController extends Zend_Controller_Action {
             $user = $usersTable->getUserBasics($auth->getIdentity()->id);
             $this->view->lname = $user['lname'];
             $this->view->fname = $user['fname'];
+            $this->view->uid = $auth->getIdentity()->id;
         }
     }
+
+    /*
+     * Index : redirection vers la liste, type de vue (prio/type) par défaut
+     */
 
     public function indexAction() {
         $viewDefaults = new Zend_Session_Namespace('viewDefaults');
@@ -89,6 +104,10 @@ class TravauxController extends Zend_Controller_Action {
             $this->_redirect('travaux/liste/mode/' . self::$DEFAULT_LIST_ACTION);
         }
     }
+
+    /*
+     * Liste des travaux
+     */
 
     public function listeAction() {
         $mode = '';
@@ -103,6 +122,13 @@ class TravauxController extends Zend_Controller_Action {
         } else
             $mode = $this->getRequest()->getParam('mode');
 
+        if($this->getRequest()->has('id')) {
+            $workViewId = $this->getRequest()->getParam('id');
+            $workViewId = (int)$workViewId;
+            if($workViewId) {
+                $this->view->workViewId = $workViewId;
+            }
+        }
         $this->view->title = 'Travaux';
         $this->view->page = 'list';
         $acl = Zend_Registry::get('acl');
@@ -133,15 +159,11 @@ class TravauxController extends Zend_Controller_Action {
 
         $userId = Zend_Auth::getInstance()->getIdentity()->id;
         if ('types' == $mode) {
-            $viewDefaults->worksListMode = 'types';
+            $this->view->viewMode = $viewDefaults->worksListMode = 'types';
             $this->view->works = $travauxTable->getAllByTypes($userId);
-            $this->_helper->viewRenderer('liste-types');
+            $this->_helper->viewRenderer('list-types');
         } else if ('prios' == $mode || self::$DEFAULT_LIST_ACTION == $mode) {
-            $viewDefaults->worksListMode = 'prios';
-           /* $scPaths = $this->view->getScriptPaths();
-            $file = fopen(reset($scPaths).'travaux/work-view.phtml', 'r+');
-            var_dump($file);
-            die();*/
+            $this->view->viewMode = $viewDefaults->worksListMode = 'prios';
             $this->view->works = $travauxTable->getAllByPrios($userId);
             $this->_helper->viewRenderer('liste-prios');
         }
@@ -156,6 +178,11 @@ class TravauxController extends Zend_Controller_Action {
             // On a la permission de modifier la priorité, et on a les parametres requis
             $travauxTable = new Application_Model_Travaux();
             $travauxTable->changeWorkPrio($workId, $prioId);
+            // Si on passe à la prio "Déjà effectué", on supprime les travaux des listes utilisateurs
+            if ($prioId == Application_Model_Travaux::$PRIORITIES['Déjà effectué']) {
+                $travauxTravailleursTable = new Application_Model_TravauxTravailleurs();
+                $travauxTravailleursTable->deleteWorksFromAllCurrentLists($workId);
+            }
             $this->_redirect('/travaux/index');
         } else {                                                                  // Si on a pas la permission de modifier la priorité d'un travail, on est renvoyé vers l'index
             $this->_redirect('/travaux/index');
@@ -165,26 +192,34 @@ class TravauxController extends Zend_Controller_Action {
     public function marquerFaitAction() {
         $acl = Zend_Registry::get('acl');
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
-        $workId = (int) $this->_request->getParam('id');
-        if ($acl->isAllowed($role, 'set_work_done') && !empty($workId)) {
-            try {
-                // Marquer le travail comme effectué (prio 3)
-                $worksTable = new Application_Model_Travaux();
-                $oldPrio = $worksTable->getWorkPrio($workId);
-                $worksTable->setWorkDone($workId);
-                // Mettre a jour la table WORKS_WORKERS
-                $worksWorkersTable = new Application_Model_TravauxTravailleurs();
+        if ($acl->isAllowed($role, 'set_work_done')) {
+            if ($this->_request->has('id') && (int)$this->_request->getParam('id')) {
                 $noticeSession = new Zend_Session_Namespace('notice');
-                $oldWorkSession = new Zend_Session_Namespace('oldWork');
-                $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);   // Expiration par défaut
-                $oldWorkSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);  // Expiration par défaut
-                $noticeSession->noticeType = 'cancel';
-                $noticeSession->cancelOperation = 'set_work_done';
-                $oldWorkSession->id = $workId;
-                $oldWorkSession->prio = $oldPrio;
-                $this->_redirect('/travaux/index');
-            } catch (Exception $ex) {
-                echo $ex->getTraceAsString();
+                $workId = (int)$this->_request->getParam('id');
+                try {
+                    // Marquer le travail comme effectué (prio 3)
+                    $worksTable = new Application_Model_Travaux();
+                    $oldPrio = $worksTable->getWorkPrio($workId);
+                    $worksTable->setWorkDone($workId);
+                    // Suppression des listes utilisateurs
+                    $travauxTravailleursTable = new Application_Model_TravauxTravailleurs();
+                    $travauxTravailleursTable->deleteWorksFromAllCurrentLists($workId);
+                    // Mettre a jour la table WORKS_WORKERS
+                    $worksWorkersTable = new Application_Model_TravauxTravailleurs();
+                    $noticeSession = new Zend_Session_Namespace('notice');
+                    $oldWorkSession = new Zend_Session_Namespace('oldWork');
+                    $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);   // Expiration par défaut
+                    $oldWorkSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);  // Expiration par défaut
+                    $noticeSession->noticeType = 'cancel';
+                    $noticeSession->cancelOperation = 'set_work_done';
+                    $oldWorkSession->id = $workId;
+                    $oldWorkSession->prio = $oldPrio;
+                    $this->_redirect('/travaux/index');
+                } catch (Exception $ex) {
+                    echo $ex->getTraceAsString();
+                }
+            } else {
+                Zend_Session::namespaceUnset('notice');
             }
         } else {
             $this->_redirect('/travaux/index');
@@ -194,48 +229,30 @@ class TravauxController extends Zend_Controller_Action {
     public function supprimerAction() {
         $acl = Zend_Registry::get('acl');
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
-        $workId = (int) $this->_request->getParam('id');
-        if ($acl->isAllowed($role, 'remove_work') && !empty($workId)) {
-            $noticeSession = new Zend_Session_Namespace('notice');
-            $workSession = new Zend_Session_Namespace('work');
-            $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);
-            $workSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);
-            $noticeSession->noticeType = 'yes-no';
-            $noticeSession->operation = 'remove';
-            $workSession->id = $workId;
-            $this->_redirect('/travaux/index');
-        } else {
-            $this->_redirect('/travaux/index');
-        }
-    }
-
-    public function confirmerSuppressionAction() {
-        $acl = Zend_Registry::get('acl');
-        $role = Zend_Auth::getInstance()->getIdentity()->role_id;
-        $confirm = (bool) $this->_request->getParam('confirmer');
-        if ($acl->isAllowed($role, 'remove_work')) {                             // Autorisé à supprimer un travail
-            $workSession = new Zend_Session_Namespace('work');
-            $noticeSession = new Zend_Session_Namespace('notice');
-            $id = (int) $workSession->id;
-            if (!empty($confirm) && $confirm && !empty($id)) {
+        if ($acl->isAllowed($role, 'remove_work')) {                           // Autorisé à supprimer un travail
+            try {
+                $noticeSession = new Zend_Session_Namespace('notice');
+                $id = (int) $this->_request->getParam('id');
                 $worksTable = new Application_Model_Travaux();
                 $additionalWorkersTable = new Application_Model_IntervenantsExterieurs();
-                                                                                // Suppression des intervenants extérieurs
+                // Suppression des intervenants extérieurs
                 $result = $worksTable->deleteById($id);
                 $additionalWorkersTable->delete('work_id = ' . $id);
                 if ($result) {
                     $noticeSession->noticeType = 'confirmation';
                     $noticeSession->confirmationType = 'remove';
                 } else {
-                    $noticeSession->noticeType = 'error';
-                    $noticeSession->errorType = 'remove';
+                    throw new Exception();
                 }
-            } else {
-                Zend_Session::namespaceUnset('notice');
-                Zend_Session::namespaceUnset('work');
+            } catch (Exception $e) {
+                $noticeSession->noticeType = 'error';
+                $noticeSession->errorType = 'remove';
             }
+        } else {
+            Zend_Session::namespaceUnset('notice');
+            Zend_Session::namespaceUnset('work');
         }
-        $this->_redirect('/travaux/index');                                     // Dans tous les cas, on redirige vers la liste
+        $this->_redirect('/travaux/index');                                    // Dans tous les cas, on redirige vers la liste
     }
 
     public function ajouterAction() {
@@ -246,36 +263,38 @@ class TravauxController extends Zend_Controller_Action {
             if ($this->_request->getPost()) {
                 $formData = $this->_request->getPost();
                 $addWorkForm = new Application_Form_AddWork();
-                if ($addWorkForm->isValid($formData)) {                         // Form valide
+                $addWorkForm->populate($formData);
+                $formIsValid = $addWorkForm->isValid($formData);
+                $worktype = $this->_request->getParam('worktype');            // On vide les champs qui ne sont plus nécessaires
+                if ('question' != $worktype) {                                  // Travail classique ou balisage
+                    $addWorkForm->getElement('title_question')->setValue('');
+                    $addWorkForm->getElement('title_question')->removeDecorator('Errors'); // Errors reseting : UPDATE 2015-03-17 - TO TEST
+                } else {
+                    $addWorkForm->getElement('title')->setValue('');
+                    $addWorkForm->getElement('title')->removeDecorator('Errors');
+                    
+                }
+                
+                if ($formIsValid) {                        // Form valide
                     $travauxTable = new Application_Model_Travaux();
                     $travauxTable->addWork($formData);
-                    
+
                     $noticeSession = new Zend_Session_Namespace('notice');
                     $noticeSession->noticeType = 'confirmation';
                     $noticeSession->confirmationType = 'add';
                     $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS); // Expiration par défaut
                     $this->_redirect('/travaux/index');
-                } else {                                                        // Erreurs
-                    $worktype = $this->_request->getParam('worktype');          // On vide les champs qui ne sont plus nécessaires
-                    if ('normal' == $worktype) {
-                        $addWorkForm->getElement('title_question')->setValue('');
-                        $addWorkForm->getElement('title_question')->setErrors(array()); // Errors reseting : UPDATE 2015-03-17 - TO TEST
-                        $addWorkForm->getElement('description_question')->setValue('');
-                        $addWorkForm->getElement('description_question')->setErrors(array());
-                    } else {
-                        $addWorkForm->getElement('title')->setValue('');
-                        $addWorkForm->getElement('title')->setErrors(array());
-                        $addWorkForm->getElement('description')->setValue('');
-                        $addWorkForm->getElement('description')->setErrors(array());
-                    }
-                                                                                // Ajouter les intervenants externes, qui ne font pas partie du FORM initial
+                } else {                                                       // Erreurs
+                    // Ajouter les intervenants externes, qui ne font pas partie du FORM initial
                     $curIdx = 0;
-                    foreach($formData['additional-workers'] as $curAdditionalWorker) {
-                        $elt = $addWorkForm->getDisplayGroup('additional_workersG')->addElement(new Zend_Form_Element_Hidden(array(
-                            'id' => 'prevAddWorker-'.++$curIdx,
-                            'name' => 'prevAddWorker-'.$curIdx,
-                            'class' => 'prevAddWorker',
-                            'value' => $curAdditionalWorker)));
+                    if(isset($formData['additional-workers']) && count($formData['additional-workers'])) {
+                        foreach ($formData['additional-workers'] as $curAdditionalWorker) {
+                            $elt = $addWorkForm->getDisplayGroup('additional_workersG')->addElement(new Zend_Form_Element_Hidden(array(
+                                'id' => 'prevAddWorker-' . ++$curIdx,
+                                'name' => 'prevAddWorker-' . $curIdx,
+                                'class' => 'prevAddWorker',
+                                'value' => $curAdditionalWorker)));
+                        }
                     }
                     $this->view->noticeTemplate = 'index/notices/error-form.phtml';
                 }
@@ -414,14 +433,14 @@ class TravauxController extends Zend_Controller_Action {
                             ));
                         }
                     }
-                    
+
                     // 3. Update additional_workers
                     $intervenantsExterieursTable = new Application_Model_IntervenantsExterieurs();
                     $intervenantsExterieursTable->removeAllByWork($workId);
-                    if($this->hasParam('additional-workers') && $this->getParam('additional-workers')) {
+                    if ($this->hasParam('additional-workers') && $this->getParam('additional-workers')) {
                         $additionalWorkersArray = array();
-                        foreach($this->getParam('additional-workers') as $curAW) {
-                            if(!empty($curAW)) {
+                        foreach ($this->getParam('additional-workers') as $curAW) {
+                            if (!empty($curAW)) {
                                 $intervenantsExterieursTable->insert(array(
                                     'work_id' => $workId,
                                     'label' => $curAW,
@@ -429,7 +448,7 @@ class TravauxController extends Zend_Controller_Action {
                             }
                         }
                     }
-                    
+
                     $worksTable->update($workData, 'id = ' . $workId);
                     $noticeSession = new Zend_Session_Namespace('notice');
                     $noticeSession->noticeType = 'confirmation';
@@ -462,7 +481,7 @@ class TravauxController extends Zend_Controller_Action {
                     $this->setFormElements($editWorkForm, array('title' => $work['title']));
                     $this->setFormElements($editWorkForm, array('description' => $work['description']));
                 }
-                if(!empty($work['tools']) && $work['tools']) {
+                if (!empty($work['tools']) && $work['tools']) {
                     $this->setFormElements($editWorkForm, array('tools' => $work['tools']));
                 }
                 if (!empty($work['oeuvre_id'])) {                                // Si on a une oeuvre associee
@@ -484,6 +503,12 @@ class TravauxController extends Zend_Controller_Action {
                         'emplacement_coords_x' => $work['coords_x'],
                         'emplacement_coords_y' => $work['coords_y'],
                         'maponload' => true));
+                }
+                // Description de l'emplacement
+                if(!empty($work['desc_emplact'])) {
+                    $this->setFormElements($editWorkForm, array(
+                        'desc_emplacement' => $work['desc_emplact'],
+                    ));
                 }
                 // Recuperer les types
                 $travauxTypesTable = new Application_Model_TravauxTypes();
@@ -520,18 +545,17 @@ class TravauxController extends Zend_Controller_Action {
                 // Récupération des intervenants externes
                 $intervenantsExterieursTable = new Application_Model_IntervenantsExterieurs();
                 $intervenantsExterieurs = $intervenantsExterieursTable->getAllByWork($work['id']);
-                
-                foreach($intervenantsExterieurs as $curAdditionalWorker) {
-                    $elt = $editWorkForm->getDisplayGroup('additional_workersG')->addElement(new Zend_Form_Element_Hidden(array(
-                        'id' => 'prevAddWorker-'.$curAdditionalWorker['id'],
-                        'name' => 'prevAddWorker-'.$curAdditionalWorker['id'],
+                foreach ($intervenantsExterieurs as $curAdditionalWorker) {
+                    $elt = $editWorkForm->addElement(new Zend_Form_Element_Hidden(array(
+                        'id' => 'prevAddWorker-' . $curAdditionalWorker['id'],
+                        'name' => 'prevAddWorker-' . $curAdditionalWorker['id'],
                         'class' => 'prevAddWorker',
                         'value' => $curAdditionalWorker['label'])));
                 }
                 // Token
                 $editWorkForm->initToken();
             }
-            $this->view->title = 'Éditer le travai';
+            $this->view->title = 'Éditer le travail';
             $this->view->page = 'edit-work';
             $this->view->editWorkForm = $editWorkForm;
         } else {
@@ -640,18 +664,22 @@ class TravauxController extends Zend_Controller_Action {
                 $this->_redirect('/travaux/index');
             }
             //try {
-                $worksWorkersTable = new Application_Model_TravauxTravailleurs();
-                $worksWorkersTable->deleteFromUserList($userId, $workId);
-                                                                                // Les travaux de la liste ont date_added mais pas date_done
-                
-                $noticeSession = new Zend_Session_Namespace('notice');          // Possibilité d'annuler
-                $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);   // Expiration par défaut
-                $noticeSession->noticeType = 'confirmation';
-                $noticeSession->confirmationType = 'remove-from-ulist';
+            $worksWorkersTable = new Application_Model_TravauxTravailleurs();
+            $worksWorkersTable->deleteFromUserList($userId, $workId);
+            // Les travaux de la liste ont date_added mais pas date_done
+
+            $noticeSession = new Zend_Session_Namespace('notice');          // Possibilité d'annuler
+            $noticeSession->setExpirationSeconds(NOTICE_EXPIRATION_SECS);   // Expiration par défaut
+            $noticeSession->noticeType = 'confirmation';
+            $noticeSession->confirmationType = 'remove-from-ulist';
+            if ($this->getRequest()->has('redirect')) {
+                if ($this->getRequest()->getParam('redirect') == 'list')
+                    $this->_redirect('/travaux/liste');
+            } else
                 $this->_redirect('/travaux/liste-perso');
-            /*} catch (Exception $ex) {
-                echo $ex->getTraceAsString();
-            }*/
+            /* } catch (Exception $ex) {
+              echo $ex->getTraceAsString();
+              } */
         } else {
             $this->_redirect('/travaux/index');
         }
@@ -670,8 +698,8 @@ class TravauxController extends Zend_Controller_Action {
             switch ($cancelOperation) {
                 case 'set_work_done' : {
                         $oldWorkSession = new Zend_Session_Namespace('oldWork');
-                        //    $workId = $oldWorkSession->id;
-                        //    $workPrio = $oldWorkSession->prio;
+                        $workId = $oldWorkSession->id;
+                        $workPrio = $oldWorkSession->prio;
                         if (!empty($workId) && !empty($workPrio)) {
                             $this->view->noticeTemplate = 'travaux/notices/cancel-work-done.phtml';
                         }
@@ -713,7 +741,7 @@ class TravauxController extends Zend_Controller_Action {
                 case 'remove-from-ulist': {
                         $this->view->noticeTemplate = 'travaux/notices/confirmation-remove-ulist.phtml';
                         break;
-                }
+                    }
                 default: {
                         $this->view->noticeTemplate = 'index/notices/confirmation-default.phtml';
                         break;
@@ -744,6 +772,14 @@ class TravauxController extends Zend_Controller_Action {
         } else if (isset($noticeSession->noticeType) && $noticeSession->noticeType == 'yes-no') {                // Demande de confirmation
             $operation = $noticeSession->operation;
             switch ($operation) {
+                case 'set-done': {
+                        $workSession = new Zend_Session_Namespace('work');
+                        $workId = (int) $workSession->id;
+                        if (!empty($workId)) {
+                            $this->view->noticeTemplate = 'travaux/notices/yes-no-set-done.phtml';
+                        }
+                        break;
+                    }
                 case 'remove': {
                         $workSession = new Zend_Session_Namespace('work');
                         $workId = (int) $workSession->id;
@@ -779,7 +815,6 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->noTypeLabel = Application_Model_Travaux::$NOTYPE;      // Travaux sans type
 
             $this->setNotices();                                                // Notices
-            
         } else {
             $this->_redirect('/auth/deconnecter');
             // On ne devrait jamais arriver jusqu'ici.

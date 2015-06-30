@@ -55,16 +55,18 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         
         $view->headLink()->prependStylesheet('/css/site.css')
                 ->headLink()->prependStylesheet('/js/colpick/css/colpick.css')
-                ->headLink()->prependStylesheet('http://fonts.googleapis.com/css?family=Open+Sans:400,700')
-                ->headLink()->prependStylesheet('http://yui.yahooapis.com/pure/0.5.0/pure-min.css')
-                ->headLink()->prependStylesheet('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
-                ->headLink()->prependStylesheet('http://fonts.googleapis.com/css?family=Bevan');
-        $view->headScript()->prependFile('/js/jquery-dateFormat-master/dist/dateFormat.min.js')
+        //        ->headLink()->prependStylesheet('http://fonts.googleapis.com/css?family=Open+Sans:400,700')
+        //        ->headLink()->prependStylesheet('http://yui.yahooapis.com/pure/0.5.0/pure-min.css')
+        //        ->headLink()->prependStylesheet('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
+        //        ->headLink()->prependStylesheet('http://fonts.googleapis.com/css?family=Bevan')
+                ->headLink()->prependStylesheet('/semantic-ui/dist/semantic.min.css');
+        $view->headScript()//->prependFile('/js/jquery-dateFormat-master/dist/dateFormat.min.js')
                 ->prependFile('/js/jquery-dateFormat-master/dist/jquery-dateFormat.min.js')
                 ->prependFile('/js/colpick/js/colpick.js')
-                ->headScript()->prependFile('/js/site.js');
+                ->headScript()->prependFile('/js/site.js')
+                ->prependFile('/semantic-ui/dist/semantic.min.js'); // @todo change semantic ui installation -> dist on site folder
         
-        $view->headScript()->prependFile('https://maps.googleapis.com/maps/api/js?key=' . GMAPS_V3_API_KEY);    
+        $view->headScript()->prependFile('https://maps.googleapis.com/maps/api/js?key=' . GMAPS_V3_API_KEY);
     }
 }
 

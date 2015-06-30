@@ -1,5 +1,8 @@
-
-<section id="main-menu">
-    <a class="pure-button pure-button-primary<?php if(isset($this->page) && 'list' == $this->page) : echo ' pure-button-active'; endif; ?>" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste'), null, true) ?>"><i class="fa fa-list"></i> Tous les travaux</a>
-    <a class="pure-button pure-button-primary<?php if(isset($this->page) && 'my-list' == $this->page) : echo ' pure-button-active'; endif; ?>" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste-perso'), null, true) ?>"><i class="fa fa-user"></i> Ma liste<?php echo $this->getUserWorksListCount(Zend_Auth::getInstance()->getIdentity()->id) ?></a>
-</section>
+<a href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste'), null, true) ?>"
+   class="item<?php if(isset($this->page) && 'list' == $this->page) : echo ' active'; endif; ?>">
+    <i class="list icon"></i> Travaux
+</a>
+<a href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste-perso'), null, true) ?>"
+   class="item<?php if(isset($this->page) && 'liste-perso' == $this->page) : echo ' active'; endif; ?>">
+    <i class="user icon"></i> Ma liste<?php echo $this->getUserWorksListCount(Zend_Auth::getInstance()->getIdentity()->id) ?>
+</a>

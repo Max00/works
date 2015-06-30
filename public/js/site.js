@@ -66,20 +66,11 @@ function isCoordY(coord) {
     return /[-]?\d+[.]?\d*/.test(coord);
 }
 function initMap() {
-    // init GMap
-    //yAr = $('#emplacement_coords_y').val().split(/([NS])[\s]*(\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-    //xAr = $('#emplacement_coords_x').val().split(/([EW])[\s]*([0-1]?\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-    //yCard = yAr[1];
-    //xCard = xAr[1];
-    //yAr = yAr.map(parseFloat);
-    //xAr = xAr.map(parseFloat);
-    //yD = LocationFormatter.DMSToDecimal(yAr[2], yAr[3], yAr[4], yCard);
-    //xD = LocationFormatter.DMSToDecimal(xAr[2], xAr[3], xAr[4], xCard);
     var latlon = new google.maps.LatLng( $('#emplacement_coords_y').val(),  $('#emplacement_coords_x').val());
     var mapOptions = {
         center: latlon,
         zoom: 15
-    }
+    };
     $('#add-work-map').removeClass('hide');
     var map = new google.maps.Map(document.getElementById('add-work-map'), mapOptions);
     var marker = new google.maps.Marker({
@@ -87,50 +78,41 @@ function initMap() {
         map: map,
         title: $('#oeuvre_emplact').val(),
         draggable: true
-    })
+    });
     /* Draggable marker -> change coords */
     google.maps.event.addListener(marker, 'drag', function(e) {
 //        $('#emplacement_coords_y').val(LocationFormatter.decimalLatToDMS(e.latLng.lat()))
 //        $('#emplacement_coords_x').val(LocationFormatter.decimalLongToDMS(e.latLng.lng()))
-        $('#emplacement_coords_y').val(e.latLng.lat())
-        $('#emplacement_coords_x').val(e.latLng.lng())
+        $('#emplacement_coords_y').val(e.latLng.lat());
+        $('#emplacement_coords_x').val(e.latLng.lng());
         $('#oeuvre_emplact').val('');
         $('#oeuvre_id').val('');
-    })
+    });
     google.maps.event.addListener(marker, 'dragend', function(e) {
 //        $('#emplacement_coords_y').val(LocationFormatter.decimalLatToDMS(e.latLng.lat()))
 //        $('#emplacement_coords_x').val(LocationFormatter.decimalLongToDMS(e.latLng.lng()))
-        $('#emplacement_coords_y').val(e.latLng.lat())
-        $('#emplacement_coords_x').val(e.latLng.lng())
+        $('#emplacement_coords_y').val(e.latLng.lat());
+        $('#emplacement_coords_x').val(e.latLng.lng());
         $('#oeuvre_emplact').val('');
         $('#oeuvre_id').val('');
-    })
+    });
     map.initialize;
 }
 function initViewWorkMap(x, y, locationLabel) {
-  //  if (isCoordX(x) && isCoordY(y)) {
-        // init GMAP
-//        yAr = y.split(/([NS])[\s]*(\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-//        xAr = x.split(/([EW])[\s]*([0-1]?\d{1,2})[°]?[\s]+([0-5]?\d)[']?[\s]+([0-5]?\d?\.?\d*)['']?/g);
-//        yCard = yAr[1];
-//        xCard = xAr[1];
-//        yAr = yAr.map(parseFloat);
-//        xAr = xAr.map(parseFloat);
-//        yD = LocationFormatter.DMSToDecimal(yAr[2], yAr[3], yAr[4], yCard);
-//        xD = LocationFormatter.DMSToDecimal(xAr[2], xAr[3], xAr[4], xCard);
-    if (isCoordX(x) && isCoordY(y)) {
+    var google;
+    if (isCoordX(x) && isCoordY(y) && google != undefined) {
         var latlon = new google.maps.LatLng(y, x);
         var mapOptions = {
             center: latlon,
             zoom: 15
-        }
+        };
         $('#work-view-map').removeClass('hide');
         var map = new google.maps.Map(document.getElementById('work-view-map'), mapOptions);
         var marker = new google.maps.Marker({
             position: latlon,
             map: map,
             title: locationLabel
-        })
+        });
         map.initialize;
     } else {
         $('#work-view-map').addClass('hide');
@@ -140,27 +122,34 @@ function hideAddWMap() {
     $('#add-work-map').addClass('hide');
 }
 function addViewWorkType(id, name, color) {
-    $('#work-view #work-types').append('<div data-id="' + id + '">' + name + '</div>')
-    $('#work-view #work-types div[data-id="' + id + '"]').css('background-color', '#' + color)
+    $('#work-view #work-types').append('<div data-id="' + id + '">' + name + '</div>');
+    $('#work-view #work-types div[data-id="' + id + '"]').css('background-color', '#' + color);
 }
-function loadWorkView(workId, locationLabel) {
+
+
+function loadWorkView2(workId) {
     $('#work-view span#work-title').hide();
     $('#work-view span#user-add-label').hide();
     $('#work-view span#user-add').hide();
+    $('a#a_addwork').hide();            
+    $('a#a_removework').hide();
+    $('#work-view div#nearby-label').hide();
+    $('#work-view div#nearby').hide().text('');
     $('#work-view div#work-details *').hide();
     $('#work-view p#help').hide();
     $('#work-view div#additional-workers-container').hide();
     $('#work-view #work-edit-container').show();
     $('#work-view div#work-details').show();
     $('#work-view #work_id').val(workId);
-    $('div#work-edit-container a').attr('href', $('#work-view #work_edit_link').val().replace('__ID__', $('#work-view #work_id').val()));
+    //console.log($('#work-view #a_editWork').attr('href'));
+    //$('#work-view #a_editWork').attr('href', $('#work-view #a_editWork').attr('href').replace('__WID__', $('#work-view #work_id').val()));
     // $('#work-view p#work-location').html(locationLabel).show();
     $.ajax({
         type: "POST",
         url: "/index.php/ajax/get-work-details",
         data: {
             workId: workId,
-            auth_token: $('#auth_token').val(),
+            auth_token: $('#auth_token').val()
         },
         success: function(response) {
             fm = response.frequency_months;
@@ -172,7 +161,7 @@ function loadWorkView(workId, locationLabel) {
             if (fm || fw || fd) {
                 $('div#work-frequency').show();
             }
-            initViewWorkMap(response.coords_x, response.coords_y, locationLabel);
+            initViewWorkMap(response.coords_x, response.coords_y, "Travail");
             if (response.oeuvre_title) {
                 $('p#work-oeuvre-title-wrapper').show();
                 $('span#work-oeuvre-numero').html(response.oeuvre_numero).show();
@@ -203,13 +192,34 @@ function loadWorkView(workId, locationLabel) {
                 $('div#work-prio-container').show();
                 $('div#work-prio-' + response.prio).show();
             }
-            if(response.additional_workers.length) {
+            if(response.additional_workers && response.additional_workers.length) {
                 $('div#additional-workers-label').show();
                 $('div#additional-workers').show();
-                console.log(response.additional_workers)
                 $.each(response.additional_workers, function(idx, elt){
                     $('div#additional-workers').append('<span>'+elt+'</span>');
-                })
+                });
+            }
+            if(response.added) {
+                if(response.user_id == $('input#user-id').val())
+                    $('a#a_removework').show();
+            }
+            else {
+                $('a#a_addwork').show();
+            }
+            if(response.nearby && response.nearby.length) {
+                $('div#nearby-label').show();
+                $('div#nearby').show();
+                $.each(response.nearby, function(idx, elt){
+                    if(elt.oeuvre_title)
+                        $('div#nearby').append('<a href="#" id="link_to_'+elt.id+'">' + elt.title + ' (' + elt.oeuvre_title + ', ' + elt.distance + 'm)</a><br>');
+                    else
+                        $('div#nearby').append('<a href="#" id="link_to_'+elt.id+'">'+elt.title+' ('+elt.distance+'m)</a><br>');
+                    // Ajout de l'evevenement de click
+                    $('a#link_to_'+elt.id).bind('click', function(e) {
+                        loadWorkView(elt.id);
+                    });
+                   
+                });
             }
             if (fm && fm > 0) {
                 $('div#work-frequency-number').html(response.frequency_months).show();
@@ -237,45 +247,97 @@ function loadWorkView(workId, locationLabel) {
                 $('div#work-types').html('');
                 $(response.types).each(function(i, elt) {
                     $('div#work-types').show();
-                    addViewWorkType(elt.id, elt.name, elt.color)
-                })
+                    addViewWorkType(elt.id, elt.name, elt.color);
+                });
             }
             if (response.date_last_done) {
-                $('p#work-date_last_done-container').show()
+                $('p#work-date_last_done-container').show();
                 $('span#work-date_last_done').show().html($.format.date(response.date_last_done + ' 00:00:00.0', 'dd/MM/yyyy'));
+            }
+            // Lien vers la modification du travail
+            // Si html rendu, c'est qu'on est admin
+            if($('#a_editWork_model')) {
+                // Remplacement de la partie __WID__ par le vrai ID
+                var to_r = $('#a_editWork_model').attr('data-url');
+                var newVal = to_r.replace('__WID__', workId);
+                $('#a_editWork').attr('data-url', newVal);
             }
         },
         error: function(response) {
-            console.log(response)
-            console.log('AJAX error')
+            console.log(response);
+            console.log('AJAX error');
         }
-    })
+    });
 }
+
+function loadWorkView(workId) {
+    $('#work_view').modal('show');
+}
+
 $(document).ready(function() {
+    $(document).tooltip({track:true});
+    $('.ui.dropdown').dropdown({
+        allowCategorySelection: true
+    });
+    $('table.works_table td.item').click(function() {
+        loadWorkView($(this).attr('data-workid'));
+    });
+    $('.clickable_link').click(function() {
+        document.location.href=$(this).attr('data-href');
+    });
+    // Modals
+    $('.ui.modal').modal();
+    $('.delete_work_button').click(function(){
+        $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
+        $('#delete_work_modal')
+                .modal({
+                    onApprove:function(){window.location.href=$('input#waiting_action').attr('data-href')}
+                })
+                .modal('show');
+    })
+    $('.set_work_done_button').click(function(){
+        $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
+        $('#set_work_done_modal')
+                .modal({
+                    onApprove:function(){window.location.href=$('input#waiting_action').attr('data-href')}
+                })
+                .modal('show');
+    })
+    // Notices
+    $('#noticesContainer .message').delay(3000).fadeOut();
+    
+    /* OLD */
     if ($('section#works-list').length > 0) {
         $('div.work-options').hide();
         $('#work-view div#work-details').hide();
         $('#work-view div#work-details p').hide();
         $('#work-view #work-edit-container').hide();
+        $('#work-view div#nearby-label').hide();
         $('section#works-list li').hover(function() {
             $($(this).children('div.work-options')[0]).show();
         }, function() {
             $($(this).children('div.work-options')[0]).hide();
-        })
+        });
         $('section#works-list div.work-options').click(function(e) {
             e.stopPropagation();
-        })
+        });
         $('section#works-list li').click(function() {
-            loadWorkView($(this).attr('data-workid'), $(this).children('div.location').text());
+            loadWorkView($(this).attr('data-workid'));
             $('div#noticesContainer dialog').hide();
-        })
+        });
+        $('#a_editWork').click(function(){
+           document.location.href = $(this).attr('data-url');
+        });
     }
     else if ($('.formWork').length > 0) {
         hideAddWMap();
         var wt = $('[name="worktype"][checked="checked"]').val();
+        $('#add_edit_work').click(function(){
+            $('#formAddWork').submit();
+        })
         if ('question' === wt) {
-            $('#fieldset-titleDesc').addClass('hide')
-            $('#fieldset-titleDescQuestion').removeClass('hide')
+            $('#fieldset-titleDesc').addClass('hide');
+            $('#fieldset-titleDescQuestion').removeClass('hide');
         }
         if (!isCoordX($('#emplacement_coords_x').val()) || !isCoordY($('#emplacement_coords_y').val())) {
             hideAddWMap();
@@ -290,7 +352,7 @@ $(document).ready(function() {
             var adW = $('#additional_worker_template')
                     .clone()
                     .prop('id', 'additional-workers[]')
-                    .prop('name', 'additional-workers[]')
+                    .prop('name', 'additional-workers[]');
             adW.removeClass('hide')
                     .addClass('additional_worker')
                     .val(elt.value)
@@ -310,7 +372,7 @@ $(document).ready(function() {
                             $('#add_additional_worker').hide();
                         }
                     });
-        })
+        });
         $('.prevAddWorker').remove();
         $('input#oeuvre_emplact').autocomplete({
             source: function(request, response) {
@@ -319,7 +381,7 @@ $(document).ready(function() {
                     url: '/index.php/ajax/get-oeuvres',
                     data: {
                         q: request.term,
-                        auth_token: $('#auth_token').val(),
+                        auth_token: $('#auth_token').val()
                     },
                     dataType: 'json',
                     async: true,
@@ -327,14 +389,14 @@ $(document).ready(function() {
                     success: function(data) {
                         var suggestions = [];
                         $.each(data, function(i, val) {
-                            suggestions.push({'id': val.Value, 'value': val.Text})
-                        })
+                            suggestions.push({'id': val.Value, 'value': val.Text});
+                        });
                         response(suggestions);
                     },
                     error: function(response) {
-                        console.log('AJAX error: get-oeuvres')
+                        console.log('AJAX error: get-oeuvres');
                     }
-                })
+                });
             },
             select: function(event, ui) {
                 $('#oeuvre_id').val(ui.item.id);
@@ -343,7 +405,7 @@ $(document).ready(function() {
                     url: '/index.php/ajax/get-oeuvre-coords',
                     data: {
                         oeuvreId: ui.item.id,
-                        auth_token: $('#auth_token').val(),
+                        auth_token: $('#auth_token').val()
                     },
                     success: function(response) {
                         if (response.coords_x && response.coords_y) {
@@ -359,9 +421,9 @@ $(document).ready(function() {
                         //refreshMap();
                     },
                     error: function(response) {
-                        console.log('AJAX error: get-oeuvres-coords')
+                        console.log('AJAX error: get-oeuvres-coords');
                     }
-                })
+                });
             }
         });
         $('input#oeuvre_emplact').on('keyup change', function() {
@@ -391,16 +453,18 @@ $(document).ready(function() {
             else
                 hideAddWMap();
         });
+        
         $('#add_type_color_btn').colpick({onSubmit: function(hsb, hex, rgb, el) {
                 $(el).css('background-color', '#' + hex);
                 $(el).colpickHide();
             }});
+        
         $('#add_additional_worker').click(function() {
             var curIdx = 'additional-worker-' + ($('.additional_worker').length + 1);
             var adW = $('#additional_worker_template')
                     .clone()
                     .prop('id', 'additional-workers[]')
-                    .prop('name', 'additional-workers[]')
+                    .prop('name', 'additional-workers[]');
             adW.removeClass('hide')
                     .addClass('additional_worker')
                     .insertBefore('#add_additional_worker')
@@ -413,7 +477,6 @@ $(document).ready(function() {
                                 break;
                             }
                         }
-                        console.log(hasEmptyValues)
                         if (!hasEmptyValues) {
                             $('#add_additional_worker').show();
                         } else {
@@ -421,7 +484,7 @@ $(document).ready(function() {
                         }
                     });
             $(this).hide();
-        })
+        });
         /*
          $('#add_additional_worker').click(function(){
          $.ajax({
@@ -439,11 +502,10 @@ $(document).ready(function() {
                 data: {
                     name: $('#add_type_label').val(),
                     color: rgb2hex($('#add_type_color_btn').css('background-color'), true),
-                    auth_token: $('#auth_token').val(),
+                    auth_token: $('#auth_token').val()
                 },
                 success: function(response) {
                     if (response.success == true) {
-                        console.log('0eeee')
                         function addListElement(el) {
                             $('dd#types-element').append(el);
                             var labels = $('dd#types-element label').sort(function(a, b) {
@@ -454,21 +516,24 @@ $(document).ready(function() {
                                 return 0;
                             });
                             $('dd#types-element').html(labels);
-                            $('dd#types-element label.hide').removeClass('hide')
+                            $('dd#types-element label.hide').removeClass('hide');
                         }
                         addListElement('<label class="hide"><input type="checkbox" checked="checked" name="types[]" id="types-' + response.typeId + '" value="' + response.typeId + '">' + response.typeName + '</label>');
                     }
                     else if (response.error == true && response.typeId) {
                         $('input#types-' + response.typeId).prop('checked', true);
                     }
-                    if (response.notice)
-                        $('div#noticesContainer').empty().prepend(response.notice)
+                    if (response.notice) {
+                        $('div#noticesContainer').empty().prepend(response.notice);
+                        $('#noticesContainer .message').show();
+                        $('#noticesContainer .message').delay(3000).fadeOut();
+                    }
                 },
                 error: function(response) {
-                    console.log('AJAX error')
+                    console.log('AJAX error');
                 }
-            })
-        })
+            });
+        });
         $('#add_type_label').keypress(function(e) {
             if (e.which == 13) {
                 $('#add_type_btn').click();
@@ -481,12 +546,14 @@ $(document).ready(function() {
         $('input[name="worktype"]').change(function() {
             var wtype = $(this).val();
             if ('question' == wtype) {
-                $('#fieldset-titleDesc').addClass('hide')
-                $('#fieldset-titleDescQuestion').removeClass('hide')
+                $('#title').addClass('hide');
+                $('#title_question').removeClass('hide');
+                $('#title-element .errors').remove();
             } else if ('normal' == wtype || 'markup' == wtype) {
-                $('#fieldset-titleDesc').removeClass('hide')
-                $('#fieldset-titleDescQuestion').addClass('hide')
+                $('#title_question').addClass('hide');
+                $('#title').removeClass('hide');
+                $('#title_question-element .errors').remove();
             }
-        })
+        });
     }
-})
+});

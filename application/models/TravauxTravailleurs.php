@@ -56,6 +56,18 @@ class Application_Model_TravauxTravailleurs extends Zend_Db_Table_Abstract {
         else return null;
     }
     
+    public function getUserIdForWork($workId) {
+        $req = $this
+                ->select()
+                ->from($this, array('user_id'))
+                ->where($this->getAdapter()->quoteInto('work_id = ?', $workId));
+        $row = $this->fetchRow($req);
+        if($row) {
+            return $row['user_id'];
+        }
+        else return null;
+    }
+    
     public function deleteById($userId, $workId, $dateAdded) {
         $where = array();
         $where[]= $this->getAdapter()->quoteInto('user_id = ?', $userId);
@@ -76,5 +88,14 @@ class Application_Model_TravauxTravailleurs extends Zend_Db_Table_Abstract {
     public function getCountForUser($userId) {
         $count = count($this->fetchAll('user_id = ' . $userId . ' AND date_done IS NULL'));
         return $count;
+    }
+    
+    public function deleteWorksFromAllCurrentLists($workId) {
+        $where = array();
+        $where[]= $this->getAdapter()->quoteInto('work_id = ?', $workId);
+        // Supprimer les travaux n'ayant pas été effectués de la liste
+        $where[]= 'date_done IS NULL';
+        $where[]= 'date_added IS NOT NULL';
+        $this->delete($where);
     }
 }

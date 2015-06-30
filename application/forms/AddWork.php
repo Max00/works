@@ -11,43 +11,41 @@ class Application_Form_AddWork extends Zend_Form {
             $this->getElement('types')->addMultiOptions(array($currentType['id'] => $currentType['name']));
         }
         $this->addElementPrefixPath('Vdf_Form_Decorator_', ROOT_PATH . 'Vdf/Form/Decorator/', 'decorator');
-
-        $this->removeDecorator('DtDdWrapper');
-        foreach($this->getDisplayGroups() as $group) {
-            $group -> removeDecorator('DtDdWrapper');
-        }
-//        $this->getDisplayGroup('titleDesc')->removeDecorator('DtDdWrapper');    // Remove some decorators
-//        $this->getDisplayGroup('titleDescQuestion')->removeDecorator('DtDdWrapper');
-//        $this->getDisplayGroup('prioG')->removeDecorator('DtDdWrapper');
-//        $this->getDisplayGroup('coords')->removeDecorator('DtDdWrapper');
-//        $this->getElement('worktype')->removeDecorator('DtDdWrapper');
-//        $this->getElement('prio')->removeDecorator('DtDdWrapper');
-//        $this->getElement('oeuvre_id')->removeDecorator('DtDdWrapper');
-
-        $coordWrapperX = new Vdf_Form_Decorator_CoordWrapper(array('id' => 'cell_coord_x'));
-        $coordWrapperY = new Vdf_Form_Decorator_CoordWrapper(array('id' => 'cell_coord_y'));
-        $this->getElement('emplacement_coords_x')->addDecorator($coordWrapperX);
-        $this->getElement('emplacement_coords_y')->addDecorator($coordWrapperY);
         
-        $this->getElement('tools')->removeDecorator('DtDdWrapper');
-        $this->getElement('tools')->removeDecorator('Label');
-
-        $this->getElement('oeuvre_id')->removeDecorator('DtDdWrapper');
-        $this->getElement('oeuvre_id')->removeDecorator('Label');
-        $this->getElement('frequency_type')->removeDecorator('DtDdWrapper');
-        $this->getElement('frequency_type')->removeDecorator('Label');
-        $this->getElement('add_type_color_btn')->removeDecorator('DtDdWrapper');
-        $this->getElement('add_type_color_btn')->removeDecorator('Label');
-        $this->getElement('add_type_btn')->removeDecorator('DtDdWrapper');
-        $this->getElement('add_type_btn')->removeDecorator('Label');
-        $this->getElement('manage_types_btn')->removeDecorator('DtDdWrapper');
-        $this->getElement('manage_types_btn')->removeDecorator('Label');
+        $this->getElement('prio')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('worktype')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('form_title')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('title')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('title_question')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('auth_token')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('description')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('additional_worker_template')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('add_additional_worker')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('tools')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('emplacement')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('emplacement_coords_x')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('emplacement_coords_y')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('desc_emplacement')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('worktype')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('prio')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('types')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('add_type_label')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('frequency')->removeDecorator('Label')->removeDecorator('HtmlTag')->removeDecorator('Errors');
+        $this->getElement('frequency_type')->removeDecorator('Label')->removeDecorator('HtmlTag')->removeDecorator('Errors');
+        
+        $this->setDecorators(array(
+            array('ViewScript', array(
+                'viewScript' => '_formWork.phtml',
+                'mode' => 'add',
+            ))
+            )
+        );        
     }
 
     public function initToken() {
         $authNS = new Zend_Session_Namespace('authToken');
         $authNS->setExpirationSeconds(TOKEN_EXPIRATION_SECS);
-        $authNS->authToken = $hash = md5(uniqid(rand(), 1));                    // Token, pour AJAX notamment
+        $authNS->authToken = $hash = md5(uniqid(rand(), 1));                   // Token, pour AJAX notamment
         $this->auth_token->setValue($hash)
                 ->removeDecorator('HtmlTag')
                 ->removeDecorator('Label');

@@ -9,14 +9,13 @@ class Zend_View_Helper_ChangePrioButtons {
     
     public function ChangePrioButtons($workId, $currentPrioId) {
         $prios = Application_Model_Travaux::$PRIORITIES;
-        $lowPrio = max($prios);
-        $highPrio = min($prios);
-        $showUp = $currentPrioId > $highPrio ? '<a class="move-up" href="' . 
-                $this->_view->url(array('controller' => 'travaux', 'action' => 'changer-prio', 'travail' => $workId, 'prio' => $currentPrioId - 1), null, true) .
-                '"><i class="fa fa-arrow-up"></i></a>' : '';
-        $showDown = $currentPrioId < $lowPrio ?'<a class="move-down" href="' . 
-                $this->_view->url(array('controller' => 'travaux', 'action' => 'changer-prio', 'travail' => $workId, 'prio' => $currentPrioId + 1), null, true) .
-                '"><i class="fa fa-arrow-down"></i></a>' : '';
+        $upPrio = $this->_view->url(array('controller' => 'travaux', 'action' => 'changer-prio', 'travail' => $workId, 'prio' => $currentPrioId - 1), null, true);
+        $downPrio = $this->_view->url(array('controller' => 'travaux', 'action' => 'changer-prio', 'travail' => $workId, 'prio' => $currentPrioId + 1), null, true);
+        
+        // On affiche prio UP si la prio courante est de 2 ou 3
+        $showUp = $currentPrioId > Application_Model_Travaux::$PRIORITIES['Urgent'] ? '<div class="ui button clickable_link" data-href="'.$upPrio.'"><i class="caret up icon"></i></div>' : '';
+        // On affiche prio DOWN si la prio courante est de 1
+        $showDown = $currentPrioId == Application_Model_Travaux::$PRIORITIES['Urgent'] ?'<div class="ui button clickable_link" data-href="'.$downPrio.'"><i class="caret down icon"></i></div>' : '';
         // $implode = $showUp && $showDown ? ' | ' : '';
         // return $showUp . $implode . $showDown;
         return $showUp . $showDown;

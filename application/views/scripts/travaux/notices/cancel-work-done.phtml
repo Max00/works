@@ -1,1 +1,4 @@
-<dialog class="success" open>Vous venez de marquer un travail comme effectué. <a href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'cancel-work-done'), null, true) ?>">Annuler</a></dialog>
+<div class="ui positive message">
+    Vous venez de marquer un travail comme effectué.
+    <a class="ui tiny button" href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'cancel-work-done'), null, true) ?>">Annuler</a>
+</div>

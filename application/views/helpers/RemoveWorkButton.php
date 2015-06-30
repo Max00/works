@@ -8,6 +8,6 @@ class Zend_View_Helper_RemoveWorkButton {
     }
     
     public function RemoveWorkButton($workId) {
-        return '<a class="remove" href="' . $this->_view->url(array('controller' => 'travaux', 'action' => 'supprimer', 'id' => $workId), null, true) . '"><i class="fa fa-remove"></i></a>';
+        return '<div class="ui button delete_work_button" data-href="' . $this->_view->url(array('controller' => 'travaux', 'action' => 'supprimer', 'id' => $workId), null, true) . '"><i class="remove icon"></i></div>';
     }
 }

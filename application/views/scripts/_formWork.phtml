@@ -1,0 +1,103 @@
+<?php
+    $f = $this->element;
+    $additionalWorkers = array();
+    foreach($f->getElements() as $curElt) {
+        if(strstr($curElt->getId(), 'prevAddWorker-'))
+            array_push($additionalWorkers, $curElt);
+    }
+?>
+<form class="<?php echo $f->getAttrib('class') ?>"
+      id="<?php echo $f->getAttrib('id') ?>"
+      action="<?php echo $f->getAction() ?>"
+      method="<?php echo $f->getMethod() ?>">
+    <h2 class="ui dividing header"><?php echo $f->form_title->render() ?></h2>
+    <div class="ui two column relaxed fitted stackable grid">
+        <div class="column" id="main_form">
+            <?php echo $f->auth_token->render() ?>
+            <div class="field<?php if($f->title->getErrors() || $f->title_question->getErrors()) echo ' error'?>">
+                <?php echo $f->title->render() ?>
+                <?php echo $f->title_question->render() ?>
+            </div>
+            <div class="field<?php if($f->description->getErrors()) echo ' error'?>">
+                <?php echo $f->description->render() ?>
+            </div>
+            <?php echo $f->additional_worker_template->render() ?>
+            <div class="ui two column relaxed fitted stackable grid">
+                <div class="column">
+                    <div class="field<?php if($f->add_additional_worker->getErrors()) echo ' error'?>"><?php echo $f->add_additional_worker->render() ?></div>
+                    <?php foreach($additionalWorkers as $curAdditionalWorker) : ?>
+                    <div class="field">
+                        <?php echo $curAdditionalWorker->render(); ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <div class="column">
+                    <div class="field<?php if($f->tools->getErrors()) echo ' error'?>"><?php echo $f->tools->render() ?></div>
+                </div>
+            </div>
+            <div class="ui two column relaxed fitted stackable grid">
+                <div class="column">
+                    <div class="ui field small icon input"><?php echo $f->emplacement->render() ?>
+                        <i class="search icon"></i>
+                    </div>
+                    <div class="two fields">
+                        <div class="field<?php if($f->emplacement_coords_x->getErrors()) echo ' error'?>"><?php echo $f->emplacement_coords_x->render() ?></div>
+                        <div class="field<?php if($f->emplacement_coords_y->getErrors()) echo ' error'?>"><?php echo $f->emplacement_coords_y->render() ?></div>
+                    </div>
+                    <div class="field<?php if($f->desc_emplacement->getErrors()) echo ' error'?>"><?php echo $f->desc_emplacement->render() ?></div>
+                </div>
+                <div class="column">
+                    <div id="add-work-map" style="width:100%; height:200px; background-color:rgba(0,0,0,0.2);"></div>
+                </div>
+            </div>
+        </div>
+        <div class="column" id="right_column_form">
+            <div class="field<?php if($f->worktype->getErrors()) echo ' error'?>"><?php echo $f->worktype->render() ?></div>
+            <div class="ui divider"></div>
+            <div class="field<?php if($f->prio->getErrors()) echo ' error'?>"><?php echo $f->prio->render() ?></div>
+            <div class="ui divider"></div>
+            
+
+            <div class="fields">
+                <div class="field<?php if($f->types->getErrors()) echo ' error'?>"><?php echo $f->types->render() ?></div>
+                <div class="ui divider"></div>
+                
+
+                <div class="ui middle aligned two column grid">
+                    <div class="first row">
+                        <div class="column">
+                            <div class="field<?php if($f->add_type_label->getErrors()) echo ' error'?>"><?php echo $f->add_type_label->render() ?></div>
+                        </div>
+                        <div class="column">
+                            <div class="ui small icon button" id="add_type_color_btn"><i class="icon eyedropper"></i></div>
+                            <div class="ui small icon button" id="add_type_btn"><i class="icon plus"></i></div>
+                        </div>
+                    </div>
+                    <div class="second row">
+                        <div class="column"></div>
+                        <div class="column">
+                            <div class="ui tiny icon button clickable_link" data-href="<?php echo $this->url(array('controller' => 'types'), null, true) ?>"><i class="icon list"></i> Gérer les types</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui divider"></div>
+            <div class="inline fields middle aligned"><label>Tous les </label>
+                <div class="field<?php if($f->frequency->getErrors()) echo ' error'?>">
+                    <?php echo $f->frequency->render() ?>
+                </div>
+                <div class="field<?php if($f->frequency_type->getErrors()) echo ' error'?>">
+                    <?php echo $f->frequency_type->render() ?>
+                </div>
+            </div>
+            <div class="ui hidden divider"></div>
+            <div class="ui big fluid primary button" id="add_edit_work">
+            <?php if($this->mode == 'add') : ?>
+                Ajouter le travail
+            <?php elseif($this->mode == 'edit') : ?>
+                Modifier le travail
+            <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</form>

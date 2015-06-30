@@ -69,7 +69,20 @@ class AjaxController extends Zend_Controller_Action {
         echo json_encode(array('error' => 'token'));
         return;
     }
-
+//    
+//    public function getWorksAndOeuvresNearBy() {
+//        $authNS = new Zend_Session_Namespace('authToken');
+//        $hash = $authNS->authToken;
+//        if ($this->getRequest() && $hash == $this->getRequest()->getParam('auth_token')) {
+//            $workId = $this->getRequest()->getParam('workId');
+//            if (!empty($workId)) {
+//                
+//                echo json_encode($items);
+//                return;
+//            }
+//        }
+//    }
+    
     public function getOeuvreCoordsAction() {
         $authNS = new Zend_Session_Namespace('authToken');
         $hash = $authNS->authToken;
@@ -193,6 +206,26 @@ class AjaxController extends Zend_Controller_Action {
                 }
                 $workAr['additional_workers'] = $workersToWorkAr;
                 
+                if(isset($workAr['coords_x']) && isset($workAr['coords_y'])) {
+                    $lat = $workAr['coords_y'];
+                    $lon = $workAr['coords_x'];
+                    $nearbyItems = $worksTable->getWorksAndOeuvresNearBy($lat,$lon, Application_Model_Travaux::$NEARBY_PERIMETER);
+                    // Zend_Registry::get('logger')->log(Zend_Debug::Dump($nearbyItems, null, false), 6);
+                    $workAr['nearby'] = array();
+                    foreach($nearbyItems as $item) {
+                        if($item['id'] != $workId)
+                            $workAr['nearby'] []= array('id' => $item['id'], 'title' => $item['title'], 'oeuvre_title' => $item['oeuvre_title'], 'distance' => $item['distance']);
+                    }
+                }
+                
+                /* Définir si le travail a été ajouté à une liste, et si oui l'id de l'intervenant */
+                $worksWorkersTable = new Application_Model_TravauxTravailleurs();
+                $userId = $worksWorkersTable->getUserIdForWork($workId);
+                if($userId) {
+                    $workAr['added'] = true;
+                    $workAr['user_id'] = $userId;
+                }
+                Zend_Registry::get('logger')->log(Zend_Debug::Dump($workId, null, false), 6);
                 echo json_encode($workAr);
                 return;
             }
