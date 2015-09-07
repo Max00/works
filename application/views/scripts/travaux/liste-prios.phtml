@@ -40,7 +40,7 @@
                             <div class="tiny icon ui buttons">
                                 <?php if (isset($this->changeWorkPrio) && $this->changeWorkPrio) : echo $this->ChangePrioButtons($workId, $currentPrioId);
                                 endif; ?>
-                                <?php if (isset($this->setWorkDone) && $this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo $this->SetWorkDoneButton($workId);
+                                <?php if (isset($this->setWorkDone) && $this->setWorkDone) : echo $this->SetWorkDoneButton($workId);
                                 endif; ?>
                                 <?php if (isset($this->removeWork) && $this->removeWork) : echo $this->RemoveWorkButton($workId);
                                 endif; ?>

@@ -227,7 +227,6 @@ function sortWList(list) {
     var rows = $(list + ' tbody  tr').get();
 
     rows.sort(function (a, b) {
-
         var A = $(a).children('td').children('.work_title').eq(0).text().toUpperCase();
         var B = $(b).children('td').children('.work_title').eq(0).text().toUpperCase();
 
@@ -238,9 +237,7 @@ function sortWList(list) {
         if (A > B) {
             return 1;
         }
-
         return 0;
-
     });
 
     $.each(rows, function (index, row) {
@@ -248,8 +245,15 @@ function sortWList(list) {
     });
 }
 
+function setPrioButtons(list, prio, arrow) {
+    var cps=$(list + ' div.change_prio');
+    cps.attr('data-prio', prio);
+    cps.children('i').removeClass('up down').addClass(arrow);
+}
+
 $(document).ready(function () {
     $(document).tooltip({track: true});
+    $('.hide').hide();
     $('.ui.dropdown').dropdown({
         allowCategorySelection: true
     });
@@ -266,7 +270,6 @@ $(document).ready(function () {
     $('#noticesContainer .message').delay(3000).fadeOut();
 
 
-    if ($('section#works-list').length > 0) {
         $('.delete_work_button').click(function () {
             $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
             $('#delete_work_modal')
@@ -294,6 +297,7 @@ $(document).ready(function () {
                     wm = $('tr[data-workid="' + wid + '"]').detach();
                     $('#works_1').append(wm);
                     sortWList('#works_1');
+                    setPrioButtons('#works_1', 2, 'down');
                 },
                 error: function (response) {
                     console.log('AJAX error: wv_set_urgent');
@@ -317,6 +321,7 @@ $(document).ready(function () {
                     wm = $('tr[data-workid="' + wid + '"]').detach();
                     $('#works_2').append(wm);
                     sortWList('#works_2');
+                    setPrioButtons('#works_2', 1, 'up');
                 },
                 error: function (response) {
                     console.log('AJAX error: wv_set_urgent');
@@ -340,6 +345,7 @@ $(document).ready(function () {
                     wm = $('tr[data-workid="' + wid + '"]').detach();
                     $('#works_3').append(wm);
                     sortWList('#works_3');
+                    setPrioButtons('#works_3', 2, 'up');
                 },
                 error: function (response) {
                     console.log('AJAX error: wv_set_urgent');
@@ -361,8 +367,33 @@ $(document).ready(function () {
             loadWorkView($(this).parent('tr').attr('data-workid'));
             $('div#noticesContainer dialog').hide();
         });
-    }
-    else if ($('.formWork').length > 0) {
+        
+        $('div.change_prio').click(function(){
+            wid = $(this).parents('tr').attr('data-workid');
+            prio = $(this).attr('data-prio');
+            console.log(wid);
+            console.log(prio);
+            $.ajax({
+                type: "GET",
+                url: '/index.php/ajax/change-work-prio',
+                data: {
+                    id: wid,
+                    p: prio,
+                    auth_token: $('#auth_token').val()
+                },
+                success: function (response) {
+                    wm = $('tr[data-workid="' + wid + '"]').detach();
+                    $('#works_'+prio).append(wm);
+                    sortWList('#works_'+prio);
+                    setPrioButtons('#works_1', 2, 'down');
+                    setPrioButtons('#works_2', 1, 'up');
+                },
+                error: function (response) {
+                    console.log('AJAX error: wv_set_urgent');
+                }
+            });
+        })
+    if ($('.formWork').length > 0) {
         hideAddWMap();
         var wt = $('[name="worktype"][checked="checked"]').val();
         $('#add_edit_work').click(function () {

@@ -47,6 +47,13 @@ table.works_table td.options {
 dd {
     margin-left:0;
 }
+#works_1 .set_work_done_button,
+#works_2 .set_work_done_button {
+    display:inherit;
+}
+#works_3 .set_work_done_button {
+    display:none;
+}
 #formLogin {
     width:300px;
     text-align:center;
