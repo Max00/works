@@ -438,7 +438,11 @@ HAVING distance < 1000 ORDER BY distance
                 ->joinLeft(array('ww' => 'works_workers'), 'ww.work_id = w.id', array())
                 ->joinLeft(array('u' => 'users'), 'u.id = ww.user_id', array())
                 ->where('w.prio = ?', $prioId)
-                ->order(new Zend_Db_Expr('case when type_name is null then 1 else 0 end, type_name, work_title'));
+                // Get the typed works first
+                // ->order(new Zend_Db_Expr('case when type_name is null then 1 else 0 end, type_name, work_title'));
+                // - OR -
+                // Only alphabetical
+                ->order(new Zend_Db_Expr('work_title'));
         //echo $req;
         //die();
         // LEFT JOIN pour récupérer les travaux qui n'ont pas de type
