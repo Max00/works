@@ -7,14 +7,14 @@
         <table class="ui table works_table" id="works_<?php echo $currentPrioId ?>">
             <tbody>
                 <?php foreach ($currentPrio['works'] as $workId => $curWork): ?>
-                    <tr<?php
+                    <tr data-workid="<?php echo $workId; ?>"<?php
                     if(!empty($curWork['user_id'])) {
                         echo ' title="';
                         $this->PrintInUserListMessage($curUserId, $curWork['user_id'], $curWork['user_fname'], $curWork['user_lname']);
                         echo '"';
                         
                     } ?>>
-                        <td class="item" data-workid="<?php echo $workId; ?>">
+                        <td class="item">
                             <?php if(!empty($curWork['user_id'])) {
                                 if($curWork['user_id'] == $curUserId) {
                                     echo '<i class="ui icon pin"></i>';
