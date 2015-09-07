@@ -189,6 +189,8 @@ class AjaxController extends Zend_Controller_Action {
                 $types = $work->findManyToManyRowset('Application_Model_Types', 'Application_Model_TravauxTypes');
                 $workAr['types'] = $types->toArray();
                                                                                 // Si un utilisateur a ajouté le travail dans sa liste, on renvoie son nom + prenom
+                
+                
                 $wwTable = new Application_Model_TravauxTravailleurs();
                 $userId = $wwTable->getUserIdForWorkNotDone($workId);
                 if($userId) {
@@ -205,8 +207,7 @@ class AjaxController extends Zend_Controller_Action {
                     $workersToWorkAr []= $curAW['label'];
                 }
                 $workAr['additional_workers'] = $workersToWorkAr;
-                
-                if(isset($workAr['coords_x']) && isset($workAr['coords_y'])) {
+                if(isset($workAr['coords_x']) && isset($workAr['coords_y'])) {                    
                     $lat = $workAr['coords_y'];
                     $lon = $workAr['coords_x'];
                     $nearbyItems = $worksTable->getWorksAndOeuvresNearBy($lat,$lon, Application_Model_Travaux::$NEARBY_PERIMETER);
@@ -214,7 +215,7 @@ class AjaxController extends Zend_Controller_Action {
                     $workAr['nearby'] = array();
                     foreach($nearbyItems as $item) {
                         if($item['id'] != $workId)
-                            $workAr['nearby'] []= array('id' => $item['id'], 'title' => $item['title'], 'oeuvre_title' => $item['oeuvre_title'], 'distance' => $item['distance']);
+                            $workAr['nearby'] []= array('id' => $item['id'], 'title' => $item['work_title'], 'oeuvre_title' => $item['oeuvre_title'], 'distance' => $item['distance']);
                     }
                 }
                 
@@ -225,8 +226,25 @@ class AjaxController extends Zend_Controller_Action {
                     $workAr['added'] = true;
                     $workAr['user_id'] = $userId;
                 }
-                Zend_Registry::get('logger')->log(Zend_Debug::Dump($workId, null, false), 6);
                 echo json_encode($workAr);
+                return;
+            }
+        }
+        // Invalid token
+        echo json_encode(array('error' => 'token'));
+        return;
+    }
+    
+    public function changeWorkPrioAction() {
+        $authNS = new Zend_Session_Namespace('authToken');
+        $hash = $authNS->authToken;
+        if ($this->getRequest() && $hash == $this->getRequest()->getParam('auth_token')) {
+            $workId = $this->getRequest()->getParam('id');
+            $prioId = $this->getRequest()->getParam('p');
+            if(!empty($workId) && in_array((int)$prioId, Application_Model_Travaux::$PRIORITIES)) {
+                $travauxTable = new Application_Model_Travaux();
+                $travauxTable->changeWorkPrio($workId, $prioId);
+                echo true;
                 return;
             }
         }

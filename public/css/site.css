@@ -105,6 +105,53 @@ div.message {
     z-index:99;
 }
 
+#wv_set_urgent {
+    color: Red;
+    padding:0.8em;
+}
+
+#wv_set_normal {
+    color:Green;
+    padding:0.8em;
+}
+
+#wv_set_done {
+    color: Grey;
+    padding:0.8em;
+}
+
+#wv_title_inside {
+    font-weight: bold;
+}
+
+#wv_frequency_container {
+    padding-top:1em;
+}
+
+#wv_types_container {
+    padding-top:1em;
+}
+
+#wv_tools_container {
+    padding-top:1em;
+}
+
+#wv_workers_container {
+    padding-top:1em;
+}
+
+#wv_map {
+    margin-top:1em;
+    height:150px;
+    width:100%;
+}
+
+#wv_coords {
+    padding-top:1em;
+    font-style: italic;
+    font-size: 80%;
+}
+
 /* Conserver ? */
 form.formWork legend {
     padding-right: 15px; padding-left: 15px;

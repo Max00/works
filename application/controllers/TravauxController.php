@@ -274,7 +274,6 @@ class TravauxController extends Zend_Controller_Action {
                     $addWorkForm->getElement('title')->removeDecorator('Errors');
                     
                 }
-                
                 if ($formIsValid) {                        // Form valide
                     $travauxTable = new Application_Model_Travaux();
                     $travauxTable->addWork($formData);

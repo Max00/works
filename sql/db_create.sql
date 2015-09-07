@@ -401,3 +401,10 @@ INSERT INTO `works_workers` (`work_id`, `user_id`, `date_added`, `date_done`) VA
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+CREATE VIEW works_with_coords AS (
+SELECT w.id, w.title AS work_title, o.title AS oeuvre_title, COALESCE(w.coords_x, o.coords_x) as coords_x,COALESCE(w.coords_y, o.coords_y) as coords_y
+FROM works AS w
+JOIN oeuvres AS o ON o.id = w.oeuvre_id
+);

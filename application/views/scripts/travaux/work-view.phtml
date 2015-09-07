@@ -1,18 +1,48 @@
-<div class="ui modal" id="work_view">
+<input type="hidden" id="auth_token" value="<?php echo $this->auth_token ?>" />
+<div class="ui large modal" id="work_view">
+    <input type="hidden" id="wv_id" />
     <i class="close icon"></i>
     <div class="header">
-        Modal Title
+        <span id="wv_title"></span>
     </div>
     <div class="content">
-        <div class="image">
-            An image can appear on left or an icon
-        </div>
-        <div class="description">
-            A description can appear on the right
-        </div>
+        <div class="ui grid">
+            <div class="row three column">
+                <div class="four wide column" id="first">
+                    <div class="ui tiny buttons">
+                        <button class="ui button" id="wv_set_urgent">Urgent</button>
+                        <button class="ui button" id="wv_set_normal">Normal</button>
+                        <button class="ui button" id="wv_set_done">Fait</button>
+                    </div>
+                    <div id="wv_frequency_container">
+                        <i class="repeat icon"></i> Tous les
+                        <span id="wv_frequency_number"></span>
+                        <span id="wv_frequency_type"></span>
+                    </div>
+                    <div id="wv_types_container"></div>
+                </div>
+                <div class="six wide column" id="second">
+                    <div id="wv_title_inside"></div>
+                    <div id="wv_description"></div>
+                    <div id="wv_tools_container">
+                        <b>Outils : </b><span id="wv_tools"></span>
+                    </div>
+                    <div id="wv_workers_container">
+                        <b>Intervenants extérieurs : </b><ul><span id="wv_workers"></span></ul>
+                    </div>
+                </div>
+                <div class="six wide column" id="third">
+                    <div id="wv_oeuvre_container">
+                        <b>Oeuvre à proximité : </b><span id="wv_oeuvre"></span>
+                    </div>
+                    <span id="wv_desc_emplact"></span>
+                    <div id="wv_map"></div>
+                    <div id="wv_coords"></div>
+                </div>
+            </div>
+        </div>  
     </div>
     <div class="actions">
-        <div class="ui button">Cancel</div>
         <div class="ui button">OK</div>
     </div>
 </div>

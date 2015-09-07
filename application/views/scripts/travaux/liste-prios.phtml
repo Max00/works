@@ -63,10 +63,7 @@
         </table>
         <?php endforeach; ?>
     <?php echo $this->partial('travaux/modals.phtml'); ?>
-    <?php echo $this->partial('travaux/work-view.phtml'); ?>
-    <?php //if($this->workViewId) : ?>
-        
-    <?php //endif; ?>
+    <?php echo $this->partial('travaux/work-view.phtml', array('auth_token' => $this->auth_token)); ?>
 </section>
 
             <?php goto end; ?>

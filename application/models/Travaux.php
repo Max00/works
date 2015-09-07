@@ -32,11 +32,11 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
      */
     public function getWorksAndOeuvresNearBy($startLat, $startLong, $perimeter) {
         
-        $req = "SELECT id,title, coords_y, coords_x,
+        $req = "SELECT id, work_title, oeuvre_title, coords_y, coords_x,
 ROUND(SQRT(
 POW(111200 * (coords_y - $startLat), 2) +
 POW(111200 * ($startLong - coords_x) * COS($startLong / 57.3), 2))) AS distance, oeuvre_title
-FROM (SELECT w.id as id, w.title, w.coords_x, w.coords_y, w.oeuvre_title FROM works_with_coords as w WHERE w.coords_x IS NOT NULL) as w
+FROM (SELECT w.id as id, w.work_title, w.coords_x, w.coords_y, w.oeuvre_title FROM works_with_coords as w WHERE w.coords_x IS NOT NULL) as w
 HAVING distance < 1000 ORDER BY distance
 ";
         return $this->_db->fetchAll($req);

@@ -99,15 +99,15 @@ function initMap() {
     map.initialize;
 }
 function initViewWorkMap(x, y, locationLabel) {
-    var google;
-    if (isCoordX(x) && isCoordY(y) && google != undefined) {
+    if (isCoordX(x) && isCoordY(y) && google !== undefined) {
+        console.log("and those are coords")
         var latlon = new google.maps.LatLng(y, x);
         var mapOptions = {
             center: latlon,
             zoom: 15
         };
-        $('#work-view-map').removeClass('hide');
-        var map = new google.maps.Map(document.getElementById('work-view-map'), mapOptions);
+        $('#wv_map').show();
+        var map = new google.maps.Map(document.getElementById('wv_map'), mapOptions);
         var marker = new google.maps.Marker({
             position: latlon,
             map: map,
@@ -115,7 +115,7 @@ function initViewWorkMap(x, y, locationLabel) {
         });
         map.initialize;
     } else {
-        $('#work-view-map').addClass('hide');
+        $('#wv_map').hide();
     }
 }
 function hideAddWMap() {
@@ -126,7 +126,8 @@ function addViewWorkType(id, name, color) {
     $('#work-view #work-types div[data-id="' + id + '"]').css('background-color', '#' + color);
 }
 
-
+/*
+ * old function
 function loadWorkView2(workId) {
     $('#work-view span#work-title').hide();
     $('#work-view span#user-add-label').hide();
@@ -269,9 +270,104 @@ function loadWorkView2(workId) {
         }
     });
 }
-
+*/
 function loadWorkView(workId) {
-    $('#work_view').modal('show');
+    $('#wv_set_urgent').removeClass('active');
+    $('#wv_set_normal').removeClass('active');
+    $('#wv_set_done').removeClass('active');
+    $('#wv_frequency_container').hide();
+    $('#wv_tools_container').hide();
+    $('#wv_workers_container').hide();
+    $('#wv_oeuvre_container').hide();
+    $('#wv_workers_container').hide();
+    $('#wv_map').hide();
+    $('#wv_types_container').html('');
+    $('#wv_workers').html('');
+    $('#wv_desc_emplact').html('');
+    
+    $.ajax({
+        type: "POST",
+        url: "/index.php/ajax/get-work-details",
+        data: {
+            workId: workId,
+            auth_token: $('#auth_token').val()
+        },
+        success: function(response) {
+            console.log(response)
+            $('#wv_id').val(workId);
+            $('#wv_title').html(response.title);
+            $('#wv_title_inside').html(response.title);
+            if(response.prio=="1") {
+                $('#wv_set_urgent').addClass('active');
+            } else if(response.prio=="2") {
+                $('#wv_set_normal').addClass('active');
+            } else {
+                $('#wv_set_done').addClass('active');
+            }
+            fd=response.frequency_days;
+            fw=response.frequency_weeks;
+            fm=response.frequency_months;
+            fcur=null;
+            if(fd) {
+                fcur = fd;
+                if(fd == 1)
+                    $('#wv_frequency_type').html('jour');
+                else
+                    $('#wv_frequency_type').html('jours');
+            } else if(fw) {
+                fcur = fw;
+                if(fd == 1)
+                    $('#wv_frequency_type').html('semaine');
+                else
+                    $('#wv_frequency_type').html('semaines');
+            } else if(fm) {
+                fcur = fm;
+                $('#wv_frequency_type').html('mois');
+            }
+            if(fcur) {
+                $('#wv_frequency_container').show();
+                $('#wv_frequency_number').html(fcur);
+            }
+            if(response.types) {
+                $(response.types).each(function(i){
+                    $('#wv_types_container').append('<a class="ui label" style="background-color:#'+this.color+'">'+this.name+'</a>')
+                })
+            }
+            if(response.description) {
+                $('#wv_description').html(response.description);
+            }
+            if(response.tools) {
+                $('#wv_tools_container').show();
+                $('#wv_tools').html(response.tools);
+            }
+            if(response.additional_workers.length) {
+                $('#wv_workers_container').show();
+                $(response.additional_workers).each(function(i){
+                    $('#wv_workers').append('<li>'+this+'</li>')
+                })
+            }
+            if(response.coords_x) {
+                x = Math.round(response.coords_x * 10000) / 10000;
+                y = Math.round(response.coords_y * 10000) / 10000;
+                $('#wv_coords').html(x + ', ' + y);
+            }
+            if(response.oeuvre_title) {
+                $('#wv_oeuvre_container').show();
+                $('#wv_oeuvre').html(response.oeuvre_title);
+                initViewWorkMap(response.coords_x, response.coords_y, response.oeuvre_title);
+            } else if(response.coords_x) {
+                initViewWorkMap(response.coords_x, response.coords_y, response.title);
+            }
+            if(response.desc_emplact) {
+                $('#wv_desc_emplact').html(response.desc_emplact);
+            }
+            
+            $('#work_view').modal({onHidden:function(){location.reload()}}).modal('show');
+        },
+        error: function(response) {
+            console.log('AJAX error Get Work');
+        }
+    });
 }
 
 $(document).ready(function() {
@@ -291,7 +387,7 @@ $(document).ready(function() {
         $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
         $('#delete_work_modal')
                 .modal({
-                    onApprove:function(){window.location.href=$('input#waiting_action').attr('data-href')}
+                    onApprove:function(){location.reload()}
                 })
                 .modal('show');
     })
@@ -299,12 +395,71 @@ $(document).ready(function() {
         $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
         $('#set_work_done_modal')
                 .modal({
-                    onApprove:function(){window.location.href=$('input#waiting_action').attr('data-href')}
+                    onApprove:function(){location.reload()}
                 })
                 .modal('show');
     })
     // Notices
     $('#noticesContainer .message').delay(3000).fadeOut();
+    // List
+    // WV Set prios
+    $('#wv_set_urgent').click(function(){
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/change-work-prio',
+            data: {
+                id: $('#wv_id').val(),
+                p: 1,
+                auth_token: $('#auth_token').val()
+            },
+            success: function(response) {
+                $('#wv_set_urgent').addClass('active');
+                $('#wv_set_normal').removeClass('active');
+                $('#wv_set_done').removeClass('active');
+            },
+            error: function(response) {
+                console.log('AJAX error: wv_set_urgent');
+            }
+        });
+    })
+    $('#wv_set_normal').click(function(){
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/change-work-prio',
+            data: {
+                id: $('#wv_id').val(),
+                p: 2,
+                auth_token: $('#auth_token').val()
+            },
+            success: function(response) {
+                $('#wv_set_urgent').removeClass('active');
+                $('#wv_set_normal').addClass('active');
+                $('#wv_set_done').removeClass('active');
+            },
+            error: function(response) {
+                console.log('AJAX error: wv_set_urgent');
+            }
+        });
+    })
+    $('#wv_set_done').click(function(){
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/change-work-prio',
+            data: {
+                id: $('#wv_id').val(),
+                p: 3,
+                auth_token: $('#auth_token').val()
+            },
+            success: function(response) {
+                $('#wv_set_urgent').removeClass('active');
+                $('#wv_set_normal').removeClass('active');
+                $('#wv_set_done').addClass('active');
+            },
+            error: function(response) {
+                console.log('AJAX error: wv_set_urgent');
+            }
+        });
+    })
     
     /* OLD */
     if ($('section#works-list').length > 0) {
@@ -471,7 +626,6 @@ $(document).ready(function() {
                     .keyup(function() {
                         var hasEmptyValues = false;
                         for (var i = 0; i < $('.additional_worker').length; i++) {
-                            console.log($('.additional_worker')[i].value);
                             if ($('.additional_worker')[i].value === '') {
                                 hasEmptyValues = true;
                                 break;
