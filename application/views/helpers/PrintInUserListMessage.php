@@ -14,7 +14,7 @@ class Zend_View_Helper_PrintInUserListMessage {
         if($currentUserId == $userId) {                                         // Dans la liste de l'utilisateur courant
             echo self::$INMYLISTMESSAGE;
         } else {
-            printf(self::$INUSERLISTMESSAGE, $userLName . ' ' . $userLName);
+            printf(self::$INUSERLISTMESSAGE, $userFName . ' ' . $userLName);
         }
     }
 }

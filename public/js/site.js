@@ -162,10 +162,12 @@ function loadWorkView(workId) {
     $('#wv_workers_container').hide();
     $('#wv_oeuvre_container').hide();
     $('#wv_workers_container').hide();
-    //$('#wv_map').hide();
+    $('#wv_map').hide();
+    $('#wv_user_add_container').hide();
     $('#wv_types_container').html('');
     $('#wv_workers').html('');
     $('#wv_desc_emplact').html('');
+    $('#wv_coords').html('');
 
     $.ajax({
         type: "POST",
@@ -180,6 +182,10 @@ function loadWorkView(workId) {
             $('#wv_id').val(workId);
             $('#wv_title').html(response.title);
             $('#wv_title_inside').html(response.title);
+            if(response.user_add) {
+                $('#wv_user_add_container').show();
+                $('#wv_user_add').html(response.user_add);
+            }
             if (response.prio == "1") {
                 $('#wv_set_urgent').addClass('active');
             } else if (response.prio == "2") {
@@ -405,8 +411,14 @@ $(document).ready(function () {
                                 $('#works_3').append(wm);
                                 sortWList('#works_3');
                                 setPrioButtons('#works_3', 2, 'up');
-                                $('tr[data-workid="' + wid + '"]').find('i.icon.pin').remove();
-                                $('tr[data-workid="' + wid + '"]').find('.buttons').remove();
+                                if($('#auth_token_supervisor').val()) { 
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.lock').remove();
+                                    $('tr[data-workid="' + wid + '"]').find('div.set_work_done_button').remove();
+                                } else {
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.pin').remove();
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.lock').remove();
+                                    $('tr[data-workid="' + wid + '"]').find('.buttons').remove();
+                                }
                             },
                             error: function (response) {
                                 console.log('AJAX error: set_done');

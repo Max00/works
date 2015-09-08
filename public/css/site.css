@@ -31,6 +31,9 @@ table#works_1 {
     border-left-color: #EB4747;
     border-left-width: thick;
 }
+table.works_table {
+    min-width:800px;
+}
 table.works_table td {
     height: 3em;
     padding-top:0 !important;
@@ -144,6 +147,10 @@ div.message {
 }
 
 #wv_workers_container {
+    padding-top:1em;
+}
+
+#wv_user_add_container {
     padding-top:1em;
 }
 
