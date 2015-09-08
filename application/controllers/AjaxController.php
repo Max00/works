@@ -11,8 +11,12 @@ class AjaxController extends Zend_Controller_Action {
     // Dropdown
     public function getOeuvresAction() {
         $authNS = new Zend_Session_Namespace('authToken');
-        $hash = $authNS->authToken;
-        if ($this->getRequest() && $hash == $this->getRequest()->getParam('auth_token')) {
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        }
+        if ($hash == $pageToken) {
             $q = $this->getParam('q');
             if (empty($q))
                 return;
@@ -36,8 +40,12 @@ class AjaxController extends Zend_Controller_Action {
     // Creation d'un type a la volée
     public function createOnFlyTypeAction() {
         $authNS = new Zend_Session_Namespace('authToken');
-        $hash = $authNS->authToken;
-        if (true || $this->getRequest() && $hash == $this->getRequest()->getParam('auth_token')) {
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        }
+        if ($hash == $pageToken) {
             $color = $this->getRequest()->getParam('color');
             $name = $this->getRequest()->getParam('name');
             $colorValidator = new Zend_Validate_Regex(array('pattern' => '/^[a-fA-F0-9]*$/'));
@@ -85,8 +93,14 @@ class AjaxController extends Zend_Controller_Action {
     
     public function getOeuvreCoordsAction() {
         $authNS = new Zend_Session_Namespace('authToken');
-        $hash = $authNS->authToken;
-        if ($this->getRequest() && $hash == $this->getRequest()->getParam('auth_token')) {
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        } else if(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
+        }
+        if ($hash == $pageToken) {
             $oeuvreId = $this->getRequest()->getParam('oeuvreId');
             if (!empty($oeuvreId)) {
                 $coordsAr = array();
@@ -142,8 +156,14 @@ class AjaxController extends Zend_Controller_Action {
 //    
     public function getWorkDetailsAction() {
         $authNS = new Zend_Session_Namespace('authToken');
-        $hash = $authNS->authToken;
-        if ($this->getRequest() && $hash == $this->getRequest()->getParam('auth_token')) {
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        } else if(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
+        }
+        if ($hash == $pageToken) {
             $workId = $this->getRequest()->getParam('workId');
             if(!empty($workId)) {
                 $worksTable = new Application_Model_Travaux();
@@ -236,22 +256,13 @@ class AjaxController extends Zend_Controller_Action {
     }
     
     public function changeWorkPrioAction() {
-        $authSupervisorNS = new Zend_Session_Namespace('authTokenSupervisor');
-        $authWorkerNS = new Zend_Session_Namespace('authTokenWorker');
-        $role;
+        $authNS = new Zend_Session_Namespace('authToken');
         $hash;
-        $tokenValid;
-        if(isset($authSupervisorNS->authToken)) {
-            $hash = $authSupervisorNS->authToken;
-            $role = 'supervisor';
-            $tokenValid = $hash == $this->getRequest()->getParam('auth_token_supervisor');
-        } else {
-            $hash = $authWorkerNS->authToken;
-            $role = 'worker';
-            $tokenValid = $hash == $this->getRequest()->getParam('auth_token_worker');
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
         }
-        
-        if ($this->getRequest() && $tokenValid) {
+        if ($hash == $pageToken) {
             $workId = $this->getRequest()->getParam('id');
             $prioId = $this->getRequest()->getParam('p');
             if(!empty($workId) && in_array((int)$prioId, Application_Model_Travaux::$PRIORITIES)) {
@@ -262,7 +273,32 @@ class AjaxController extends Zend_Controller_Action {
             }
         }
         
+        // Invalid token
+        echo json_encode(array('error' => 'token'));
+        return;
+    }
+    
+    public function setWorkDoneAction() {
+        $authNS = new Zend_Session_Namespace('authToken');
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
         
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
+        }
+        if ($hash == $pageToken) {
+            $workId = $this->getRequest()->getParam('id');
+            if(!empty($workId)) {
+                $travauxTable = new Application_Model_Travaux();
+                $travauxTravailleursTable = new Application_Model_TravauxTravailleurs();
+                $travauxTravailleursTable->deleteWorksFromAllCurrentLists($workId);
+                $travauxTable->setWorkDone($workId);
+                echo true;
+                return;
+            }
+        }
         
         // Invalid token
         echo json_encode(array('error' => 'token'));

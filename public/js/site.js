@@ -175,6 +175,8 @@ function loadWorkView(workId) {
             auth_token: getPageToken()
         },
         success: function (response) {
+            console.log(response)
+            console.log(getPageToken());
             $('#wv_id').val(workId);
             $('#wv_title').html(response.title);
             $('#wv_title_inside').html(response.title);
@@ -393,10 +395,9 @@ $(document).ready(function () {
                     onApprove: function () {
                         $.ajax({
                             type: "GET",
-                            url: '/index.php/ajax/change-work-prio',
+                            url: '/index.php/ajax/set-work-done',
                             data: {
                                 id: wid,
-                                p: 3,
                                 auth_token: getPageToken()
                             },
                             success: function (response) {
@@ -404,6 +405,8 @@ $(document).ready(function () {
                                 $('#works_3').append(wm);
                                 sortWList('#works_3');
                                 setPrioButtons('#works_3', 2, 'up');
+                                $('tr[data-workid="' + wid + '"]').find('i.icon.pin').remove();
+                                $('tr[data-workid="' + wid + '"]').find('.buttons').remove();
                             },
                             error: function (response) {
                                 console.log('AJAX error: set_done');

@@ -92,6 +92,7 @@ class TravauxController extends Zend_Controller_Action {
         }
         
         /* Selon le role, on ne crée pas le même token */
+        Zend_Registry::get('logger')->log('Will create TOKEN', 6);
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
         $ns;
         if($role == Application_Model_Roles::$ROLE_SUPERVISOR) {                // Si on est superviseur
@@ -99,9 +100,12 @@ class TravauxController extends Zend_Controller_Action {
         } else {                                                                // Si on est Worker
             $ns = 'authTokenWorker';
         }
-        $authNS = new Zend_Session_Namespace($ns);
+        $authNS = new Zend_Session_Namespace('authToken');
         $authNS->setExpirationSeconds(TOKEN_EXPIRATION_SECS);
-        $authNS->$ns = $this->view->$ns = md5(uniqid(rand(), 1));               // Token
+
+        $authNS->$ns = md5(uniqid(rand(), 1));                                  // Token
+        
+        $this->view->$ns = $authNS->$ns;
     }
 
     /*
@@ -816,10 +820,7 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->removeWorkFromList = $acl->isAllowed($role, 'remove_work_from_list');
             $this->view->setWorkDone = $acl->isAllowed($role, 'set_work_done');
             $this->view->workDonePrio = Application_Model_Travaux::$PRIORITIES['Déjà effectué'];
-            $authNS = new Zend_Session_Namespace('authToken');
-            $authNS->setExpirationSeconds(TOKEN_EXPIRATION_SECS);
-            $authNS->authToken = $this->view->auth_token = md5(uniqid(rand(), 1)); // Token
-
+            
             $travauxTable = new Application_Model_Travaux();
 
             $this->view->noTypeLabel = Application_Model_Travaux::$NOTYPE;      // Travaux sans type
