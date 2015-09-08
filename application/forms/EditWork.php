@@ -45,7 +45,7 @@ class Application_Form_EditWork extends Zend_Form {
     public function initToken() {
         $authNS = new Zend_Session_Namespace('authToken');
         $authNS->setExpirationSeconds(TOKEN_EXPIRATION_SECS);
-        $authNS->authToken = $hash = md5(uniqid(rand(), 1));                   // Token, pour AJAX notamment
+        $authNS->authTokenForm = $hash = md5(uniqid(rand(), 1));                   // Token, pour AJAX notamment
         $this->auth_token->setValue($hash)
                 ->removeDecorator('HtmlTag')
                 ->removeDecorator('Label');
