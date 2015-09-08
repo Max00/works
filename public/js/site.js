@@ -469,7 +469,7 @@ $(document).ready(function () {
                     .clone()
                     .prop('id', 'additional-workers[]')
                     .prop('name', 'additional-workers[]');
-            adW.removeClass('hide')
+            adW.show()
                     .addClass('additional_worker')
                     .val(elt.value)
                     .insertBefore('#add_additional_worker')
@@ -580,7 +580,7 @@ $(document).ready(function () {
                     .clone()
                     .prop('id', 'additional-workers[]')
                     .prop('name', 'additional-workers[]');
-            adW.removeClass('hide')
+            adW.show()
                     .addClass('additional_worker')
                     .insertBefore('#add_additional_worker')
                     .keyup(function () {
