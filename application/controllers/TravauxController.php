@@ -90,6 +90,18 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->fname = $user['fname'];
             $this->view->uid = $auth->getIdentity()->id;
         }
+        
+        /* Selon le role, on ne crée pas le même token */
+        $role = Zend_Auth::getInstance()->getIdentity()->role_id;
+        $ns;
+        if($role == Application_Model_Roles::$ROLE_SUPERVISOR) {                // Si on est superviseur
+            $ns = 'authTokenSupervisor';
+        } else {                                                                // Si on est Worker
+            $ns = 'authTokenWorker';
+        }
+        $authNS = new Zend_Session_Namespace($ns);
+        $authNS->setExpirationSeconds(TOKEN_EXPIRATION_SECS);
+        $authNS->$ns = $this->view->$ns = md5(uniqid(rand(), 1));               // Token
     }
 
     /*
@@ -142,9 +154,8 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->addWorkToUserList = $acl->isAllowed($role, 'add_work_to_user_list');
 //            $this->view->haveWorkSuggestion = $acl->isAllowed($role, 'have_work_suggestion');
             $this->view->workDonePrio = Application_Model_Travaux::$PRIORITIES['Déjà effectué'];
-            $authNS = new Zend_Session_Namespace('authToken');
-            $authNS->setExpirationSeconds(TOKEN_EXPIRATION_SECS);
-            $authNS->authToken = $this->view->auth_token = md5(uniqid(rand(), 1));                                  // Token
+            
+            
             $travauxTable = new Application_Model_Travaux();
 
             $this->view->noTypeLabel = Application_Model_Travaux::$NOTYPE;
@@ -265,7 +276,7 @@ class TravauxController extends Zend_Controller_Action {
                 $addWorkForm = new Application_Form_AddWork();
                 $addWorkForm->populate($formData);
                 $formIsValid = $addWorkForm->isValid($formData);
-                $worktype = $this->_request->getParam('worktype');            // On vide les champs qui ne sont plus nécessaires
+                $worktype = $this->_request->getParam('worktype');              // On vide les champs qui ne sont plus nécessaires
                 if ('question' != $worktype) {                                  // Travail classique ou balisage
                     $addWorkForm->getElement('title_question')->setValue('');
                     $addWorkForm->getElement('title_question')->removeDecorator('Errors'); // Errors reseting : UPDATE 2015-03-17 - TO TEST

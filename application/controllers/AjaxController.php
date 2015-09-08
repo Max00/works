@@ -236,9 +236,22 @@ class AjaxController extends Zend_Controller_Action {
     }
     
     public function changeWorkPrioAction() {
-        $authNS = new Zend_Session_Namespace('authToken');
-        $hash = $authNS->authToken;
-        if ($this->getRequest() && $hash == $this->getRequest()->getParam('auth_token')) {
+        $authSupervisorNS = new Zend_Session_Namespace('authTokenSupervisor');
+        $authWorkerNS = new Zend_Session_Namespace('authTokenWorker');
+        $role;
+        $hash;
+        $tokenValid;
+        if(isset($authSupervisorNS->authToken)) {
+            $hash = $authSupervisorNS->authToken;
+            $role = 'supervisor';
+            $tokenValid = $hash == $this->getRequest()->getParam('auth_token_supervisor');
+        } else {
+            $hash = $authWorkerNS->authToken;
+            $role = 'worker';
+            $tokenValid = $hash == $this->getRequest()->getParam('auth_token_worker');
+        }
+        
+        if ($this->getRequest() && $tokenValid) {
             $workId = $this->getRequest()->getParam('id');
             $prioId = $this->getRequest()->getParam('p');
             if(!empty($workId) && in_array((int)$prioId, Application_Model_Travaux::$PRIORITIES)) {
@@ -248,6 +261,9 @@ class AjaxController extends Zend_Controller_Action {
                 return;
             }
         }
+        
+        
+        
         // Invalid token
         echo json_encode(array('error' => 'token'));
         return;

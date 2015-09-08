@@ -1,3 +1,23 @@
+String.prototype.stripAccents = function(){
+    var accent = [
+        /[\300-\306]/g, /[\340-\346]/g, // A, a
+        /[\310-\313]/g, /[\350-\353]/g, // E, e
+        /[\314-\317]/g, /[\354-\357]/g, // I, i
+        /[\322-\330]/g, /[\362-\370]/g, // O, o
+        /[\331-\334]/g, /[\371-\374]/g, // U, u
+        /[\321]/g, /[\361]/g, // N, n
+        /[\307]/g, /[\347]/g, // C, c
+    ];
+    var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
+     
+    var str = this;
+    for(var i = 0; i < accent.length; i++){
+        str = str.replace(accent[i], noaccent[i]);
+    }
+     
+    return str;
+}
+
 function rgb2hex(rgb, noHashtag) {
     if (/^#[0-9A-F]{6}$/i.test(rgb))
         return rgb;
@@ -125,6 +145,14 @@ function addViewWorkType(id, name, color) {
     $('#work-view #work-types div[data-id="' + id + '"]').css('background-color', '#' + color);
 }
 
+function getPageToken() {
+    if($('#auth_token_supervisor').length) {
+        return $('#auth_token_supervisor').val();
+    } else {
+        return $('#auth_token_worker').val();
+    }
+}
+
 function loadWorkView(workId) {
     $('#wv_set_urgent').removeClass('active');
     $('#wv_set_normal').removeClass('active');
@@ -134,7 +162,7 @@ function loadWorkView(workId) {
     $('#wv_workers_container').hide();
     $('#wv_oeuvre_container').hide();
     $('#wv_workers_container').hide();
-    $('#wv_map').hide();
+    //$('#wv_map').hide();
     $('#wv_types_container').html('');
     $('#wv_workers').html('');
     $('#wv_desc_emplact').html('');
@@ -144,7 +172,7 @@ function loadWorkView(workId) {
         url: "/index.php/ajax/get-work-details",
         data: {
             workId: workId,
-            auth_token: $('#auth_token').val()
+            auth_token: getPageToken()
         },
         success: function (response) {
             $('#wv_id').val(workId);
@@ -215,7 +243,12 @@ function loadWorkView(workId) {
                 $('#wv_desc_emplact').html(response.desc_emplact);
             }
 
-            $('#work_view').modal('show');
+            $('#work_view').modal({
+                onVisible:function(){
+                    initViewWorkMap(response.coords_x, response.coords_y, response.title);
+                },
+                transition:'fly down'
+            }).modal('show');
         },
         error: function (response) {
             console.log('AJAX error Get Work');
@@ -227,8 +260,8 @@ function sortWList(list) {
     var rows = $(list + ' tbody  tr').get();
 
     rows.sort(function (a, b) {
-        var A = $(a).children('td').children('.work_title').eq(0).text().toUpperCase();
-        var B = $(b).children('td').children('.work_title').eq(0).text().toUpperCase();
+        var A = $(a).children('td').children('.work_title').eq(0).text().toUpperCase().stripAccents();
+        var B = $(b).children('td').children('.work_title').eq(0).text().toUpperCase().stripAccents();
 
         if (A < B) {
             return -1;
@@ -246,7 +279,7 @@ function sortWList(list) {
 }
 
 function setPrioButtons(list, prio, arrow) {
-    var cps=$(list + ' div.change_prio');
+    var cps = $(list + ' div.change_prio');
     cps.attr('data-prio', prio);
     cps.children('i').removeClass('up down').addClass(arrow);
 }
@@ -270,129 +303,148 @@ $(document).ready(function () {
     $('#noticesContainer .message').delay(3000).fadeOut();
 
 
-        $('.delete_work_button').click(function () {
-            $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
-            $('#delete_work_modal')
-                    .modal({
-                        onApprove: function () {
-                            location.reload()
-                        }
-                    })
-                    .modal('show');
-        })
-        $('#wv_set_urgent').click(function () {
-            wid = $('#wv_id').val();
-            $.ajax({
-                type: "GET",
-                url: '/index.php/ajax/change-work-prio',
-                data: {
-                    id: wid,
-                    p: 1,
-                    auth_token: $('#auth_token').val()
-                },
-                success: function (response) {
-                    $('#wv_set_urgent').addClass('active');
-                    $('#wv_set_normal').removeClass('active');
-                    $('#wv_set_done').removeClass('active');
-                    wm = $('tr[data-workid="' + wid + '"]').detach();
-                    $('#works_1').append(wm);
-                    sortWList('#works_1');
-                    setPrioButtons('#works_1', 2, 'down');
-                },
-                error: function (response) {
-                    console.log('AJAX error: wv_set_urgent');
-                }
-            });
-        })
-        $('#wv_set_normal').click(function () {
-            wid = $('#wv_id').val();
-            $.ajax({
-                type: "GET",
-                url: '/index.php/ajax/change-work-prio',
-                data: {
-                    id: wid,
-                    p: 2,
-                    auth_token: $('#auth_token').val()
-                },
-                success: function (response) {
-                    $('#wv_set_urgent').removeClass('active');
-                    $('#wv_set_normal').addClass('active');
-                    $('#wv_set_done').removeClass('active');
-                    wm = $('tr[data-workid="' + wid + '"]').detach();
-                    $('#works_2').append(wm);
-                    sortWList('#works_2');
-                    setPrioButtons('#works_2', 1, 'up');
-                },
-                error: function (response) {
-                    console.log('AJAX error: wv_set_urgent');
-                }
-            });
-        })
-        $('#wv_set_done').click(function () {
-            wid = $('#wv_id').val();
-            $.ajax({
-                type: "GET",
-                url: '/index.php/ajax/change-work-prio',
-                data: {
-                    id: wid,
-                    p: 3,
-                    auth_token: $('#auth_token').val()
-                },
-                success: function (response) {
-                    $('#wv_set_urgent').removeClass('active');
-                    $('#wv_set_normal').removeClass('active');
-                    $('#wv_set_done').addClass('active');
-                    wm = $('tr[data-workid="' + wid + '"]').detach();
-                    $('#works_3').append(wm);
-                    sortWList('#works_3');
-                    setPrioButtons('#works_3', 2, 'up');
-                },
-                error: function (response) {
-                    console.log('AJAX error: wv_set_urgent');
-                }
-            });
-        })
-        $('.set_work_done_button').click(function () {
-            $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
-            $('#set_work_done_modal')
-                    .modal({
-                        onApprove: function () {
-                            location.reload()
-                        }
-                    })
-                    .modal('show');
-        })
-
-        $('section#works-list li').click(function () {
-            loadWorkView($(this).parent('tr').attr('data-workid'));
-            $('div#noticesContainer dialog').hide();
+    $('.delete_work_button').click(function () {
+        $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
+        $('#delete_work_modal')
+                .modal({
+                    onApprove: function () {
+                        location.reload()
+                    }
+                })
+                .modal('show');
+    })
+    $('#wv_set_urgent').click(function () {
+        wid = $('#wv_id').val();
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/change-work-prio',
+            data: {
+                id: wid,
+                p: 1,
+                auth_token: getPageToken()
+            },
+            success: function (response) {
+                $('#wv_set_urgent').addClass('active');
+                $('#wv_set_normal').removeClass('active');
+                $('#wv_set_done').removeClass('active');
+                wm = $('tr[data-workid="' + wid + '"]').detach();
+                $('#works_1').append(wm);
+                sortWList('#works_1');
+                setPrioButtons('#works_1', 2, 'down');
+            },
+            error: function (response) {
+                console.log('AJAX error: wv_set_urgent');
+            }
         });
-        
-        $('div.change_prio').click(function(){
-            wid = $(this).parents('tr').attr('data-workid');
-            prio = $(this).attr('data-prio');
-            console.log(wid);
-            console.log(prio);
-            $.ajax({
-                type: "GET",
-                url: '/index.php/ajax/change-work-prio',
-                data: {
-                    id: wid,
-                    p: prio,
-                    auth_token: $('#auth_token').val()
-                },
-                success: function (response) {
-                    wm = $('tr[data-workid="' + wid + '"]').detach();
-                    $('#works_'+prio).append(wm);
-                    sortWList('#works_'+prio);
-                    setPrioButtons('#works_1', 2, 'down');
-                    setPrioButtons('#works_2', 1, 'up');
-                },
-                error: function (response) {
-                    console.log('AJAX error: wv_set_urgent');
-                }
-            });
-        })
+    })
+    $('#wv_set_normal').click(function () {
+        wid = $('#wv_id').val();
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/change-work-prio',
+            data: {
+                id: wid,
+                p: 2,
+                auth_token: getPageToken()
+            },
+            success: function (response) {
+                $('#wv_set_urgent').removeClass('active');
+                $('#wv_set_normal').addClass('active');
+                $('#wv_set_done').removeClass('active');
+                wm = $('tr[data-workid="' + wid + '"]').detach();
+                $('#works_2').append(wm);
+                sortWList('#works_2');
+                setPrioButtons('#works_2', 1, 'up');
+            },
+            error: function (response) {
+                console.log('AJAX error: wv_set_normal');
+            }
+        });
+    })
+    $('#wv_set_done').click(function () {
+        wid = $('#wv_id').val();
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/change-work-prio',
+            data: {
+                id: wid,
+                p: 3,
+                auth_token: getPageToken()
+            },
+            success: function (response) {
+                $('#wv_set_urgent').removeClass('active');
+                $('#wv_set_normal').removeClass('active');
+                $('#wv_set_done').addClass('active');
+                wm = $('tr[data-workid="' + wid + '"]').detach();
+                $('#works_3').append(wm);
+                sortWList('#works_3');
+                setPrioButtons('#works_3', 2, 'up');
+                $('#work_view').transition('tada');
+            },
+            error: function (response) {
+                console.log('AJAX error: wv_set_done');
+            }
+        });
+    })
+    $('.set_work_done_button').click(function () {
+        wid = $(this).parents('tr').attr('data-workid');
+        $('#set_work_done_modal')
+                .modal({
+                    onApprove: function () {
+                        $.ajax({
+                            type: "GET",
+                            url: '/index.php/ajax/change-work-prio',
+                            data: {
+                                id: wid,
+                                p: 3,
+                                auth_token: getPageToken()
+                            },
+                            success: function (response) {
+                                wm = $('tr[data-workid="' + wid + '"]').detach();
+                                $('#works_3').append(wm);
+                                sortWList('#works_3');
+                                setPrioButtons('#works_3', 2, 'up');
+                            },
+                            error: function (response) {
+                                console.log('AJAX error: set_done');
+                            }
+                        });
+                    }
+                })
+                .modal('show');
+    })
+
+    $('section#works-list li').click(function () {
+        loadWorkView($(this).parents('tr').attr('data-workid'));
+        $('div#noticesContainer dialog').hide();
+    });
+
+    $('div.change_prio').click(function () {
+        wid = $(this).parents('tr').attr('data-workid');
+        prio = $(this).attr('data-prio');
+        console.log(wid);
+        console.log(prio);
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/change-work-prio',
+            data: {
+                id: wid,
+                p: prio,
+                auth_token: getPageToken()
+            },
+            success: function (response) {
+                wm = $('tr[data-workid="' + wid + '"]').detach();
+                $('#works_' + prio).append(wm);
+                sortWList('#works_' + prio);
+                setPrioButtons('#works_1', 2, 'down');
+                setPrioButtons('#works_2', 1, 'up');
+                $('tr[data-workid="' + wid + '"]').hide().transition('pulse');
+            },
+            error: function (response) {
+                console.log('AJAX error: wv_set_urgent');
+            }
+        });
+    })
     if ($('.formWork').length > 0) {
         hideAddWMap();
         var wt = $('[name="worktype"][checked="checked"]').val();
@@ -444,7 +496,7 @@ $(document).ready(function () {
                     url: '/index.php/ajax/get-oeuvres',
                     data: {
                         q: request.term,
-                        auth_token: $('#auth_token').val()
+                        auth_token: getPageToken()
                     },
                     dataType: 'json',
                     async: true,
@@ -468,7 +520,7 @@ $(document).ready(function () {
                     url: '/index.php/ajax/get-oeuvre-coords',
                     data: {
                         oeuvreId: ui.item.id,
-                        auth_token: $('#auth_token').val()
+                        auth_token: getPageToken()
                     },
                     success: function (response) {
                         if (response.coords_x && response.coords_y) {
@@ -554,7 +606,7 @@ $(document).ready(function () {
                 data: {
                     name: $('#add_type_label').val(),
                     color: rgb2hex($('#add_type_color_btn').css('background-color'), true),
-                    auth_token: $('#auth_token').val()
+                    auth_token: getPageToken()
                 },
                 success: function (response) {
                     if (response.success == true) {

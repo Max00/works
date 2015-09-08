@@ -8,6 +8,11 @@
         <?php echo $this->headScript() ?>
     </head>
     <body<?php if(isset($this->err)) echo ' class="error"' ?>>
+        <?php if(isset($this->authTokenSupervisor)) : ?>
+        <input type="hidden" name="auth_token_supervisor" value="<?php echo $this->authTokenSupervisor ?>" />
+        <?php elseif(isset($this->authTokenWorker)) : ?>
+        <input type="hidden" name="auth_token_worker" value="<?php echo $this->authTokenWorker ?>" />
+        <?php endif; ?>
         <div id="content">
             <div class="ui menu green" id="mainMenu">
                 <div class="header item">
@@ -28,6 +33,5 @@
                 <?php echo $this->layout()->content ?>
             </section>
         </div>
-        <input type="hidden" id="waiting_action" />
     </body>
 </html>

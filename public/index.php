@@ -52,3 +52,10 @@ $application = new Zend_Application(
 
 $application->bootstrap()
             ->run();
+
+/*
+ * @todo
+ * 
+ * auth_token => auth_token_supervisor || auth_token_worker
+ * => Update all token, based on AJAX - Set Done
+ */
