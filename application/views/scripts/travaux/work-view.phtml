@@ -8,11 +8,16 @@
         <div class="ui grid">
             <div class="row three column">
                 <div class="four wide column" id="first">
+                    <?php if($this->roleId == Application_Model_Roles::$ROLE_SUPERVISOR) : ?>
                     <div class="ui tiny buttons">
                         <button class="ui button" id="wv_set_urgent">Urgent</button>
                         <button class="ui button" id="wv_set_normal">Normal</button>
                         <button class="ui button" id="wv_set_done">Fait</button>
                     </div>
+                    <?php else : ?>
+                    <button class="ui button" id="wv_set_done">Fait</button>
+                    <button class="ui button" id="wv_add_to_ulist">Ajouter à la liste</button>
+                    <?php endif; ?>
                     <div id="wv_frequency_container">
                         <i class="repeat icon"></i> Tous les
                         <span id="wv_frequency_number"></span>

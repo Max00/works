@@ -13,7 +13,17 @@
                         $this->PrintInUserListMessage($curUserId, $curWork['user_id'], $curWork['user_fname'], $curWork['user_lname']);
                         echo '"';
                         
-                    } ?>>
+                    } ?>
+                        data-workstate="<?php
+                        if(!empty($curWork['user_id'])) : 
+                            if($curUserId == $curWork['user_id'])
+                                echo 'current';
+                            else
+                                echo 'other';
+                        else :
+                            echo 'free';
+                        endif;
+?>">
                         <td class="item">
                             <?php if(!empty($curWork['user_id'])) {
                                 if($curWork['user_id'] == $curUserId) {
@@ -38,21 +48,18 @@
                             </td>
                         <td class="options">
                             <div class="tiny icon ui buttons">
-                                <?php if (isset($this->changeWorkPrio) && $this->changeWorkPrio) : echo $this->ChangePrioButtons($workId, $currentPrioId);
-                                endif; ?>
-                                <?php if (isset($this->setWorkDone) && $this->setWorkDone) : echo $this->SetWorkDoneButton($workId);
-                                endif; ?>
-                                <?php if (isset($this->removeWork) && $this->removeWork) : echo $this->RemoveWorkButton($workId);
-                                endif; ?>
-                                <?php if (isset($this->editWork) && $this->editWork) : echo $this->EditWorkButton($workId);
-                                endif; ?>
+                                <?php if (isset($this->changeWorkPrio) && $this->changeWorkPrio) : echo $this->ChangePrioButtons($currentPrioId); endif; ?>
+                                <?php if (isset($this->setWorkDone) && $this->setWorkDone) : echo $this->SetWorkDoneButton($workId); endif; ?>
+                                <?php if (isset($this->removeWork) && $this->removeWork) : echo $this->RemoveWorkButton($workId); endif; ?>
+                                <?php if (isset($this->editWork) && $this->editWork) : echo $this->EditWorkButton($workId); endif; ?>
                                 <?php
                                 $alreadyDoneCode = Application_Model_Travaux::$PRIORITIES['Déjà effectué'];
                                 if (isset($this->addWorkToUserList) && $this->addWorkToUserList && $alreadyDoneCode != $currentPrioId) {
-                                    if(!isset($curWork['added']))              // Personne ne l'a ajouté
-                                        echo $this->AddWorkToUserListButton($workId, $curUserId);
-                                    else if(isset($curWork['cur_user'])) // C'est l'utilisateur courant qui l'a ajouté
-                                        echo $this->RemoveWorkFromUserListButton($workId, $curUserId);
+                                    if(!isset($curWork['added'])) {             // Personne ne l'a ajouté
+                                    } else if(isset($curWork['cur_user'])) {    // C'est l'utilisateur courant qui l'a ajouté
+                                    }
+                                    echo $this->AddWorkToUserListButton();
+                                    echo $this->RemoveWorkFromUserListButton();
                                 }
                                 ?>
                             </div>
@@ -63,7 +70,7 @@
         </table>
         <?php endforeach; ?>
     <?php echo $this->partial('travaux/modals.phtml'); ?>
-    <?php echo $this->partial('travaux/work-view.phtml'); ?>
+    <?php echo $this->partial('travaux/work-view.phtml', array('roleId' => $this->roleId)); ?>
 </section>
 
             <?php goto end; ?>

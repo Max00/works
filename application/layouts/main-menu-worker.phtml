@@ -4,5 +4,5 @@
 </a>
 <a href="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'liste-perso'), null, true) ?>"
    class="item<?php if(isset($this->page) && 'liste-perso' == $this->page) : echo ' active'; endif; ?>">
-    <i class="user icon"></i> Ma liste<?php echo $this->getUserWorksListCount(Zend_Auth::getInstance()->getIdentity()->id) ?>
+    <i class="user icon"></i> Ma liste (<span id="ulist_count"><?php echo $this->getUserWorksListCount(Zend_Auth::getInstance()->getIdentity()->id) ?></span>)
 </a>

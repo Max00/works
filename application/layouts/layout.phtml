@@ -8,6 +8,18 @@
         <?php echo $this->headScript() ?>
     </head>
     <body<?php if(isset($this->err)) echo ' class="error"' ?>>
+        <?php if(isset($this->uid)) : ?>
+        <input type="hidden" id="user_id" value="<?php echo $this->uid ?>" />
+        <?php endif; ?>
+        <?php if(isset($this->roleId)) : ?>
+        <input type="hidden" id="role_id" value="<?php echo $this->roleId ?>" />
+        <?php endif; ?>        
+        <?php if(isset($this->supervisorRoleId)) : ?>
+        <input type="hidden" id="supervisor_role_id" value="<?php echo $this->supervisorRoleId ?>" />
+        <?php endif; ?>
+        <?php if(isset($this->workerRoleId)) : ?>
+        <input type="hidden" id="worker_role_id" value="<?php echo $this->workerRoleId ?>" />
+        <?php endif; ?>
         <?php if(isset($this->authTokenSupervisor)) : ?>
         <input type="hidden" id="auth_token_supervisor" name="auth_token_supervisor" value="<?php echo $this->authTokenSupervisor ?>" />
         <?php elseif(isset($this->authTokenWorker)) : ?>

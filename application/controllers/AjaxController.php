@@ -304,4 +304,91 @@ class AjaxController extends Zend_Controller_Action {
         echo json_encode(array('error' => 'token'));
         return;
     }
+    
+    public function getUlistCountAction() {
+        $authNS = new Zend_Session_Namespace('authToken');
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
+        }
+        if ($hash == $pageToken) {
+            $uid = $this->getRequest()->getParam('uid');
+            if(!empty($uid)) {
+                $travauxTravailleursTable = new Application_Model_TravauxTravailleurs();
+                $count = $travauxTravailleursTable->getCountForUser($uid);
+                echo json_encode(array('works_count' => $count));
+                return;
+            }
+        }
+        
+        // Invalid token
+        echo json_encode(array('error' => 'token'));
+        return;
+    }
+    
+    public function addToUlistAction() {
+        $authNS = new Zend_Session_Namespace('authToken');
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
+        }
+        if ($hash == $pageToken) {
+            $uid = $this->getRequest()->getParam('uid');
+            $wid = $this->getRequest()->getParam('wid');
+            if(!empty($uid) && !empty($wid)) {
+                
+                $worksWorkersTable = new Application_Model_TravauxTravailleurs();
+                // Vérifier si l'enregistrement n'existe pas déjà, avec une date antérieure
+                if ($worksWorkersTable->alreadyExists($uid, $wid))
+                    return;
+
+                $dateAdded = date('Y-m-d H:i:s');                               // Date d'ajout                
+                $worksWorkersTable->insert(array('user_id' => $uid, 'work_id' => $wid, 'date_added' => $dateAdded));
+                // Insertion d'une ligne: ajout a la liste perso
+                echo json_encode(true);
+                return;
+            }
+        }
+        
+        // Invalid token
+        echo json_encode(array('error' => 'token'));
+        return;
+    }
+    
+    public function removeFromUlistAction() {
+        $authNS = new Zend_Session_Namespace('authToken');
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
+        }
+        if ($hash == $pageToken) {
+            $uid = $this->getRequest()->getParam('uid');
+            $wid = $this->getRequest()->getParam('wid');
+            if(!empty($uid) && !empty($wid)) {
+                $worksWorkersTable = new Application_Model_TravauxTravailleurs();
+                // Vérifier si l'enregistrement n'existe pas déjà, avec une date antérieure
+                if ($worksWorkersTable->alreadyExists($uid, $wid)) {
+                    $worksWorkersTable->deleteFromUserList($uid, $wid);
+                    echo json_encode(true);
+                    return;
+                }
+                return;
+            }
+        }
+        
+        // Invalid token
+        echo json_encode(array('error' => 'token'));
+        return;
+    }
 }

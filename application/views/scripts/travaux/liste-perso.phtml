@@ -1,41 +1,103 @@
+<section id="sidebar">- Sidebar -</section>
+<section id="content">
+    <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): ?>
+        <?php if (count($currentPrio['typesWorks'])) : ?>
+            <b><?php echo $currentPrio['label_prio'] ?></b><br/><br/>
+            <?php foreach ($currentPrio['typesWorks'] as $currentType): ?>
+                <?php if (isset($currentType['type'])) : ?>
+                    <div class="ui label" style="background-color:#<?php echo $currentType['type']['color'] ?>">
+                        <?php echo $currentType['type']['name'] ?>
+                    </div>
+                <?php else : ?>
+                    <?php echo $this->noTypeLabel ?>
+                <?php endif ?>
+                <table class="ui table works_table">
+                    <?php
+                    /*
+                    TODO ROLE ID ERROR
+                    PLUS ONLY AJAX FOR ADD/REMOVE FROM LIST
+                    PLUS NEARBY WORKS ON WORK VIEW
+                    */
+                    ?>
+                    <tbody>
+                        <?php foreach ($currentType['works'] as $currentWork) : ?>
+                            <tr data-workid="<?php echo $currentWork['id'] ?>">
+                                <td class="item">
+                                    <?php
+                                    if (!empty($currentWork['title'])) {
+                                        echo '<span class="work_title"> ' . $currentWork['title'] . '</span>';
+                                    } else if (!empty($currentWork['oeuvre_numero'])) {
+                                        echo '<span class="work_title"> ' . '#' . $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title'] . '</span>';
+                                    } else {
+                                        echo '<span class="work_title"> ' . Application_Model_Travaux::$UNTITLED_WORK . '</span>';
+                                    }
+                                    ?>
+                                </td>
+                                <td class="options">
+                                    <div class="tiny icon ui buttons">
+                                        <?php echo $this->SetWorkDoneButton(); ?>
+                                        <?php echo $this->RemoveWorkFromUserListButton(); ?>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    <?php endforeach; ?>
+    <?php echo $this->partial('travaux/modals.phtml'); ?>
+    <?php echo $this->partial('travaux/work-view.phtml', array('roleId' => $this->roleId)); ?>
+</section>
+
+<?php goto end; ?>
 <section id="works-container">
     <section id="works-list">
         <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): ?>
-            <?php if(count($currentPrio['typesWorks'])) : ?>
-            <div class="prio prio-<?php echo $currentPrioId ?>">
-                <span class="prio-name"><?php echo $currentPrio['label_prio'] ?></span>
-                <?php foreach ($currentPrio['typesWorks'] as $currentType): ?>
-                    <?php if (isset($currentType['type'])) : ?>
-                        <p class="type"><?php echo $currentType['type']['name'] ?></p>
-                    <?php else : ?>
-                        <p class="type"><?php echo $this->noTypeLabel ?></p>
-                    <?php endif ?>
-                    <ul>
-                        <?php foreach ($currentType['works'] as $currentWork) : ?>
-                            <li data-workid="<?php echo $currentWork['id'] ?>"<?php if(isset($currentWork['added'])): ?> class="added"<?php endif; ?>>
-                                <?php if(isset($currentWork['cur_user'])): ?>
-                                <span class="in-cur-user-list"><i class="fa fa-thumb-tack"></i></span>
-                                <?php endif; ?>
-                                <div class="title">
-                                    <?php echo $currentWork['title'] ?>
-                                </div>
-                                <div class="location">
-                                    <?php if(!empty($currentWork['oeuvre_title'])) : echo $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title']; elseif(!empty($currentWork['coords_x'])): echo $currentWork['coords_x'] . ', ' . $currentWork['coords_y']; endif; ?>
-                                </div>
-                                <div class="work-options">
-                                    <?php if (isset($this->setWorkDone) && $this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']); endif; ?>
-                                    <?php if (isset($this->removeWorkFromList) && $this->removeWorkFromList) : echo ' ' . $this->RemoveWorkFromListButton($currentWork['id'], Zend_Auth::getInstance()->getIdentity()->id); endif; ?>
-                                </div>
-                            </li>
-                <?php endforeach ?>
-                    </ul>
+            <?php if (count($currentPrio['typesWorks'])) : ?>
+                <div class="prio prio-<?php echo $currentPrioId ?>">
+                    <span class="prio-name"><?php echo $currentPrio['label_prio'] ?></span>
+                    <?php foreach ($currentPrio['typesWorks'] as $currentType): ?>
+                        <?php if (isset($currentType['type'])) : ?>
+                            <p class="type"><?php echo $currentType['type']['name'] ?></p>
+                        <?php else : ?>
+                            <p class="type"><?php echo $this->noTypeLabel ?></p>
+                        <?php endif ?>
+                        <ul>
+                            <?php foreach ($currentType['works'] as $currentWork) : ?>
+                                <li data-workid="<?php echo $currentWork['id'] ?>"<?php if (isset($currentWork['added'])): ?> class="added"<?php endif; ?>>
+                                    <?php if (isset($currentWork['cur_user'])): ?>
+                                        <span class="in-cur-user-list"><i class="fa fa-thumb-tack"></i></span>
+                                    <?php endif; ?>
+                                    <div class="title">
+                                        <?php echo $currentWork['title'] ?>
+                                    </div>
+                                    <div class="location">
+                                        <?php
+                                        if (!empty($currentWork['oeuvre_title'])) : echo $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title'];
+                                        elseif (!empty($currentWork['coords_x'])): echo $currentWork['coords_x'] . ', ' . $currentWork['coords_y'];
+                                        endif;
+                                        ?>
+                                    </div>
+                                    <div class="work-options">
+                                        <?php if (isset($this->setWorkDone) && $this->setWorkDone && $currentPrioId != $this->workDonePrio) : echo ' ' . $this->SetWorkDoneButton($currentWork['id']);
+                                        endif;
+                                        ?>
+                                <?php if (isset($this->removeWorkFromList) && $this->removeWorkFromList) : echo ' ' . $this->RemoveWorkFromUserListButton($currentWork['id'], Zend_Auth::getInstance()->getIdentity()->id);
+                                endif;
+                                ?>
+                                    </div>
+                                </li>
+                    <?php endforeach ?>
+                        </ul>
         <?php endforeach; ?>
-            </div>
+                </div>
         <?php endif; ?>
     <?php endforeach; ?>
     </section>
     <section id="middle">
     </section>
-    <?php echo $this->partial('travaux/modals.phtml'); ?>
-    <?php echo $this->partial('travaux/work-view.phtml'); ?>
+<?php echo $this->partial('travaux/modals.phtml'); ?>
+<?php echo $this->partial('travaux/work-view.phtml'); ?>
 </section>
+<?php end: ?>
