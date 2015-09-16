@@ -7,7 +7,7 @@ class Zend_View_Helper_AddWorkToUserListButton {
         $this->_view = $view;
     }
     
-    public function AddWorkToUserListButton($workId, $userId) {
-        echo '<div class="ui button clickable_link" data-href="' . $this->_view->url(array('controller' => 'travaux', 'action' => 'ajouter-liste-perso', 'travail' => $workId, 'operateur' => $userId), null, true) . '"><i class="plus icon"></i></a>';
+    public function AddWorkToUserListButton() {
+        return '<div class="ui button add_ulist"><i class="plus icon"></i></div>';
     }
 }

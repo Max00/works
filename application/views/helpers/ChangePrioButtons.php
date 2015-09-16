@@ -7,7 +7,7 @@ class Zend_View_Helper_ChangePrioButtons {
         $this->_view = $view;
     }
     
-    public function ChangePrioButtons($workId, $currentPrioId) {
+    public function ChangePrioButtons($currentPrioId) {
         $prios = Application_Model_Travaux::$PRIORITIES;
         
         // On affiche prio UP si la prio courante est de 2 ou 3

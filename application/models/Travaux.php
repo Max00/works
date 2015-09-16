@@ -393,6 +393,7 @@ HAVING distance < 1000 ORDER BY distance
                     $typesWorksA[$tIdx]['type'] = array();
                     $typesWorksA[$tIdx]['type']['id'] = $currentTypeId;
                     $typesWorksA[$tIdx]['type']['name'] = $currentWorkRow['type_name'];
+                    $typesWorksA[$tIdx]['type']['color'] = $currentWorkRow['type_color'];
                 } else {
                     $typesWorksA[$tIdx]['notype'] = true;
                 }
@@ -470,7 +471,7 @@ HAVING distance < 1000 ORDER BY distance
         $req=<<<EOT
 SELECT
 `w`.`id` AS `work_id`, `w`.`title` AS `work_title`, `w`.`date_creation`, `w`.`coords_x`, `w`.`coords_y`,
-`t`.`id` AS `type_id`, `t`.`name` AS `type_name`,
+`t`.`id` AS `type_id`, `t`.`name` AS `type_name`, `t`.`color` AS `type_color`,
 `o`.`title` AS `oeuvre_title`, `o`.`numero` AS `oeuvre_numero`,
 `ww`.`date_added`
 FROM `works_workers` AS `ww`,`works` AS `w`

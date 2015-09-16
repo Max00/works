@@ -89,10 +89,12 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->lname = $user['lname'];
             $this->view->fname = $user['fname'];
             $this->view->uid = $auth->getIdentity()->id;
+            $this->view->roleId = $roleId;
+            $this->view->supervisorRoleId = Application_Model_Roles::$ROLE_SUPERVISOR;
+            $this->view->workerRoleId = Application_Model_Roles::$ROLE_WORKER;
         }
         
         /* Selon le role, on ne crée pas le même token */
-        Zend_Registry::get('logger')->log('Will create TOKEN', 6);
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
         $ns;
         if($role == Application_Model_Roles::$ROLE_SUPERVISOR) {                // Si on est superviseur
@@ -622,7 +624,10 @@ class TravauxController extends Zend_Controller_Action {
         $noticeSession->confirmationType = 'cancel-add-ulist';
         $this->_redirect('travaux/index');
     }
-
+/*
+ * 
+ * NOW AJAX
+ * 
     public function ajouterListePersoAction() {
         $acl = Zend_Registry::get('acl');
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
@@ -665,7 +670,7 @@ class TravauxController extends Zend_Controller_Action {
             $this->_redirect('/travaux/index');
         }
     }
-
+*/
     public function retirerListePersoAction() {
         $acl = Zend_Registry::get('acl');
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
@@ -833,8 +838,8 @@ class TravauxController extends Zend_Controller_Action {
             // l'autorisation de lister les travaux
         }
 
-        $userId = Zend_Auth::getInstance()->getIdentity()->id;
-
+        $userId = $this->view->userId = Zend_Auth::getInstance()->getIdentity()->id;
+        
         $this->view->works = $travauxTable->getFromUserAndPrio($userId);
         $this->_helper->viewRenderer('liste-perso');
     }

@@ -163,6 +163,8 @@ function loadWorkView(workId) {
     $('#wv_oeuvre_container').hide();
     $('#wv_workers_container').hide();
     $('#wv_map').hide();
+    $('#wv_add_to_ulist').hide();
+    $('#wv_set_done').hide();
     $('#wv_user_add_container').hide();
     $('#wv_types_container').html('');
     $('#wv_workers').html('');
@@ -186,12 +188,18 @@ function loadWorkView(workId) {
                 $('#wv_user_add_container').show();
                 $('#wv_user_add').html(response.user_add);
             }
-            if (response.prio == "1") {
+            if (response.prio === "1") {
                 $('#wv_set_urgent').addClass('active');
-            } else if (response.prio == "2") {
+                $('#wv_add_to_ulist').show();
+                $('#wv_set_done').show();
+            } else if (response.prio === "2") {
                 $('#wv_set_normal').addClass('active');
+                $('#wv_add_to_ulist').show();
+                $('#wv_set_done').show();
             } else {
                 $('#wv_set_done').addClass('active');
+                $('#wv_add_to_ulist').show();
+                $('#wv_set_done').hide();
             }
             fd = response.frequency_days;
             fw = response.frequency_weeks;
@@ -250,6 +258,11 @@ function loadWorkView(workId) {
             if (response.desc_emplact) {
                 $('#wv_desc_emplact').html(response.desc_emplact);
             }
+            if (!response.user_add) {
+                $('#wv_add_to_ulist').show();
+            } else {
+                $('#wv_add_to_ulist').hide();
+            }
 
             $('#work_view').modal({
                 onVisible:function(){
@@ -262,6 +275,14 @@ function loadWorkView(workId) {
             console.log('AJAX error Get Work');
         }
     });
+}
+
+function isWorker() {
+    return $('#role_id').val() == $('#worker_role_id').val()
+}
+
+function isSupervisor() {
+    return $('#role_id').val() == $('#supervisor_role_id').val()
 }
 
 function sortWList(list) {
@@ -292,6 +313,51 @@ function setPrioButtons(list, prio, arrow) {
     cps.children('i').removeClass('up down').addClass(arrow);
 }
 
+function cleanUserList() {
+    $('table.works_table').each(function(){
+        if(!$(this).children('tbody').children('tr').length) {
+            $(this).prev('div.label').remove();
+            $(this).remove();
+        }
+    });
+}
+
+function cleanIconsPrioList() {
+    $('table.works_table tr').each(function(){
+        var pinI = $(this).children('td.item').children('i.pin');
+        var lockI = $(this).children('td.item').children('i.lock');
+        var state = $(this).attr('data-workstate');
+        if(state === "current") {
+            lockI.hide();
+        } else if(state === "other") {
+            pinI.hide();
+        } else {
+            lockI.hide();
+            pinI.hide();
+        }
+    });
+}
+
+function refreshUListCount() {
+    $.ajax({
+        type: "GET",
+        url: '/index.php/ajax/get-ulist-count',
+        data: {
+            uid: $('#user_id').val(),
+            auth_token: getPageToken()
+        },
+        success: function (response) {
+            if(response)
+                $('#ulist_count').html(response.works_count)
+            else
+                $('#ulist_count').html('0')
+        },
+        error: function (response) {
+            console.log('AJAX error: get ulist count');
+        }
+    });
+}
+
 $(document).ready(function () {
     $(document).tooltip({track: true});
     $('.hide').hide();
@@ -310,6 +376,23 @@ $(document).ready(function () {
     // Notices
     $('#noticesContainer .message').delay(3000).fadeOut();
 
+    cleanIconsPrioList();
+    
+    // +/- refresh
+    $('.works_table tr').each(function(){
+        var s = $(this).attr('data-workstate');
+        if(s === "current") {
+            // Afficher -
+            $(this).find('div.add_ulist').hide();
+        } else if(s === "other") {
+            // Ne rien afficher
+            $(this).find('div.add_ulist').hide();
+            $(this).find('div.remove_ulist').hide();
+        } else if(s === "free") {
+            // Afficher +
+            $(this).find('div.remove_ulist').hide();
+        }
+    });
 
     $('.delete_work_button').click(function () {
         $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
@@ -320,7 +403,7 @@ $(document).ready(function () {
                     }
                 })
                 .modal('show');
-    })
+    });
     $('#wv_set_urgent').click(function () {
         wid = $('#wv_id').val();
         $.ajax({
@@ -344,7 +427,7 @@ $(document).ready(function () {
                 console.log('AJAX error: wv_set_urgent');
             }
         });
-    })
+    });
     $('#wv_set_normal').click(function () {
         wid = $('#wv_id').val();
         $.ajax({
@@ -368,15 +451,14 @@ $(document).ready(function () {
                 console.log('AJAX error: wv_set_normal');
             }
         });
-    })
+    });
     $('#wv_set_done').click(function () {
         wid = $('#wv_id').val();
         $.ajax({
             type: "GET",
-            url: '/index.php/ajax/change-work-prio',
+            url: '/index.php/ajax/set-work-done',
             data: {
                 id: wid,
-                p: 3,
                 auth_token: getPageToken()
             },
             success: function (response) {
@@ -384,16 +466,25 @@ $(document).ready(function () {
                 $('#wv_set_normal').removeClass('active');
                 $('#wv_set_done').addClass('active');
                 wm = $('tr[data-workid="' + wid + '"]').detach();
+                wm.find('.add_ulist').hide();
+                wm.find('.remove_ulist').hide();
+                wm.find('.pin').hide();
                 $('#works_3').append(wm);
                 sortWList('#works_3');
                 setPrioButtons('#works_3', 2, 'up');
+                if(isWorker()) {
+                    $('#wv_set_done').hide();
+                    $('#wv_add_to_ulist').show();
+                    cleanUserList();
+                    refreshUListCount();
+                }
                 $('#work_view').transition('tada');
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_done');
             }
         });
-    })
+    });
     $('.set_work_done_button').click(function () {
         wid = $(this).parents('tr').attr('data-workid');
         $('#set_work_done_modal')
@@ -419,6 +510,10 @@ $(document).ready(function () {
                                     $('tr[data-workid="' + wid + '"]').find('i.icon.lock').remove();
                                     $('tr[data-workid="' + wid + '"]').find('.buttons').remove();
                                 }
+                                if(isWorker()) {
+                                    cleanUserList();
+                                    refreshUListCount();
+                                }
                             },
                             error: function (response) {
                                 console.log('AJAX error: set_done');
@@ -427,7 +522,65 @@ $(document).ready(function () {
                     }
                 })
                 .modal('show');
-    })
+    });
+    $('.add_ulist').click(function () {
+        wid = $(this).parents('tr').attr('data-workid');
+        uid = $('#user_id').val();
+        var bAdd = $(this);
+        var tr = bAdd.parents('tr');
+        var bRem = tr.find('div.remove_ulist');
+        var pinI = tr.children('td.item').children('i.pin');
+        var lockI = tr.children('td.item').children('i.lock');
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/add-to-ulist',
+            data: {
+                wid: wid,
+                uid: uid,
+                auth_token: getPageToken()
+            },
+            success: function () {
+                // Afficher seulement "-"
+                // tr.data-workstate="current"
+                tr.attr('data-workstate', 'current');
+                bAdd.hide();
+                bRem.show();
+                pinI.show();
+                refreshUListCount();
+            },
+            error: function () {
+                console.log('AJAX error: add ulist');
+            }
+        });
+    });
+    $('.remove_ulist').click(function () {
+        wid = $(this).parents('tr').attr('data-workid');
+        uid = $('#user_id').val();
+        var bRem = $(this);
+        var tr = bRem.parents('tr');
+        var bAdd = tr.find('div.add_ulist');
+        var pinI = tr.children('td.item').children('i.pin');
+        var lockI = tr.children('td.item').children('i.lock');
+        $.ajax({
+            type: "GET",
+            url: '/index.php/ajax/remove-from-ulist',
+            data: {
+                wid: wid,
+                uid: uid,
+                auth_token: getPageToken()
+            },
+            success: function () {
+                tr.attr('data-workstate', 'free');
+                bAdd.show();
+                bRem.hide();
+                pinI.hide();
+                refreshUListCount();
+            },
+            error: function () {
+                console.log('AJAX error: remove ulist');
+            }
+        });
+    });
 
     $('section#works-list li').click(function () {
         loadWorkView($(this).parents('tr').attr('data-workid'));

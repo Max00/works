@@ -38,7 +38,7 @@ class Application_Model_TravauxTravailleurs extends Zend_Db_Table_Abstract {
         $where = array();
         $where[]= $this->getAdapter()->quoteInto('user_id = ?', $userId);        
         $where[]= $this->getAdapter()->quoteInto('work_id = ?', $workId);
-        $where[]= $this->getAdapter()->quoteInto('date_done IS NULL');          // On ne cible que les travaux pas encore effectués !
+        $where[]= 'date_done IS NULL';          // On ne cible que les travaux pas encore effectués !
         $rowset = $this->fetchAll($where);
         return boolval(count($rowset));
     }
