@@ -90,6 +90,13 @@ form#formAddWork {
 #right_column_form .second {
     padding-top:0;
 }
+#wv_nearby_works {
+    padding-left:0;
+}
+#wv_nearby_works li {
+    margin-left:0;
+    margin-bottom: 1em;
+}
 
 /* BEGIN Form elements */
 #tools {

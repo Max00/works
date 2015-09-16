@@ -17,7 +17,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     public static $NOTYPE = 'Sans type';
     public static $UNTITLED_WORK = 'Travail sans nom';
 
-    public static $NEARBY_PERIMETER = 500;                                      // Périmètre de proximité, en mètres
+    public static $NEARBY_PERIMETER=  1000;                                     // Périmètre de proximité, en mètres
     /*
      * Renvoie un rowset de tous les travaux
      */
@@ -30,14 +30,16 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     /*
      * Renvoie les oeuvres à proximité d'un point donné, dans un rayon de $perimeter mètres
      */
-    public function getWorksAndOeuvresNearBy($startLat, $startLong, $perimeter) {
+    public function getWorksAndOeuvresNearBy($startLat, $startLong, $perimeter = null) {
+        if($perimeter == null)
+            $perimeter = self::$NEARBY_PERIMETER;
         
         $req = "SELECT id, work_title, oeuvre_title, coords_y, coords_x,
 ROUND(SQRT(
 POW(111200 * (coords_y - $startLat), 2) +
 POW(111200 * ($startLong - coords_x) * COS($startLong / 57.3), 2))) AS distance, oeuvre_title
 FROM (SELECT w.id as id, w.work_title, w.coords_x, w.coords_y, w.oeuvre_title FROM works_with_coords as w WHERE w.coords_x IS NOT NULL) as w
-HAVING distance < 1000 ORDER BY distance
+HAVING distance < $perimeter ORDER BY distance
 ";
         return $this->_db->fetchAll($req);
     }

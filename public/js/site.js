@@ -153,7 +153,7 @@ function getPageToken() {
     }
 }
 
-function loadWorkView(workId) {
+function cleanWV() {
     $('#wv_set_urgent').removeClass('active');
     $('#wv_set_normal').removeClass('active');
     $('#wv_set_done').removeClass('active');
@@ -167,10 +167,20 @@ function loadWorkView(workId) {
     $('#wv_set_done').hide();
     $('#wv_user_add_container').hide();
     $('#wv_types_container').html('');
+    $('#wv_nearby_works_container').hide();
     $('#wv_workers').html('');
     $('#wv_desc_emplact').html('');
     $('#wv_coords').html('');
+    $('#wv_nearby_works_container').hide();
+    $('#wv_nearby_works').html('');
+}
 
+function loadWorkView(workId, browse) {
+    
+    if(browse) {
+        $('#work_view').modal('hide');
+    }
+    
     $.ajax({
         type: "POST",
         url: "/index.php/ajax/get-work-details",
@@ -179,6 +189,7 @@ function loadWorkView(workId) {
             auth_token: getPageToken()
         },
         success: function (response) {
+            cleanWV();
             console.log(response)
             console.log(getPageToken());
             $('#wv_id').val(workId);
@@ -263,13 +274,34 @@ function loadWorkView(workId) {
             } else {
                 $('#wv_add_to_ulist').hide();
             }
-
-            $('#work_view').modal({
-                onVisible:function(){
-                    initViewWorkMap(response.coords_x, response.coords_y, response.title);
-                },
-                transition:'fly down'
-            }).modal('show');
+            if(response.nearby && response.nearby.length) {
+                $('#wv_nearby_works_container').show();
+                var nbw = $('#wv_nearby_works');
+                $(response.nearby).each(function(){
+                    ot = '';
+                    if(this.oeuvre_title)
+                        ot = '('+this.oeuvre_title+')';
+                    nbw.append('<li data-workid="'+this.id+'" class="ui tiny button">'+this.distance+' m : '+this.title+ot+'</li>');
+                });
+                $('#wv_nearby_works li').click(function(){
+                    wid = $(this).attr('data-workid');
+                    loadWorkView(wid, true);
+                });
+            }
+            
+            if(browse) {
+                $('#work_view').modal('show');
+            } else {
+                $('#work_view').modal({
+                    onVisible:function(){
+                        initViewWorkMap(response.coords_x, response.coords_y, response.title);
+                    },
+                    transition:'fly down',
+                    onHidden:function(){
+                        cleanWV();
+                    }
+                }).modal('show');
+            }
         },
         error: function (response) {
             console.log('AJAX error Get Work');
