@@ -164,7 +164,10 @@ function loadWorkView(workId) {
     $('#wv_workers_container').hide();
     $('#wv_map').hide();
     $('#wv_add_to_ulist').hide();
+<<<<<<< HEAD
     $('#wv_set_done').hide();
+=======
+>>>>>>> 8e7ed8929ffe0d04eb537d7d5fed9d0caf224ce8
     $('#wv_user_add_container').hide();
     $('#wv_types_container').html('');
     $('#wv_workers').html('');
@@ -260,8 +263,14 @@ function loadWorkView(workId) {
             }
             if (!response.user_add) {
                 $('#wv_add_to_ulist').show();
+<<<<<<< HEAD
             } else {
                 $('#wv_add_to_ulist').hide();
+=======
+                $('#wv_set_done').hide();
+            } else {
+                $('#wv_set_done').show();
+>>>>>>> 8e7ed8929ffe0d04eb537d7d5fed9d0caf224ce8
             }
 
             $('#work_view').modal({
@@ -322,6 +331,7 @@ function cleanUserList() {
     });
 }
 
+<<<<<<< HEAD
 function cleanIconsPrioList() {
     $('table.works_table tr').each(function(){
         var pinI = $(this).children('td.item').children('i.pin');
@@ -338,6 +348,8 @@ function cleanIconsPrioList() {
     });
 }
 
+=======
+>>>>>>> 8e7ed8929ffe0d04eb537d7d5fed9d0caf224ce8
 function refreshUListCount() {
     $.ajax({
         type: "GET",
@@ -376,8 +388,11 @@ $(document).ready(function () {
     // Notices
     $('#noticesContainer .message').delay(3000).fadeOut();
 
+<<<<<<< HEAD
     cleanIconsPrioList();
     
+=======
+>>>>>>> 8e7ed8929ffe0d04eb537d7d5fed9d0caf224ce8
     // +/- refresh
     $('.works_table tr').each(function(){
         var s = $(this).attr('data-workstate');
@@ -530,7 +545,6 @@ $(document).ready(function () {
         var tr = bAdd.parents('tr');
         var bRem = tr.find('div.remove_ulist');
         var pinI = tr.children('td.item').children('i.pin');
-        var lockI = tr.children('td.item').children('i.lock');
         $.ajax({
             type: "GET",
             url: '/index.php/ajax/add-to-ulist',
@@ -560,7 +574,6 @@ $(document).ready(function () {
         var tr = bRem.parents('tr');
         var bAdd = tr.find('div.add_ulist');
         var pinI = tr.children('td.item').children('i.pin');
-        var lockI = tr.children('td.item').children('i.lock');
         $.ajax({
             type: "GET",
             url: '/index.php/ajax/remove-from-ulist',
