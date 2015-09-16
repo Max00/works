@@ -409,7 +409,7 @@ $(document).ready(function () {
     $('#noticesContainer .message').delay(3000).fadeOut();
 
     cleanIconsPrioList();
-    
+
     // +/- refresh
     $('.works_table tr').each(function(){
         var s = $(this).attr('data-workstate');
