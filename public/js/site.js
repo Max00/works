@@ -530,7 +530,6 @@ $(document).ready(function () {
         var tr = bAdd.parents('tr');
         var bRem = tr.find('div.remove_ulist');
         var pinI = tr.children('td.item').children('i.pin');
-        var lockI = tr.children('td.item').children('i.lock');
         $.ajax({
             type: "GET",
             url: '/index.php/ajax/add-to-ulist',
@@ -560,7 +559,6 @@ $(document).ready(function () {
         var tr = bRem.parents('tr');
         var bAdd = tr.find('div.add_ulist');
         var pinI = tr.children('td.item').children('i.pin');
-        var lockI = tr.children('td.item').children('i.lock');
         $.ajax({
             type: "GET",
             url: '/index.php/ajax/remove-from-ulist',
