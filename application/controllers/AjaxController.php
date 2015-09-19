@@ -340,6 +340,8 @@ class AjaxController extends Zend_Controller_Action {
         } elseif(isset($authNS->authTokenWorker)) {
             $hash = $authNS->authTokenWorker;
         }
+        Zend_Registry::get('logger')->log($pageToken, 6);
+        Zend_Registry::get('logger')->log($hash, 6);
         if ($hash == $pageToken) {
             $uid = $this->getRequest()->getParam('uid');
             $wid = $this->getRequest()->getParam('wid');

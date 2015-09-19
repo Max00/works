@@ -164,6 +164,7 @@ function cleanWV() {
     $('#wv_workers_container').hide();
     $('#wv_map').hide();
     $('#wv_add_to_ulist').hide();
+    $('#wv_remove_from_ulist').hide();
     $('#wv_set_done').hide();
     $('#wv_user_add_container').hide();
     $('#wv_types_container').html('');
@@ -201,15 +202,12 @@ function loadWorkView(workId, browse) {
             }
             if (response.prio === "1") {
                 $('#wv_set_urgent').addClass('active');
-                $('#wv_add_to_ulist').show();
                 $('#wv_set_done').show();
             } else if (response.prio === "2") {
                 $('#wv_set_normal').addClass('active');
-                $('#wv_add_to_ulist').show();
                 $('#wv_set_done').show();
             } else {
                 $('#wv_set_done').addClass('active');
-                $('#wv_add_to_ulist').show();
                 $('#wv_set_done').hide();
             }
             fd = response.frequency_days;
@@ -269,10 +267,10 @@ function loadWorkView(workId, browse) {
             if (response.desc_emplact) {
                 $('#wv_desc_emplact').html(response.desc_emplact);
             }
-            if (!response.user_add) {
+            if (!response.user_id && response.prio !== "3") {
                 $('#wv_add_to_ulist').show();
-            } else {
-                $('#wv_add_to_ulist').hide();
+            } else if(response.user_id && response.user_id === $('#user_id').val()) {
+                $('#wv_remove_from_ulist').show();
             }
             if(response.nearby && response.nearby.length) {
                 $('#wv_nearby_works_container').show();
@@ -386,6 +384,68 @@ function refreshUListCount() {
         },
         error: function (response) {
             console.log('AJAX error: get ulist count');
+        }
+    });
+}
+
+function removeUList(wid, uid, context) {
+    var tr = $('tr[data-workid="'+wid+'"]');
+    var bRem = tr.find('div.remove_ulist');
+    var bAdd = tr.find('div.add_ulist');
+    var pinI = tr.children('td.item').children('i.pin');
+    $.ajax({
+        type: "GET",
+        url: '/index.php/ajax/remove-from-ulist',
+        data: {
+            wid: wid,
+            uid: uid,
+            auth_token: getPageToken()
+        },
+        success: function () {
+            tr.attr('data-workstate', 'free');
+            bAdd.show();
+            bRem.hide();
+            pinI.hide();
+            refreshUListCount();
+            if(context === 'wv') {
+                $('#wv_remove_from_ulist').hide();
+                $('#wv_add_to_ulist').show();
+            }
+        },
+        error: function () {
+            console.log('AJAX error: remove ulist');
+        }
+    });
+}
+
+function addUList(wid, uid, context) {
+    var tr = $('tr[data-workid="'+wid+'"]');
+    var bRem = tr.find('div.remove_ulist');
+    var bAdd = tr.find('div.add_ulist');
+    var pinI = tr.children('td.item').children('i.pin');
+    $.ajax({
+        type: "GET",
+        url: '/index.php/ajax/add-to-ulist',
+        data: {
+            wid: wid,
+            uid: uid,
+            auth_token: getPageToken()
+        },
+        success: function () {
+            // Afficher seulement "-"
+            // tr.data-workstate="current"
+            tr.attr('data-workstate', 'current');
+            bAdd.hide();
+            bRem.show();
+            pinI.show();
+            refreshUListCount();
+            if(context === 'wv') {
+                $('#wv_remove_from_ulist').show();
+                $('#wv_add_to_ulist').hide();
+            }
+        },
+        error: function () {
+            console.log('AJAX error: add ulist');
         }
     });
 }
@@ -506,7 +566,6 @@ $(document).ready(function () {
                 setPrioButtons('#works_3', 2, 'up');
                 if(isWorker()) {
                     $('#wv_set_done').hide();
-                    $('#wv_add_to_ulist').show();
                     cleanUserList();
                     refreshUListCount();
                 }
@@ -558,61 +617,26 @@ $(document).ready(function () {
     $('.add_ulist').click(function () {
         wid = $(this).parents('tr').attr('data-workid');
         uid = $('#user_id').val();
-        var bAdd = $(this);
-        var tr = bAdd.parents('tr');
-        var bRem = tr.find('div.remove_ulist');
-        var pinI = tr.children('td.item').children('i.pin');
-        $.ajax({
-            type: "GET",
-            url: '/index.php/ajax/add-to-ulist',
-            data: {
-                wid: wid,
-                uid: uid,
-                auth_token: getPageToken()
-            },
-            success: function () {
-                // Afficher seulement "-"
-                // tr.data-workstate="current"
-                tr.attr('data-workstate', 'current');
-                bAdd.hide();
-                bRem.show();
-                pinI.show();
-                refreshUListCount();
-            },
-            error: function () {
-                console.log('AJAX error: add ulist');
-            }
-        });
+        
+        addUList(wid, uid, 'list')
     });
     $('.remove_ulist').click(function () {
         wid = $(this).parents('tr').attr('data-workid');
         uid = $('#user_id').val();
-        var bRem = $(this);
-        var tr = bRem.parents('tr');
-        var bAdd = tr.find('div.add_ulist');
-        var pinI = tr.children('td.item').children('i.pin');
-        $.ajax({
-            type: "GET",
-            url: '/index.php/ajax/remove-from-ulist',
-            data: {
-                wid: wid,
-                uid: uid,
-                auth_token: getPageToken()
-            },
-            success: function () {
-                tr.attr('data-workstate', 'free');
-                bAdd.show();
-                bRem.hide();
-                pinI.hide();
-                refreshUListCount();
-            },
-            error: function () {
-                console.log('AJAX error: remove ulist');
-            }
-        });
+        
+        removeUList(wid, uid, 'list');        
+    });
+    
+    $('#wv_add_to_ulist').click(function(){
+        addUList($('#wv_id').val(), $('#user_id').val(), 'wv');
+    });
+    
+    $('#wv_remove_from_ulist').click(function(){
+        removeUList($('#wv_id').val(), $('#user_id').val(), 'wv');
     });
 
     $('section#works-list li').click(function () {
+        console.log('ID : ' + $(this).parents('tr').attr('data-workid'));
         loadWorkView($(this).parents('tr').attr('data-workid'));
         $('div#noticesContainer dialog').hide();
     });

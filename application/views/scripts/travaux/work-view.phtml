@@ -1,5 +1,6 @@
 <div class="ui large modal" id="work_view">
     <input type="hidden" id="wv_id" />
+    <input type="hidden" id="wv_state" />
     <i class="close icon"></i>
     <div class="header">
         <span id="wv_title"></span>
@@ -17,6 +18,7 @@
                     <?php else : ?>
                     <button class="ui button" id="wv_set_done">Fait</button>
                     <button class="ui button" id="wv_add_to_ulist">Ajouter</button>
+                    <button class="ui button" id="wv_remove_from_ulist">Retirer</button>
                     <?php endif; ?>
                     <div id="wv_frequency_container">
                         <i class="repeat icon"></i> Tous les
