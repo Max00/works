@@ -512,6 +512,7 @@ $(document).ready(function () {
                 $('#wv_set_done').removeClass('active');
                 wm = $('tr[data-workid="' + wid + '"]').detach();
                 $('#works_1').append(wm);
+                wm.find('div.set_work_done_button').show();
                 sortWList('#works_1');
                 setPrioButtons('#works_1', 2, 'down');
             },
@@ -535,6 +536,7 @@ $(document).ready(function () {
                 $('#wv_set_normal').addClass('active');
                 $('#wv_set_done').removeClass('active');
                 wm = $('tr[data-workid="' + wid + '"]').detach();
+                wm.find('div.set_work_done_button').show();
                 $('#works_2').append(wm);
                 sortWList('#works_2');
                 setPrioButtons('#works_2', 1, 'up');
@@ -594,12 +596,12 @@ $(document).ready(function () {
                                 sortWList('#works_3');
                                 setPrioButtons('#works_3', 2, 'up');
                                 if($('#auth_token_supervisor').val()) { 
-                                    $('tr[data-workid="' + wid + '"]').find('i.icon.lock').remove();
-                                    $('tr[data-workid="' + wid + '"]').find('div.set_work_done_button').remove();
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.lock').hide();
+                                    $('tr[data-workid="' + wid + '"]').find('div.set_work_done_button').hide();
                                 } else {
-                                    $('tr[data-workid="' + wid + '"]').find('i.icon.pin').remove();
-                                    $('tr[data-workid="' + wid + '"]').find('i.icon.lock').remove();
-                                    $('tr[data-workid="' + wid + '"]').find('.buttons').remove();
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.pin').hide();
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.lock').hide();
+                                    $('tr[data-workid="' + wid + '"]').find('.buttons').hide();
                                 }
                                 if(isWorker()) {
                                     cleanUserList();
@@ -660,7 +662,10 @@ $(document).ready(function () {
                 sortWList('#works_' + prio);
                 setPrioButtons('#works_1', 2, 'down');
                 setPrioButtons('#works_2', 1, 'up');
-                $('tr[data-workid="' + wid + '"]').hide().transition('pulse');
+                wm.hide().transition('pulse');
+                if(1 == prio || 2 == prio) {
+                    wm.find('div.set_work_done_button').show();
+                }
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_urgent');
