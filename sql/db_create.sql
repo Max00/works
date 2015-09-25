@@ -403,8 +403,12 @@ INSERT INTO `works_workers` (`work_id`, `user_id`, `date_added`, `date_done`) VA
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 
-CREATE VIEW works_with_coords AS (
-SELECT w.id, w.title AS work_title, o.title AS oeuvre_title, COALESCE(w.coords_x, o.coords_x) as coords_x,COALESCE(w.coords_y, o.coords_y) as coords_y
-FROM works AS w
-JOIN oeuvres AS o ON o.id = w.oeuvre_id
-);
+CREATE VIEW works_with_coords AS
+    SELECT w.id, w.title AS work_title, o.title AS oeuvre_title, CONVERT(COALESCE(w.coords_x, o.coords_x) USING utf8) as coords_x, CONVERT(COALESCE(w.coords_y, o.coords_y) USING utf8) as coords_y
+    FROM works AS w
+    JOIN oeuvres AS o ON o.id = w.oeuvre_id
+    UNION
+    SELECT w.id, w.title AS work_title, "" AS oeuvre_title, CONVERT(w.coords_x USING utf8) as coords_x, CONVERT(w.coords_y USING utf8) as coords_y
+    FROM works AS w
+    WHERE w.coords_x IS NOT NULL
+;

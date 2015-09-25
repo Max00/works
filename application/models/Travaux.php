@@ -28,7 +28,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     }
     
     /*
-     * Renvoie les oeuvres à proximité d'un point donné, dans un rayon de $perimeter mètres
+     * Renvoie les oeuvres et les travaux à proximité d'un point donné, dans un rayon de $perimeter mètres
      */
     public function getWorksAndOeuvresNearBy($startLat, $startLong, $perimeter = null) {
         if($perimeter == null)
