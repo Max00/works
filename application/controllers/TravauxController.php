@@ -375,21 +375,30 @@ class TravauxController extends Zend_Controller_Action {
                     if ($this->hasParam('tools') &&
                             $this->getParam('tools')) {
                         $workData['tools'] = $this->getParam('tools');
+                    } else {
+                        $workData['tools'] = NULL;
                     }
                     if ($this->hasParam('emplacement_coords_x') &&
                             $this->getParam('emplacement_coords_x')) {
                         $workData['coords_x'] = $this->getParam('emplacement_coords_x');
                         $workData['coords_y'] = $this->getParam('emplacement_coords_y');
+                    } else {
+                        $workData['coords_x'] = NULL;
+                        $workData['coords_y'] = NULL;
                     }
                     if ($this->hasParam('oeuvre_id') &&
                             $this->getParam('oeuvre_id')) {
                         $workData['oeuvre_id'] = $this->getParam('oeuvre_id');
                         $workData['coords_x'] = NULL;
                         $workData['coords_y'] = NULL;
+                    } else {
+                        $workData['oeuvre_id'] = NULL;
                     }
                     if ($this->hasParam('desc_emplacement') &&
                             $this->getParam('desc_emplacement')) {
                         $workData['desc_emplact'] = $this->getParam('desc_emplacement');
+                    } else {
+                        $workData['desc_emplact'] = NULL;
                     }
                     if ($this->hasParam('frequency_type') &&
                             $this->getParam('frequency_type') &&
@@ -419,6 +428,10 @@ class TravauxController extends Zend_Controller_Action {
                                     break;
                                 }
                         }
+                    } else {
+                        $workData['frequency_months'] = NULL;
+                        $workData['frequency_days'] = NULL;
+                        $workData['frequency_weeks'] = NULL;
                     }
                     if ($this->hasParam('worktype') && $this->getParam('worktype')) {
                         switch ($this->getParam('worktype')) {
