@@ -98,4 +98,9 @@ class Application_Model_TravauxTravailleurs extends Zend_Db_Table_Abstract {
         $where[]= 'date_added IS NOT NULL';
         $this->delete($where);
     }
+
+    public function deleteAllWorksForUser($uid) {
+        $where = $this->getAdapter()->quoteInto('user_id = ?', $uid);
+        return $this->delete($where);
+    }
 }

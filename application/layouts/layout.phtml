@@ -8,6 +8,7 @@
         <?php echo $this->headScript() ?>
     </head>
     <body<?php if(isset($this->err)) echo ' class="error"' ?>>
+        <input type="hidden" id="waiting_action" />
         <?php if(isset($this->uid)) : ?>
         <input type="hidden" id="user_id" value="<?php echo $this->uid ?>" />
         <?php endif; ?>

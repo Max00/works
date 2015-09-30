@@ -34,7 +34,8 @@ table#works_1 {
 table.works_table {
     min-width:800px;
 }
-table.works_table td {
+table.works_table td,
+table#usersList td {
     height: 3em;
     padding-top:0 !important;
     padding-bottom:0 !important;
@@ -67,6 +68,16 @@ div#noticesContainer .message {
     width:80%;
     position:fixed;
     margin-left:10%;
+}
+#usersList {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    min-width:900px;
+    max-width:900px;
+}
+#usersList .options {
+    text-align:right;
 }
 #formAddWork {
     margin-left: auto;

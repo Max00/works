@@ -492,7 +492,7 @@ $(document).ready(function () {
         $('#delete_work_modal')
                 .modal({
                     onApprove: function () {
-                        location.reload()
+                        document.location.href=$('input#waiting_action').attr('data-href');
                     }
                 })
                 .modal('show');
@@ -678,6 +678,18 @@ $(document).ready(function () {
         $('#edit_user').click(function () {
             $('#formEditUser').submit();
         })
+    }
+    if($('#usersList').length) {
+        $('.delete_user_button').click(function() {
+            $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
+            $('#delete_user_modal')
+                .modal({
+                    onApprove: function () {
+                        document.location.href=$('input#waiting_action').attr('data-href');
+                    }
+                })
+                .modal('show');
+        });
     }
     if ($('.formWork').length > 0) {
         hideAddWMap();

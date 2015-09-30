@@ -128,6 +128,7 @@ class TravauxController extends Zend_Controller_Action {
      */
 
     public function listeAction() {
+        $this->addGMapsHeadScript();
         $mode = '';
         $viewDefaults = new Zend_Session_Namespace('viewDefaults');
 
@@ -184,6 +185,10 @@ class TravauxController extends Zend_Controller_Action {
             $this->view->works = $travauxTable->getAllByPrios($userId);
             $this->_helper->viewRenderer('liste-prios');
         }
+    }
+
+    protected function addGMapsHeadScript() {
+        $this->view->headScript()->prependFile('https://maps.googleapis.com/maps/api/js?key=' . GMAPS_V3_API_KEY);
     }
 
     public function changerPrioAction() {
@@ -273,6 +278,7 @@ class TravauxController extends Zend_Controller_Action {
     }
 
     public function ajouterAction() {
+        $this->addGMapsHeadScript();
         $acl = Zend_Registry::get('acl');
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
         if ($acl->isAllowed($role, 'add_work')) {
@@ -327,6 +333,7 @@ class TravauxController extends Zend_Controller_Action {
     }
 
     public function editerAction() {
+        $this->addGMapsHeadScript();
         $acl = Zend_Registry::get('acl');
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
         if ($acl->isAllowed($role, 'edit_work')) {

@@ -1,0 +1,35 @@
+<table id="usersList" class="ui table">
+	<thead>
+		<tr>
+			<th colspan="2">
+				Gestion des utilisateurs
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+	<?php foreach($this->users as $curUser) : ?>
+		<tr>
+			<td class="user">
+			<?php
+				echo $curUser->fname . ' ' . $curUser->lname . ' (' . $curUser->mail . ')'; 
+				if($this->supervisorRoleId == $curUser->role_id)
+					echo ' - <em>Superviseur</em>';
+			?>
+			</td>
+			<td class="options">
+				<div class="ui tiny buttons">
+					<?php if($this->uid != $curUser->id) : ?>
+					<?php echo $this->RemoveUserButton($curUser->id) ?>
+					<?php endif; ?>
+					<div class="ui button edit_user">
+						<i class="ui icon edit"></i>
+					</div>
+				</div>
+			</td>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+		
+</table>
+
+<?php echo $this->partial('modals.phtml'); ?>

@@ -65,8 +65,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 ->prependFile('/js/colpick/js/colpick.js')
                 ->headScript()->prependFile('/js/site.js')
                 ->prependFile('/semantic-ui/dist/semantic.min.js'); // @todo change semantic ui installation -> dist on site folder
-        
-        $view->headScript()->prependFile('https://maps.googleapis.com/maps/api/js?key=' . GMAPS_V3_API_KEY);
     }
 }
 
