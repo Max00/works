@@ -294,7 +294,6 @@ function loadWorkView(workId, browse) {
                     onVisible:function(){
                         initViewWorkMap(response.coords_x, response.coords_y, response.title);
                     },
-                    transition:'fly down',
                     onHidden:function(){
                         cleanWV();
                     }
