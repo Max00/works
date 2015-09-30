@@ -466,6 +466,7 @@ $(document).ready(function () {
     $('.ui.modal').modal();
 
     // Notices
+    $('#noticesContainer .message').show();
     $('#noticesContainer .message').delay(3000).fadeOut();
 
     cleanIconsPrioList();
@@ -672,6 +673,12 @@ $(document).ready(function () {
             }
         });
     })
+
+    if ($('#formEditUser').length > 0) {
+        $('#edit_user').click(function () {
+            $('#formEditUser').submit();
+        })
+    }
     if ($('.formWork').length > 0) {
         hideAddWMap();
         var wt = $('[name="worktype"][checked="checked"]').val();

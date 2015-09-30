@@ -11,7 +11,7 @@
       action="<?php echo $f->getAction() ?>"
       method="<?php echo $f->getMethod() ?>">
     <input type="hidden" name="oeuvre_id" id="oeuvre_id" />
-    <h2 class="ui dividing header"><?php echo $f->form_title->render() ?></h2>
+    <h1><?php echo $f->form_title->render() ?></h1>
     <div class="ui two column relaxed fitted stackable grid">
         <div class="column" id="main_form">
             <?php echo $f->auth_token->render() ?>

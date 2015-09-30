@@ -12,7 +12,7 @@ class Zend_View_Helper_GetUserTile {
 <div class="ui dropdown blue item">
     {$fname} {$lname} ({$roleName}) <i class="dropdown icon"></i>
     <div id="usertile" class="menu">
-        <a class="item">Compte</a>
+        <a class="item" href="{$this->_view->url(array('controller'=>'user', 'action'=>'edit'), null, true)}">Compte</a>
         <a class="item" href="{$this->_view->url(array('controller'=>'auth', 'action'=>'deconnecter'), null, true)}">Déconnexion</a>
     </div>
     <input type="hidden" name="user-id" id="user-id" value="$id"/>

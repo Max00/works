@@ -35,36 +35,22 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/vdfworks/application/views/scripts/travaux/work-view.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/public/js/site.js</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/helpers/SetWorkDoneButton.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/helpers/RemoveWorkFromUserListButton.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/helpers/GetUserWorksListCount.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/layouts/main-menu-supervisor.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/application/models/TravauxTravailleurs.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/controllers/AuthController.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/layouts/main-menu-worker.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/scripts/travaux/ajouter.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/helpers/PrintInUserListMessage.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/forms/EditWork.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/scripts/_formWork.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/application/controllers/TravauxController.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/models/Travaux.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/logs/log.htm</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/helpers/ChangePrioButtons.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/scripts/travaux/liste-options.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/application/Bootstrap.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/forms/AddWork.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/controllers/IndexController.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/helpers/RemoveWorkButton.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/scripts/travaux/liste-perso.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/public/index.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/scripts/travaux/modals.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/public/css/site.css</file>
-            <file>file:/C:/wamp/www/vdfworks/application/layouts/layout.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/application/views/scripts/travaux/liste-prios.phtml</file>
-            <file>file:/C:/wamp/www/vdfworks/application/plugins/Authentification.php</file>
-            <file>file:/C:/wamp/www/vdfworks/application/controllers/AjaxController.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/views/helpers/GetUserTile.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/views/scripts/_formUser.phtml</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/controllers/UserController.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/views/scripts/user/edit.phtml</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/views/helpers/GetUserWorksListCount.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/layouts/main-menu-supervisor.phtml</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/views/scripts/travaux/editer.phtml</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/forms/EditUser.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/views/scripts/_formWork.phtml</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/forms/EditWork.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/controllers/TravauxController.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/models/Users.php</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/configs/formEditWork.ini</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/public/js/site.js</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/configs/formEditUser.ini</file>
+            <file>file:/C:/xampp/htdocs/vdfworks/application/layouts/layout.phtml</file>
         </group>
     </open-files>
 </project-private>

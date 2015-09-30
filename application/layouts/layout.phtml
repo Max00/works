@@ -37,10 +37,10 @@
                     <?php echo $this->partial('travaux/liste-options.phtml', array('viewMode' => $this->viewMode)); ?>
                 <?php endif; ?>
                 <?php if(isset($this->lname) && isset($this->fname)) : ?>
-                <?php echo $this->GetUserTile($this->uid, $this->fname, $this->lname, $this->roleName); ?>
+                    <?php echo $this->GetUserTile($this->uid, $this->fname, $this->lname, $this->roleName); ?>
                 <?php endif; ?>
                 </div>
-              </div>
+            </div>
             <div id="noticesContainer"><?php if(isset($this->noticeTemplate)) : echo $this->partial($this->noticeTemplate); endif; ?></div>
             <section id="container">
                 <?php echo $this->layout()->content ?>

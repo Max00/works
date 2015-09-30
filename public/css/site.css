@@ -68,12 +68,20 @@ div#noticesContainer .message {
     position:fixed;
     margin-left:10%;
 }
-form#formAddWork {
+#formAddWork {
     margin-left: auto;
     margin-right: auto;
     width: 50%;
     min-width:900px;
     max-width:900px;
+}
+#formEditUser {
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+}
+#formEditUser #submit {
+    display: none;
 }
 #main_form {
     width:60%;
