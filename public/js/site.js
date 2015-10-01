@@ -287,18 +287,14 @@ function loadWorkView(workId, browse) {
                 });
             }
             
-            if(browse) {
-                $('#work_view').modal('show');
-            } else {
-                $('#work_view').modal({
-                    onVisible:function(){
-                        initViewWorkMap(response.coords_x, response.coords_y, response.title);
-                    },
-                    onHidden:function(){
-                        cleanWV();
-                    }
-                }).modal('show');
-            }
+            $('#work_view').modal({
+                onVisible:function(){
+                    initViewWorkMap(response.coords_x, response.coords_y, response.title);
+                },
+                onHidden:function(){
+                    cleanWV();
+                }
+            }).modal('show');
         },
         error: function (response) {
             console.log('AJAX error Get Work');
