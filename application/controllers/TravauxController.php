@@ -839,6 +839,8 @@ class TravauxController extends Zend_Controller_Action {
         $this->view->title = 'Ma liste';
         $this->view->page = 'liste-perso';
 
+        $this->addGMapsHeadScript();
+        
         $acl = Zend_Registry::get('acl');
         $role = Zend_Auth::getInstance()->getIdentity()->role_id;
         if ($acl->isAllowed($role, 'list_works')) {

@@ -70,6 +70,10 @@ class UserController extends Zend_Controller_Action {
                 $userData['lname'] = $formData['lname'];
                 $userData['fname'] = $formData['fname'];
                 $userData['mail']  = $formData['mail'];
+                if(!empty($formData['pass'])) {
+                    // Si un mot de passe a été rentré
+                    $userData['pass'] = sha1($formData['pass']);
+                }
                 $where = $usersTable->getAdapter()->quoteInto('id = ?', $uid);
                 $usersTable->update($userData, $where);
                 $identity = $auth->getIdentity();
@@ -131,6 +135,10 @@ class UserController extends Zend_Controller_Action {
                 $userData['lname'] = $formData['lname'];
                 $userData['fname'] = $formData['fname'];
                 $userData['mail']  = $formData['mail'];
+                if(!empty($formData['pass'])) {
+                    // Si un mot de passe a été rentré
+                    $userData['pass'] = sha1($formData['pass']);
+                }
                 $where = $usersTable->getAdapter()->quoteInto('id = ?', $uid);
                 $usersTable->update($userData, $where);
                 

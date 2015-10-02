@@ -12,7 +12,7 @@ class AuthController extends Zend_Controller_Action {
             $formData = $this->_request->getPost();
             if($loginForm->isValid($formData)) {                                // Verification du formulaire
                 $login = $loginForm->getValue('login');
-                $password = $loginForm->getValue('pass');
+                $password = sha1($loginForm->getValue('pass'));
                 $db = Zend_Db_Table_Abstract::getDefaultAdapter();              // Défini automatiquement dans application.ini
                 $dbAdapter = new Zend_Auth_Adapter_DbTable($db);
                 $dbAdapter->setTableName('users')                               // @todo Dans un fichier de config
