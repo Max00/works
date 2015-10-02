@@ -12,7 +12,8 @@ class Application_Form_EditUser extends Zend_Form {
         $this->getElement('lname')->removeDecorator('Label');
         $this->getElement('pass')->removeDecorator('Label');
         $this->getElement('mail')->removeDecorator('Label');
-        
+        $this->getElement('role')->removeDecorator('Label');
+
         $this->setDecorators(array(
             array('ViewScript', array(
                 'viewScript' => '_formEditUser.phtml',

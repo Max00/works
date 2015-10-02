@@ -10,6 +10,9 @@
     <div class="field"><?php echo $f->lname->render(); ?></div>
     <div class="field"><?php echo $f->pass->render(); ?></div>
     <div class="field"><?php echo $f->mail->render(); ?></div>
+    <?php if(isset($f->role)) : ?>
+    <div class="field"><?php echo $f->role->render(); ?></div>
+	<?php endif; ?>
     <div class="ui hidden divider"></div>
     <div class="ui big fluid primary button" id="edit_user">
         Modifier les paramètres

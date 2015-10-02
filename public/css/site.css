@@ -102,6 +102,9 @@ div#noticesContainer .message {
     margin-right: auto;
     width: 400px;
 }
+dd#role-element label input {
+    margin:5px;
+}
 #formEditUser #submit {
     display: none;
 }

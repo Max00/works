@@ -61,12 +61,17 @@ class UserController extends Zend_Controller_Action {
             // Soumission du formulaire
             $formData = $this->_request->getPost();
             if($addUserForm->isValid($formData)) {
+                $role = (int)$formData['role'];
+                if($role != Application_Model_Roles::$ROLE_SUPERVISOR && $role != Application_Model_Roles::$ROLE_WORKER ) {
+                    $this->_redirect('/travaux/index');
+                }
                 // Formulaire valide
                 $usersTable = new Application_Model_Users();
                 $userData['lname'] = $formData['lname'];
                 $userData['fname'] = $formData['fname'];
                 $userData['mail']  = $formData['mail'];
                 $userData['pass'] = sha1($formData['pass']);
+                $userData['role_id'] = $role;
 
                 $usersTable->insert($userData);
 
@@ -101,6 +106,7 @@ class UserController extends Zend_Controller_Action {
         if ($this->_request->getPost()) {
             // Soumission de nouvelles valeurs
             $formData = $this->_request->getPost();
+            $editUserForm->role->setRequired(false);
             if($editUserForm->isValid($formData)) {
                 // Formulaire valide
                 $usersTable = new Application_Model_Users();
@@ -126,6 +132,8 @@ class UserController extends Zend_Controller_Action {
             } else {
                 // Formulaire non valide
             }
+            // Si l'utilisateur en cours d'édition est l'utilisateur connecté, il ne peut pas changer son rôle
+            $editUserForm->removeElement('role');
             $this->view->editUserForm = $editUserForm;
         } else {
             // Ouverture pour modification
@@ -137,6 +145,8 @@ class UserController extends Zend_Controller_Action {
                 'lname' => $user['lname'],
                 'mail' => $user['mail'],
             ));
+            // Si l'utilisateur en cours d'édition est l'utilisateur connecté, il ne peut pas changer son rôle
+            $editUserForm->removeElement('role');
             $this->view->editUserForm = $editUserForm;
         }
 
@@ -167,12 +177,22 @@ class UserController extends Zend_Controller_Action {
 
             // Soumission de nouvelles valeurs
             $formData = $this->_request->getPost();
+            if($uid == $auth->getIdentity()->id) {
+                // Si l'utilisateur courant est en cours de modification, le champ 'role' n'est pas requis.
+                // En principe, il ne doit d'ailleurs pas exister dans $_POST
+                $editUserForm->role->setRequired(false);
+            }
             if($editUserForm->isValid($formData)) {
                 // Formulaire valide
                 $usersTable = new Application_Model_Users();
                 $userData['lname'] = $formData['lname'];
                 $userData['fname'] = $formData['fname'];
                 $userData['mail']  = $formData['mail'];
+
+                if($uid != $auth->getIdentity()->id) {
+                    // Si l'utilisateur modifié n'est pas l'utilisateur courant, on prend en compte un éventuel changement de role
+                    $userData['role_id'] = $formData['role'];
+                }
                 if(!empty($formData['pass'])) {
                     // Si un mot de passe a été rentré
                     $userData['pass'] = sha1($formData['pass']);
@@ -195,6 +215,10 @@ class UserController extends Zend_Controller_Action {
             } else {
                 // Formulaire non valide
             }
+            if($uid == $auth->getIdentity()->id) {
+                // Si l'utilisateur en cours d'édition est l'utilisateur connecté, il ne peut pas changer son rôle
+                $editUserForm->removeElement('role');
+            }
             $this->view->editUserForm = $editUserForm;
         } else {
             // Ouverture pour modification
@@ -204,8 +228,13 @@ class UserController extends Zend_Controller_Action {
                 'fname' => $user['fname'],
                 'lname' => $user['lname'],
                 'mail' => $user['mail'],
+                'role' => $user['role_id'],
                 'uid' => $uid,
             ));
+            if($uid == $auth->getIdentity()->id) {
+                // Si l'utilisateur en cours d'édition est l'utilisateur connecté, il ne peut pas changer son rôle
+                $editUserForm->removeElement('role');
+            }
             $this->view->editUserForm = $editUserForm;
         }
 
@@ -227,12 +256,8 @@ class UserController extends Zend_Controller_Action {
 
             $resultW = $travauxTravailleursTable->deleteAllWorksForUser($uid);
             $resultU = $usersTable->deleteById($uid);
-            if (!$resultW || !$resultU) {
-                $noticeSession->noticeType = 'confirmation';
-                $noticeSession->confirmationType = 'remove_user';
-            } else {
-                throw new Exception();
-            }
+            $noticeSession->noticeType = 'confirmation';
+            $noticeSession->confirmationType = 'remove_user';
         } catch (Exception $e) {
             $noticeSession->noticeType = 'error';
             $noticeSession->errorType = 'remove_user';
