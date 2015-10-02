@@ -46,6 +46,44 @@ class UserController extends Zend_Controller_Action {
         $this->setNotices();
     }
     
+    public function ajouterAction() {
+        $auth = Zend_Auth::getInstance();
+        
+        if(!$auth->hasIdentity() || $auth->getIdentity()->role_id != Application_Model_Roles::$ROLE_SUPERVISOR) {
+            $this->_redirect('/travaux/index');
+        }
+        
+        $this->view->title = 'Ajouter un utilisateur';
+        $this->view->page = 'add-user';
+        $addUserForm = new Application_Form_AddUser();
+    
+        if ($this->_request->getPost()) {
+            // Soumission du formulaire
+            $formData = $this->_request->getPost();
+            if($addUserForm->isValid($formData)) {
+                // Formulaire valide
+                $usersTable = new Application_Model_Users();
+                $userData['lname'] = $formData['lname'];
+                $userData['fname'] = $formData['fname'];
+                $userData['mail']  = $formData['mail'];
+                $userData['pass'] = sha1($formData['pass']);
+
+                $usersTable->insert($userData);
+
+                $this->view->noticeTemplate = 'user/notices/user-added.phtml';
+                $this->_redirect('/user/liste');
+            } else {
+                // Formulaire non valide
+                $this->view->addUserForm = $addUserForm;
+            }
+        } else {
+            // Premier chargement
+            $this->view->addUserForm = $addUserForm;
+        }
+
+        $this->setNotices();
+    }
+
     /**
      * Affiche et traite la page de modification des parametres utilisateur
      */
@@ -108,7 +146,7 @@ class UserController extends Zend_Controller_Action {
     public function editerAction() {
         $auth = Zend_Auth::getInstance();
         
-        if(!$auth->hasIdentity()) {
+        if(!$auth->hasIdentity() || $auth->getIdentity()->role_id != Application_Model_Roles::$ROLE_SUPERVISOR) {
             $this->_redirect('/travaux/index');
         }
         

@@ -1,9 +1,9 @@
 <?php
 
-class Application_Form_EditUser extends Zend_Form {
+class Application_Form_AddUser extends Zend_Form {
 
     public function __construct($options = null) {
-        $config = new Zend_Config_Ini(CONFIGS_PATH . '/formEditUser.ini', 'editUser');
+        $config = new Zend_Config_Ini(CONFIGS_PATH . '/formAddUser.ini', 'addUser');
         parent::__construct($config);
         $typesTable = new Application_Model_Types();                            // Ajout des types
         
@@ -15,7 +15,7 @@ class Application_Form_EditUser extends Zend_Form {
         
         $this->setDecorators(array(
             array('ViewScript', array(
-                'viewScript' => '_formEditUser.phtml',
+                'viewScript' => '_formAddUser.phtml',
                 'mode' => 'edit',
             ))
             )

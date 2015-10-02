@@ -674,6 +674,11 @@ $(document).ready(function () {
             $('#formEditUser').submit();
         })
     }
+    if ($('#formAddUser').length) {
+        $('#add_new_user').click(function(){
+            $('#formAddUser').submit();
+        });
+    }
     if($('#usersList').length) {
         $('.delete_user_button').click(function() {
             $('input#waiting_action').attr('data-href', $(this).attr('data-href'));

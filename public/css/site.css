@@ -69,12 +69,18 @@ div#noticesContainer .message {
     position:fixed;
     margin-left:10%;
 }
-#usersList {
+#usersListContainer {
     margin-left: auto;
     margin-right: auto;
     width: 50%;
     min-width:900px;
     max-width:900px;
+}
+#add_user_btn {
+    float:right;
+}
+#usersList {
+    
 }
 #usersList .options {
     text-align:right;
@@ -87,6 +93,11 @@ div#noticesContainer .message {
     max-width:900px;
 }
 #formEditUser {
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+}
+#formAddUser {
     margin-left: auto;
     margin-right: auto;
     width: 400px;
