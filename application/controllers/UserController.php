@@ -153,6 +153,9 @@ class UserController extends Zend_Controller_Action {
         $this->setNotices();
     }
 
+    /*
+    Edition d'un utilisateur depuis la liste des utilisateurs ('/user/liste')
+     */
     public function editerAction() {
         $auth = Zend_Auth::getInstance();
         
@@ -192,6 +195,12 @@ class UserController extends Zend_Controller_Action {
                 if($uid != $auth->getIdentity()->id) {
                     // Si l'utilisateur modifié n'est pas l'utilisateur courant, on prend en compte un éventuel changement de role
                     $userData['role_id'] = $formData['role'];
+                    // Dans le cas d'un changement de WORKER vers SUPERVISOR, on supprime la liste de travaux associée
+                    $userEditing = $usersTable->getUserBasics($uid);
+                    if($formData['role'] == Application_Model_Roles::$ROLE_SUPERVISOR && $formData['role'] != $userEditing['role_id']) {
+                        $travauxTravailleursTable = new Application_Model_TravauxTravailleurs();
+                        $travauxTravailleursTable->deleteAllWorksForUser($uid);
+                    }
                 }
                 if(!empty($formData['pass'])) {
                     // Si un mot de passe a été rentré
