@@ -685,6 +685,9 @@ $(document).ready(function () {
                 })
                 .modal('show');
         });
+        $('.edit_user_button').click(function() {
+            document.location.href=$(this).attr('data-href');
+        });
     }
     if ($('.formWork').length > 0) {
         hideAddWMap();

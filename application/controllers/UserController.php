@@ -101,6 +101,70 @@ class UserController extends Zend_Controller_Action {
         $this->setNotices();
     }
 
+    public function editerAction() {
+        $auth = Zend_Auth::getInstance();
+        
+        if(!$auth->hasIdentity()) {
+            $this->_redirect('/travaux/index');
+        }
+        
+        $this->view->title = 'Éditer l\'utilisateur';
+        $this->view->page = 'user-edit';
+        $editUserForm = new Application_Form_EditUser();
+        
+        $uid;
+        if ($this->_request->has('uid') && (int)$this->_request->getParam('uid')) {
+            $uid = (int)$this->_request->getParam('uid');
+        } else {
+            $this->_redirect('travaux/index');
+        }
+
+        $this->_helper->viewRenderer('edit');
+        
+        if($this->_request->has('lname')) {
+
+            // Soumission de nouvelles valeurs
+            $formData = $this->_request->getPost();
+            if($editUserForm->isValid($formData)) {
+                // Formulaire valide
+                $usersTable = new Application_Model_Users();
+                $userData['lname'] = $formData['lname'];
+                $userData['fname'] = $formData['fname'];
+                $userData['mail']  = $formData['mail'];
+                $where = $usersTable->getAdapter()->quoteInto('id = ?', $uid);
+                $usersTable->update($userData, $where);
+                
+                
+                if($uid == $auth->getIdentity()->id) {
+                    $identity = $auth->getIdentity();
+                    $identity->lname = $userData['lname'];
+                    $identity->fname = $userData['fname'];
+                    $identity->mail = $userData['mail'];
+                    $auth->clearIdentity();
+                    $auth->getStorage()->write($identity);
+                    $this->setIdentityInView();
+                }
+
+                $this->view->noticeTemplate = 'user/notices/user-edited.phtml';
+            } else {
+                // Formulaire non valide
+            }
+            $this->view->editUserForm = $editUserForm;
+        } else {
+            // Ouverture pour modification
+            $usersTable = new Application_Model_Users();
+            $user = $usersTable->getUserBasics($uid);
+            $this->setFormElements($editUserForm, array(
+                'fname' => $user['fname'],
+                'lname' => $user['lname'],
+                'mail' => $user['mail'],
+                'uid' => $uid,
+            ));
+            $this->view->editUserForm = $editUserForm;
+        }
+
+        $this->setNotices();
+    }
 
     public function supprimerAction() {
         $auth = Zend_Auth::getInstance();

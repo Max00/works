@@ -21,9 +21,7 @@
 					<?php if($this->uid != $curUser->id) : ?>
 					<?php echo $this->RemoveUserButton($curUser->id) ?>
 					<?php endif; ?>
-					<div class="ui button edit_user">
-						<i class="ui icon edit"></i>
-					</div>
+					<?php echo $this->EditUserButton($curUser->id) ?>
 				</div>
 			</td>
 		</tr>
