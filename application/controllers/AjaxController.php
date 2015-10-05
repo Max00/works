@@ -253,6 +253,26 @@ class AjaxController extends Zend_Controller_Action {
         echo json_encode(array('error' => 'token'));
         return;
     }
+
+    public function getWorksStatsAction() {
+        $authNS = new Zend_Session_Namespace('authToken');
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        // Zend_Registry::get('logger')->log('0', 6);
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        }
+        if ($hash == $pageToken) {
+            $travauxTable = new Application_Model_Travaux();
+            $worksStats = $travauxTable->getWorksStats();
+            echo json_encode($worksStats);
+            return;
+        }
+        
+        // Invalid token
+        echo json_encode(array('error' => 'token'));
+        return;
+    }
     
     public function changeWorkPrioAction() {
         $authNS = new Zend_Session_Namespace('authToken');

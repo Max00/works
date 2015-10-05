@@ -69,6 +69,115 @@ HAVING distance < $perimeter ORDER BY distance
     }
 */
     
+    public function getTotalWorksCount() {
+        $queryStr =<<<EOT
+SELECT count(w.id) `works_count`
+FROM works w;
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $worksCount = (int)$result['works_count'];
+        return $worksCount;
+    }
+
+    public function getWorksStats() {
+        /*
+            Travaux urgents
+            Travaux à réaliser avant 10 jours
+            Travaux en retard
+            Taux d'attribution
+         */
+        
+        if(0 == $this->getTotalWorksCount()) {
+            return ;
+        }
+
+        // Nombre de travaux arrivant à échéance avant 10 jours
+        $queryStr =<<<EOT
+SELECT count(ws.id) AS `10days_or_less`
+FROM works ws
+WHERE CASE
+    WHEN ws.date_last_done IS NULL THEN 1
+    WHEN ws.frequency_weeks IS NOT NULL AND 7*ws.frequency_weeks-(DATEDIFF(CURDATE(),ws.date_last_done)) <= 10 THEN 1
+    WHEN ws.frequency_days IS NOT NULL AND ws.frequency_days-(DATEDIFF(CURDATE(),ws.date_last_done)) <= 10 THEN 1
+END;
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $tenDaysOrLess = $result['10days_or_less'];
+
+        // Nombre de travaux urgents
+        $queryStr =<<<EOT
+SELECT count(w.id) AS `urgents_count`
+FROM works w
+WHERE w.prio = 1;
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $urgentsCount = $result['urgents_count'];
+
+        // Nombre de travaux en retard
+        $queryStr =<<<EOT
+SELECT count(ws.id) AS `late_count`
+FROM works ws
+WHERE CASE
+    WHEN ws.date_last_done IS NULL THEN 0
+    WHEN ws.frequency_weeks IS NOT NULL AND 7*ws.frequency_weeks-(DATEDIFF(CURDATE(),ws.date_last_done)) < 0 THEN 1
+    WHEN ws.frequency_days IS NOT NULL AND ws.frequency_days-(DATEDIFF(CURDATE(),ws.date_last_done)) < 0 THEN 1
+END;
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $lateCount = $result['late_count'];
+
+        // Attribués
+        $queryStr =<<<EOT
+SELECT count(w.id) as `affected`
+FROM works w
+WHERE w.id IN (
+    SELECT DISTINCT work_id FROM works_workers
+    );
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $affectedCount = (int)$result['affected'];
+        // Total des travaux non effectués
+        $queryStr =<<<EOT
+SELECT count(w.id) as `total`
+FROM works w
+WHERE w.prio <> 3;
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $totalCount = (int)$result['total'];
+
+        $affectationRatio = round((100*$affectedCount) / $totalCount);
+
+        // Attribués urgents
+        $queryStr =<<<EOT
+SELECT count(w.id) as `affected_urgent`
+FROM works w
+WHERE w.id IN (
+    SELECT DISTINCT work_id FROM works_workers
+    )
+AND w.prio = 1;
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $affectedCountUrgent = (int)$result['affected_urgent'];
+        // Total des travaux non effectués et urgents
+        $queryStr =<<<EOT
+SELECT count(w.id) as `total_urgent`
+FROM works w
+WHERE w.prio = 1;
+EOT;
+        $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        $totalCountUrgent = (int)$result['total_urgent'];
+
+        $affectationRatioUrgent = round((100*$affectedCountUrgent) / $totalCountUrgent);
+
+        return array(
+            'urgent_works'             => $urgentsCount,
+            'ten_days_or_less_works'   => $tenDaysOrLess,
+            'late_works'               => $lateCount,
+            'affectation_ratio'        => $affectationRatio,
+            'affectation_ratio_urgent' => $affectationRatioUrgent,
+            );
+    }
+
     /*
      * Retourne un row de travail spécifique
      */

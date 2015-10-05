@@ -383,6 +383,31 @@ function refreshUListCount() {
     });
 }
 
+
+function refreshStats() {
+    $.ajax({
+        type: "GET",
+        url: '/index.php/ajax/get-works-stats',
+        data: {
+            auth_token: getPageToken()
+        },
+        success: function (response) {
+            $('#urgent_count').html(response.urgent_works);
+            $('#ten_days_or_less_count').html(response.ten_days_or_less_works);
+            $('#late_count').html(response.late_works);
+            $('#affectation_ratio').html(response.affectation_ratio);
+            $('#affectation_ratio_urgent').html(response.affectation_ratio_urgent);
+        },
+        error: function (response) {
+            console.log('AJAX error: get works stats');
+        }
+    });
+}
+
+function refreshWorkDays(wid) {
+    // @todo
+}
+
 function removeUList(wid, uid, context) {
     var tr = $('tr[data-workid="'+wid+'"]');
     var bRem = tr.find('div.remove_ulist');
@@ -402,6 +427,7 @@ function removeUList(wid, uid, context) {
             bRem.hide();
             pinI.hide();
             refreshUListCount();
+            refreshStats();
             if(context === 'wv') {
                 $('#wv_remove_from_ulist').hide();
                 $('#wv_add_to_ulist').show();
@@ -434,6 +460,7 @@ function addUList(wid, uid, context) {
             bRem.show();
             pinI.show();
             refreshUListCount();
+            refreshStats();
             if(context === 'wv') {
                 $('#wv_remove_from_ulist').show();
                 $('#wv_add_to_ulist').hide();
@@ -511,6 +538,7 @@ $(document).ready(function () {
                 wm.find('div.set_work_done_button').show();
                 sortWList('#works_1');
                 setPrioButtons('#works_1', 2, 'down');
+                refreshStats();
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_urgent');
@@ -536,6 +564,7 @@ $(document).ready(function () {
                 $('#works_2').append(wm);
                 sortWList('#works_2');
                 setPrioButtons('#works_2', 1, 'up');
+                refreshStats();
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_normal');
@@ -562,6 +591,8 @@ $(document).ready(function () {
                 $('#works_3').append(wm);
                 sortWList('#works_3');
                 setPrioButtons('#works_3', 2, 'up');
+                refreshStats();
+                clearDaysToDoneWorks();
                 if(isWorker()) {
                     $('#wv_set_done').hide();
                     cleanUserList();
@@ -591,6 +622,7 @@ $(document).ready(function () {
                                 $('#works_3').append(wm);
                                 sortWList('#works_3');
                                 setPrioButtons('#works_3', 2, 'up');
+                                refreshStats();
                                 if($('#auth_token_supervisor').val()) { 
                                     $('tr[data-workid="' + wid + '"]').find('i.icon.lock').hide();
                                     $('tr[data-workid="' + wid + '"]').find('div.set_work_done_button').hide();
@@ -662,6 +694,7 @@ $(document).ready(function () {
                 if(1 == prio || 2 == prio) {
                     wm.find('div.set_work_done_button').show();
                 }
+                refreshStats();
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_urgent');
