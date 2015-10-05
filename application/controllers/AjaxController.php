@@ -180,7 +180,6 @@ class AjaxController extends Zend_Controller_Action {
                     'markup' => $work['markup'],
                     'question' => $work['question'],
                     'answer' => $work['answer'],
-                    'frequency_months' => $work['frequency_months'],
                     'frequency_weeks' => $work['frequency_weeks'],
                     'frequency_days' => $work['frequency_days'],
                     'date_last_done' => $work['date_last_done'],

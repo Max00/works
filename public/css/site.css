@@ -40,6 +40,15 @@ table#usersList td {
     padding-top:0 !important;
     padding-bottom:0 !important;
 }
+table.works_table td.item .days_to {
+    font-size: 80%;
+    font-weight: bold;
+    margin-left: 5px;
+}
+table.works_table td.item .days_to.urgent {
+    font-size: 100%;
+    color: Red;
+}
 table.works_table td.item:hover {
     cursor:pointer;
 }
@@ -50,6 +59,13 @@ table.works_table td.options {
 }
 dd {
     margin-left:0;
+}
+#soon_tables_container {
+    margin-right:20px;
+}
+#soon_tables_container .oeuvre {
+    font-size:80%;
+    font-style: italic;
 }
 #works_1 .set_work_done_button,
 #works_2 .set_work_done_button {

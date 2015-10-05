@@ -1,4 +1,6 @@
-<section id="sidebar">- Sidebar -</section>
+<section id="sidebar">
+
+</section>
 <section id="content">
 
     <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): 
@@ -32,6 +34,24 @@
                                 foreach ($curWork['types'] as $typeId => $typeAr) :
                                     echo '<div class="ui label" style="background-color:#' . $typeAr['color'] . '">' . $typeAr['name'] . '</div>';
                                 endforeach;
+                            }
+                            if(isset($curWork['days_to'])) {
+                                $daysTo = (int)$curWork['days_to'];
+                                $class;
+                                if($daysTo <= 3) {
+                                    $class="days_to urgent";
+                                } else {
+                                    $class="days_to";
+                                }
+                                if($daysTo > 0) {
+                                    $daysTo = 'J - ' . abs($daysTo);
+                                } elseif($daysTo == 0) {
+                                    $daysTo = 'Aujourd\'hui !';
+                                } else {
+                                    $daysTo = abs($daysTo) . ' jours en retard';
+                                }
+                                
+                                echo '<span class="' . $class . '">' . $daysTo . '</span>';
                             }
                             if (!empty($curWork['title'])) {
                                 echo '<span class="work_title"> ' . $curWork['title'] . '</span>';

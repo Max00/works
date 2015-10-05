@@ -10,9 +10,8 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
         'Déjà effectué' => 3
     );                                                                          // @todo Translate
     public static $FREQTYPES = array(
-        0 => 'months',
-        1 => 'weeks',
-        2 => 'days'
+        0 => 'weeks',
+        1 => 'days'
     );
     public static $NOTYPE = 'Sans type';
     public static $UNTITLED_WORK = 'Travail sans nom';
@@ -75,7 +74,7 @@ HAVING distance < $perimeter ORDER BY distance
      */
     public function getWorkById($workId) {
         $select = $this->_db->select()
-                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.question', 'w.answer', 'w.frequency_months', 'w.frequency_weeks', 'w.frequency_days', 'date_last_done'))
+                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.question', 'w.answer', 'w.frequency_weeks', 'w.frequency_days', 'date_last_done'))
                 ->where('w.id = ?', $workId);
         return $this->_db->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
     }
@@ -209,6 +208,27 @@ HAVING distance < $perimeter ORDER BY distance
         return $priosWorksA;
     }
     
+    public function getWorksSoonScheduled() {
+        // Récupérer les travaux selon leur date d'expiration, groupées par degré d'urgence
+        $queryStr =<<<EOT
+SELECT
+    w.id, w.title as `work_title`, w.oeuvre_id, w.prio,
+    o.title as `oeuvre_title`, o.numero as `oeuvre_numero`,
+    convert(coalesce(w.coords_x,o.coords_x) using utf8) AS coords_x,
+    convert(coalesce(w.coords_y,o.coords_y) using utf8) AS coords_y,
+    u.fname,
+    u.lname,
+    DATEDIFF(CURDATE(),w.date_last_done) as `ddif`
+from works w
+LEFT JOIN works_workers ww on ww.work_id = w.id
+LEFT JOIN users u on u.id = ww.user_id
+LEFT JOIN oeuvres o on o.id = w.oeuvre_id
+ORDER BY w.date_last_done IS NULL ASC, DATEDIFF(CURDATE(), w.date_last_done)
+EOT;
+        $result = $this->_db->fetchAll($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        return $result;
+    }
+
     /*
      * Retourne un rowset des travaux sans type
      */
@@ -348,12 +368,13 @@ HAVING distance < $perimeter ORDER BY distance
                 }
                                                                                 // Écriture des propriétés
 
-                $works[$workId]['title'] = $curWork['work_title'];
+                $works[$workId]['title']         = $curWork['work_title'];
                 $works[$workId]['date_creation'] = $curWork['date_creation'];
-                $works[$workId]['oeuvre_title'] = $curWork['oeuvre_title'];
+                $works[$workId]['oeuvre_title']  = $curWork['oeuvre_title'];
                 $works[$workId]['oeuvre_numero'] = $curWork['oeuvre_numero'];
-                $works[$workId]['coords_x'] = $curWork['coords_x'];
-                $works[$workId]['coords_y'] = $curWork['coords_y'];
+                $works[$workId]['coords_x']      = $curWork['coords_x'];
+                $works[$workId]['coords_y']      = $curWork['coords_y'];
+                $works[$workId]['days_to']       = $curWork['days_to'];
                 if(!empty($curWork['user_id'])) {
                     $works[$workId]['user_id'] = $curWork['user_id'];
                     $works[$workId]['user_fname'] = $curWork['user_fname'];
@@ -392,32 +413,32 @@ HAVING distance < $perimeter ORDER BY distance
                 $currentTypeId = $currentWorkRow['type_id'];
                 $typesWorksA[$tIdx] = array();
                 if($currentWorkRow['type_id'] !== NULL) {                       // Si le travail a un type
-                    $typesWorksA[$tIdx]['type'] = array();
-                    $typesWorksA[$tIdx]['type']['id'] = $currentTypeId;
-                    $typesWorksA[$tIdx]['type']['name'] = $currentWorkRow['type_name'];
+                    $typesWorksA[$tIdx]['type']          = array();
+                    $typesWorksA[$tIdx]['type']['id']    = $currentTypeId;
+                    $typesWorksA[$tIdx]['type']['name']  = $currentWorkRow['type_name'];
                     $typesWorksA[$tIdx]['type']['color'] = $currentWorkRow['type_color'];
                 } else {
                     $typesWorksA[$tIdx]['notype'] = true;
                 }
-                $typesWorksA[$tIdx]['works'] = array();                         // Il faut ajouter cette ligne au tableau, dans l'element type fraichement créé
-                $typesWorksA[$tIdx]['works'][$wIdx] = array();
-                $typesWorksA[$tIdx]['works'][$wIdx]['id'] = $currentWorkRow['work_id'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['title'] = $currentWorkRow['work_title'];
+                $typesWorksA[$tIdx]['works']                         = array();                         // Il faut ajouter cette ligne au tableau, dans l'element type fraichement créé
+                $typesWorksA[$tIdx]['works'][$wIdx]                  = array();
+                $typesWorksA[$tIdx]['works'][$wIdx]['id']            = $currentWorkRow['work_id'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['title']         = $currentWorkRow['work_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['date_creation'] = $currentWorkRow['date_creation'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title'] = $currentWorkRow['oeuvre_title'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title']  = $currentWorkRow['oeuvre_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_numero'] = $currentWorkRow['oeuvre_numero'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['coords_x'] = $currentWorkRow['coords_x'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['coords_y'] = $currentWorkRow['coords_y'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['coords_x']      = $currentWorkRow['coords_x'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['coords_y']      = $currentWorkRow['coords_y'];
                 $wIdx++;
             } else {                                                            // On ajoute le travail dans le type existant
                 $wIdx++;
-                $typesWorksA[$tIdx]['works'][$wIdx]['id'] = $currentWorkRow['work_id'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['title'] = $currentWorkRow['work_title'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['id']            = $currentWorkRow['work_id'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['title']         = $currentWorkRow['work_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['date_creation'] = $currentWorkRow['date_creation'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title'] = $currentWorkRow['oeuvre_title'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_title']  = $currentWorkRow['oeuvre_title'];
                 $typesWorksA[$tIdx]['works'][$wIdx]['oeuvre_numero'] = $currentWorkRow['oeuvre_numero'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['coords_x'] = $currentWorkRow['coords_x'];
-                $typesWorksA[$tIdx]['works'][$wIdx]['coords_y'] = $currentWorkRow['coords_y'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['coords_x']      = $currentWorkRow['coords_x'];
+                $typesWorksA[$tIdx]['works'][$wIdx]['coords_y']      = $currentWorkRow['coords_y'];
             }
         }
         return $typesWorksA;
@@ -428,6 +449,7 @@ HAVING distance < $perimeter ORDER BY distance
      */
     private function getWorksByPrioOrderTypes($prioId) {
         $prioId = $this->_db->quote($prioId);
+       /*
         $req = $this->_db->select()
                 ->from(array('w' => 'works'), array(
                     'w.id as work_id', 'w.title as work_title', 'w.date_creation', 'w.coords_x', 'w.coords_y',
@@ -446,9 +468,39 @@ HAVING distance < $perimeter ORDER BY distance
                 // - OR -
                 // Only alphabetical
                 ->order(new Zend_Db_Expr('work_title'));
-        //echo $req;
-        //die();
-        // LEFT JOIN pour récupérer les travaux qui n'ont pas de type
+*/
+        $req =<<<EOT
+SELECT
+    `w`.`id` AS `work_id`,
+    `w`.`title` AS `work_title`,
+    `w`.`date_creation`,
+    `w`.`coords_x`,
+    `w`.`coords_y`,
+    `t`.`id` AS `type_id`,
+    `t`.`name` AS `type_name`,
+    `t`.`color` AS `type_color`,
+    `o`.`title` AS `oeuvre_title`,
+    `o`.`numero` AS `oeuvre_numero`,
+    `ww`.`date_added`,
+    `ww`.`date_done`,
+    `u`.`id` AS `user_id`,
+    `u`.`fname` AS `user_fname`,
+    `u`.`lname` AS `user_lname`,
+    CASE
+        WHEN w.date_last_done IS NULL THEN 0
+        WHEN w.frequency_weeks IS NOT NULL THEN 7*w.frequency_weeks-(DATEDIFF(CURDATE(),w.date_last_done))
+        WHEN w.frequency_days IS NOT NULL THEN w.frequency_days-(DATEDIFF(CURDATE(),w.date_last_done))
+    END AS `days_to`
+FROM `works` AS `w`
+LEFT JOIN `works_types` AS `wt` ON w.id = wt.work_id
+LEFT JOIN `types` AS `t` ON t.id = wt.type_id
+LEFT JOIN `oeuvres` AS `o` ON o.id = w.oeuvre_id
+LEFT JOIN `works_workers` AS `ww` ON ww.work_id = w.id
+LEFT JOIN `users` AS `u` ON u.id = ww.user_id
+WHERE (w.prio = $prioId)
+ORDER BY work_title
+
+EOT;
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
     }
     
@@ -496,14 +548,31 @@ EOT;
      * Change la priorité d'un travail dont l'identifiant est donné
      */
     public function changeWorkPrio($workId, $prio) {
-        $this->update(array('prio' => $prio), $this->_db->quoteInto('id = ?', $workId));
+        if($prio == self::$PRIORITIES['Déjà effectué']) {
+            // Si on marque le travail comme effectué, on change la valeur de date_last_done
+            $this->update(
+                array(
+                    'prio' => $prio,
+                    'date_last_done' => date('Y-m-d'),
+                    ),
+                    $this->_db->quoteInto('id = ?', $workId));
+        } else {
+            $this->update(
+                array('prio' => $prio),
+                $this->_db->quoteInto('id = ?', $workId));
+        }
     }
     
     /*
      * Définit le travail comme effectué
      */ 
     public function setWorkDone($workId) {
-        $this->update(array('date_last_done' => date('Y-m-d'),'prio' => Application_Model_Travaux::$PRIORITIES['Déjà effectué']), $this->_db->quoteInto('id = ?', $workId));
+        $this->update(
+            array(
+                'date_last_done' => date('Y-m-d'),
+                'prio' => Application_Model_Travaux::$PRIORITIES['Déjà effectué']
+            ),
+            $this->_db->quoteInto('id = ?', $workId));
     }
     
     /*

@@ -176,13 +176,26 @@ class TravauxController extends Zend_Controller_Action {
         }
 
         $userId = Zend_Auth::getInstance()->getIdentity()->id;
-        if ('types' == $mode) {
+        if ('types' == $mode) { // Not done ! Ne devrait jamais rentrer ici
             $this->view->viewMode = $viewDefaults->worksListMode = 'types';
             $this->view->works = $travauxTable->getAllByTypes($userId);
             $this->_helper->viewRenderer('list-types');
         } else if ('prios' == $mode || self::$DEFAULT_LIST_ACTION == $mode) {
             $this->view->viewMode = $viewDefaults->worksListMode = 'prios';
             $this->view->works = $travauxTable->getAllByPrios($userId);
+            $worksSoonScheduled = $travauxTable->getWorksSoonScheduled();
+            $worksSoonScheduledSpliced = array(
+                'urgent' => array(),
+                'normal' => array(),
+            );
+            foreach($worksSoonScheduled as $currentWorkScheduled) {
+                if($currentWorkScheduled['prio'] == Application_Model_Travaux::$PRIORITIES['Urgent']) {
+                    $worksSoonScheduledSpliced['normal'] []= $currentWorkScheduled;
+                } else {
+                    $worksSoonScheduledSpliced['urgent'] []= $currentWorkScheduled;
+                }
+            }
+            $this->view->worksSoonScheduled = $worksSoonScheduledSpliced;
             $this->_helper->viewRenderer('liste-prios');
         }
     }
@@ -406,20 +419,12 @@ class TravauxController extends Zend_Controller_Action {
                             $this->getParam('frequency')) {
                         $frequency = $this->getParam('frequency');
                         switch ($this->getParam('frequency_type')) {
-                            case 'months': {
-                                    $workData['frequency_months'] = $frequency;
-                                    $workData['frequency_weeks'] = NULL;
-                                    $workData['frequency_days'] = NULL;
-                                    break;
-                                }
                             case 'weeks': {
-                                    $workData['frequency_months'] = NULL;
                                     $workData['frequency_weeks'] = $frequency;
                                     $workData['frequency_days'] = NULL;
                                     break;
                                 }
                             case 'days': {
-                                    $workData['frequency_months'] = NULL;
                                     $workData['frequency_weeks'] = NULL;
                                     $workData['frequency_days'] = $frequency;
                                     break;
@@ -429,7 +434,6 @@ class TravauxController extends Zend_Controller_Action {
                                 }
                         }
                     } else {
-                        $workData['frequency_months'] = NULL;
                         $workData['frequency_days'] = NULL;
                         $workData['frequency_weeks'] = NULL;
                     }
@@ -560,10 +564,6 @@ class TravauxController extends Zend_Controller_Action {
                 ));
                 // Frequence
                 $freqUnit = $freqNumber = '';
-                if (!empty($work['frequency_months'])) {
-                    $freqUnit = 'months';
-                    $freqNumber = $work['frequency_months'];
-                }
                 if (!empty($work['frequency_weeks'])) {
                     $freqUnit = 'weeks';
                     $freqNumber = $work['frequency_weeks'];

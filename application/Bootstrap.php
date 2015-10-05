@@ -44,7 +44,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view->doctype('XHTML1_STRICT');
         $view->headMeta()->appendHttpEquiv('Content-Type', 'text/html;charset=utf-8');
         $view->headTitle()->setSeparator(' - ');
-        $view->headTitle('VDF Works');
+        $view->headTitle('GesTra');
         
         $view->addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
         $view->jQuery()->addStylesheet('/js/jquery-ui-1.11.2/jquery-ui.min.css');
