@@ -314,8 +314,8 @@ function sortWList(list) {
     var rows = $(list + ' tbody  tr').get();
 
     rows.sort(function (a, b) {
-        var A = $(a).children('td').children('.work_title').eq(0).text().toUpperCase().stripAccents();
-        var B = $(b).children('td').children('.work_title').eq(0).text().toUpperCase().stripAccents();
+        var A = $(a).attr('data-work-daysto');
+        var B = $(b).attr('data-work-daysto');
 
         if (A < B) {
             return -1;
@@ -351,7 +351,9 @@ function cleanIconsPrioList() {
     $('table.works_table tr').each(function(){
         var pinI = $(this).children('td.item').children('i.pin');
         var lockI = $(this).children('td.item').children('i.lock');
+        var alertI = $(this).children('td.item').children('i.warning.sign');
         var state = $(this).attr('data-workstate');
+        var alert = $(this).attr('data-alert');
         if(state === "current") {
             lockI.hide();
         } else if(state === "other") {
@@ -359,6 +361,11 @@ function cleanIconsPrioList() {
         } else {
             lockI.hide();
             pinI.hide();
+        }
+        if(!alert) {
+            alertI.hide();
+        } else {
+            alertI.show();
         }
     });
 }
@@ -467,6 +474,12 @@ function removeUList(wid, uid, context) {
                 $('#wv_remove_from_ulist').hide();
                 $('#wv_add_to_ulist').show();
             }
+            if($('.liste_perso').length) {
+                document.location.href="/travaux/liste-perso";
+            }
+            wstate = tr.attr('data-workstate');
+            if(wstate == "free")
+                tr.find('.icon.warning.sign').show();
         },
         error: function () {
             console.log('AJAX error: remove ulist');
@@ -500,6 +513,10 @@ function addUList(wid, uid, context) {
                 $('#wv_remove_from_ulist').show();
                 $('#wv_add_to_ulist').hide();
             }
+            if($('.liste_perso').length) {
+                document.location.href="/travaux/liste-perso";
+            }
+            tr.find('.icon.warning.sign').hide();
         },
         error: function () {
             console.log('AJAX error: add ulist');
@@ -513,9 +530,19 @@ $(document).ready(function () {
     $('.ui.dropdown').dropdown({
         allowCategorySelection: true
     });
+    $('.works_table .buttons').hide();
     $('table.works_table td.item').click(function () {
         loadWorkView($(this).parent('tr').attr('data-workid'));
     });
+    $('table.works_table td.work_title').click(function () {
+        loadWorkView($(this).parent('tr').attr('data-workid'));
+    });
+    $('table.works_table tr').hover(function(){
+        $(this).find('.buttons').show();
+    },function(){
+        $(this).find('.buttons').hide();
+    });
+    
     $('.clickable_link').click(function () {
         document.location.href = $(this).attr('data-href');
     });
@@ -573,9 +600,13 @@ $(document).ready(function () {
                 $('#works_1').append(wm);
                 wm.find('div.set_work_done_button').show();
                 refreshWorkDays(wid);
+                wstate = wm.attr('data-workstate');
+                if(wstate == "free")
+                    wm.find('.icon.warning.sign').show();
                 sortWList('#works_1');
                 setPrioButtons('#works_1', 2, 'down');
                 refreshStats();
+                wm.find('.buttons').hide();
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_urgent');
@@ -600,9 +631,11 @@ $(document).ready(function () {
                 wm.find('div.set_work_done_button').show();
                 $('#works_2').append(wm);
                 refreshWorkDays(wid);
+                wm.find('.icon.warning.sign').hide();
                 sortWList('#works_2');
                 setPrioButtons('#works_2', 1, 'up');
                 refreshStats();
+                wm.find('.buttons').hide();
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_normal');
@@ -628,9 +661,11 @@ $(document).ready(function () {
                 wm.find('.pin').hide();
                 $('#works_3').append(wm);
                 refreshWorkDays(wid);
+                wm.find('.icon.warning.sign').hide();
                 sortWList('#works_3');
                 setPrioButtons('#works_3', 2, 'up');
                 refreshStats();
+                wm.find('.buttons').hide();
                 clearDaysToDoneWorks();
                 if(isWorker()) {
                     $('#wv_set_done').hide();
@@ -663,10 +698,13 @@ $(document).ready(function () {
                                 refreshWorkDays(wid);
                                 setPrioButtons('#works_3', 2, 'up');
                                 refreshStats();
+                                wm.find('.buttons').hide();
                                 if($('#auth_token_supervisor').val()) { 
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.warning.sign').hide();
                                     $('tr[data-workid="' + wid + '"]').find('i.icon.lock').hide();
                                     $('tr[data-workid="' + wid + '"]').find('div.set_work_done_button').hide();
                                 } else {
+                                    $('tr[data-workid="' + wid + '"]').find('i.icon.warning.sign').hide();
                                     $('tr[data-workid="' + wid + '"]').find('i.icon.pin').hide();
                                     $('tr[data-workid="' + wid + '"]').find('i.icon.lock').hide();
                                     $('tr[data-workid="' + wid + '"]').find('.buttons').hide();
@@ -727,6 +765,7 @@ $(document).ready(function () {
                 $('#works_' + prio).append(wm);
                 sortWList('#works_' + prio);
                 refreshWorkDays(wid);
+                wm.find('.buttons').hide();
                 setPrioButtons('#works_1', 2, 'down');
                 setPrioButtons('#works_2', 1, 'up');
                 wm.hide().transition('pulse');
@@ -734,6 +773,11 @@ $(document).ready(function () {
                     wm.find('div.set_work_done_button').show();
                 }
                 refreshStats();
+                if(prio == 1 && wm.attr('data-workstate') == 'free') {
+                    wm.find('i.warning.sign').show();
+                } else {
+                    wm.find('i.warning.sign').hide();
+                }
             },
             error: function (response) {
                 console.log('AJAX error: wv_set_urgent');

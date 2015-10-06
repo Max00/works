@@ -1,8 +1,17 @@
-<section id="sidebar">- Sidebar -</section>
-<section id="content">
+<section id="sidebar">
+    <div id="stats_container" class="ui message">
+        <h3>Statistiques</h3>
+        Travaux urgents : <span id="urgent_count"></span></br>
+        Moins de 10 jours restant : <span id="ten_days_or_less_count"></span></br>
+        Travaux en retard : <span id="late_count"></span></br>
+        Affectation des travaux urgents : <span id="affectation_ratio_urgent"></span> %</br>
+        Affectation de l'ensemble : <span id="affectation_ratio"></span> %</br>
+    </div>
+</section>
+<section id="content" class="liste_perso">
     <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): ?>
         <?php if (count($currentPrio['typesWorks'])) : ?>
-            <b><?php echo $currentPrio['label_prio'] ?></b><br/><br/>
+            <span class="prio<?php if($currentPrioId == Application_Model_Travaux::$PRIORITIES['Urgent']) echo ' urgent'; ?>"><?php echo $currentPrio['label_prio'] ?></span><br/><br/>
             <?php foreach ($currentPrio['typesWorks'] as $currentType): ?>
                 <?php if (isset($currentType['type'])) : ?>
                     <div class="ui label" style="background-color:#<?php echo $currentType['type']['color'] ?>">
@@ -15,19 +24,20 @@
                     <tbody>
                         <?php foreach ($currentType['works'] as $currentWork) : ?>
                             <tr data-workid="<?php echo $currentWork['id'] ?>">
-                                <td class="item">
                                     <?php
+                                    echo '</td><td class="work_title">';                                    
                                     if (!empty($currentWork['title'])) {
-                                        echo '<span class="work_title"> ' . $currentWork['title'] . '</span>';
-                                    } else if (!empty($currentWork['oeuvre_numero'])) {
-                                        echo '<span class="work_title"> ' . '#' . $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title'] . '</span>';
+                                        echo '<span class="title">' . $currentWork['title'] . '</span>';
                                     } else {
-                                        echo '<span class="work_title"> ' . Application_Model_Travaux::$UNTITLED_WORK . '</span>';
+                                        echo '<span class="title">' . Application_Model_Travaux::$UNTITLED_WORK . '</span>';
                                     }
+                                    if (!empty($currentWork['oeuvre_numero'])) {
+                                        echo ' <span class="ui tag label w_oeuvre">#' . $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title'] . '</span> ';
+                                    }
+                                    echo '</td>';
                                     ?>
-                                </td>
                                 <td class="options">
-                                    <div class="tiny icon ui buttons">
+                                    <div class="small icon ui buttons">
                                         <?php echo $this->SetWorkDoneButton(); ?>
                                         <?php echo $this->RemoveWorkFromUserListButton(); ?>
                                     </div>

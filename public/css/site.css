@@ -6,7 +6,7 @@ body {
     padding:0;
     margin:0;
     font-family: 'Open Sans', sans-serif;
-    font-size:14px;
+    font-size:16px;
     min-width:1000px;
 }
 a#setViewPrios,
@@ -41,16 +41,39 @@ table#usersList td {
     padding-bottom:0 !important;
 }
 table.works_table td.item .days_to {
-    font-size: 80%;
     font-weight: bold;
     margin-left: 5px;
 }
 table.works_table td.item .days_to.urgent {
-    font-size: 100%;
     color: Red;
 }
+.icon.pin, .icon.lock {
+    color:#ccc;
+    float:left;
+    font-size: 150%;
+}
+.icon.warning.sign {
+    font-size: 150%;
+    color:Red;
+    float:left;
+}
+.w_oeuvre {
+    font-weight: bold;
+    letter-spacing: 1px;
+    background-color: #D2FCCE !important;
+}
+.w_oeuvre::before {
+    background-color: #D2FCCE !important;
+}
+.work_title {
+}
+.work_title .title {
+}
+.work_types {
+    margin-right:10px;
+    display: inline-block;
+}
 #stats_container {
-    font-size: 120%;
     margin-right: 20px;
 }
 #urgent_count {
@@ -83,16 +106,39 @@ table.works_table td.item .days_to.urgent {
 #affectation_ratio.alert {
     color:Red;
 }
+table.works_table td.item {
+    width:180px;
+    text-align: right;
+}
+table.works_table td.works_title {
+    
+}
+table.works_table td.work_title:hover,
 table.works_table td.item:hover {
     cursor:pointer;
 }
 table.works_table td.options {
-    width:20%;
     text-align: right;
-    padding-right:0.3em;
+}
+table.works_table td.options {
+    padding-right:5px;
+}
+table.works_table td.options .button {
+    background-color: transparent;
+    color:#aaa;
+}
+table.works_table td.options .button:hover {
+    color:#222 !important;
 }
 dd {
     margin-left:0;
+}
+.liste_perso .prio {
+    font-weight: bold;
+    font-size: 16px;
+}
+.liste_perso .prio.urgent {
+    color:Red;
 }
 #form_error {
     width:200px;
@@ -120,9 +166,9 @@ dd {
     margin-right:auto;
 }
 div#noticesContainer .message {
-    width:80%;
+    width:30%;
     position:fixed;
-    margin-left:10%;
+    margin-left:35%;
 }
 #usersListContainer {
     margin-left: auto;

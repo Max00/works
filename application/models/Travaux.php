@@ -596,7 +596,7 @@ SELECT
     `u`.`fname` AS `user_fname`,
     `u`.`lname` AS `user_lname`,
     CASE
-        WHEN w.date_last_done IS NULL THEN 0
+        WHEN w.date_last_done IS NULL THEN NULL
         WHEN w.frequency_weeks IS NOT NULL THEN 7*w.frequency_weeks-(DATEDIFF(CURDATE(),w.date_last_done))
         WHEN w.frequency_days IS NOT NULL THEN w.frequency_days-(DATEDIFF(CURDATE(),w.date_last_done))
     END AS `days_to`
@@ -607,7 +607,7 @@ LEFT JOIN `oeuvres` AS `o` ON o.id = w.oeuvre_id
 LEFT JOIN `works_workers` AS `ww` ON ww.work_id = w.id
 LEFT JOIN `users` AS `u` ON u.id = ww.user_id
 WHERE (w.prio = $prioId)
-ORDER BY work_title
+ORDER BY days_to IS NOT NULL DESC, days_to, t.name
 
 EOT;
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
