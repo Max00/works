@@ -15,6 +15,8 @@ class AjaxController extends Zend_Controller_Action {
         $pageToken = $this->getRequest()->getParam('auth_token');
         if(isset($authNS->authTokenSupervisor)) {
             $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
         }
         if ($hash == $pageToken) {
             $q = $this->getParam('q');
@@ -44,6 +46,8 @@ class AjaxController extends Zend_Controller_Action {
         $pageToken = $this->getRequest()->getParam('auth_token');
         if(isset($authNS->authTokenSupervisor)) {
             $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
         }
         if ($hash == $pageToken) {
             $color = $this->getRequest()->getParam('color');
@@ -261,6 +265,8 @@ class AjaxController extends Zend_Controller_Action {
         // Zend_Registry::get('logger')->log('0', 6);
         if(isset($authNS->authTokenSupervisor)) {
             $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
         }
         if ($hash == $pageToken) {
             $travauxTable = new Application_Model_Travaux();
@@ -280,6 +286,8 @@ class AjaxController extends Zend_Controller_Action {
         $pageToken = $this->getRequest()->getParam('auth_token');
         if(isset($authNS->authTokenSupervisor)) {
             $hash = $authNS->authTokenSupervisor;
+        } elseif(isset($authNS->authTokenWorker)) {
+            $hash = $authNS->authTokenWorker;
         }
         if ($hash == $pageToken) {
             $workId = (int)$this->getRequest()->getParam('wid');

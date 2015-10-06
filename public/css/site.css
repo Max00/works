@@ -49,6 +49,40 @@ table.works_table td.item .days_to.urgent {
     font-size: 100%;
     color: Red;
 }
+#stats_container {
+    font-size: 120%;
+    margin-right: 20px;
+}
+#urgent_count {
+    font-weight:bold;
+}
+#ten_days_or_less_count {
+    font-weight:bold;
+}
+#late_count {
+    font-weight:bold;
+}
+#affectation_ratio_urgent {
+    font-weight:bold;
+}
+#affectation_ratio {
+    font-weight:bold;
+}
+#urgent_count.alert {
+    color:Red;
+}
+#ten_days_or_less_count.alert {
+    color:Red;
+}
+#late_count.alert {
+    color:Red;
+}
+#affectation_ratio_urgent.alert {
+    color:Red;
+}
+#affectation_ratio.alert {
+    color:Red;
+}
 table.works_table td.item:hover {
     cursor:pointer;
 }
@@ -59,6 +93,11 @@ table.works_table td.options {
 }
 dd {
     margin-left:0;
+}
+#form_error {
+    width:200px;
+    margin-left:auto;
+    margin-right:auto;
 }
 #soon_tables_container {
     margin-right:20px;

@@ -1,10 +1,12 @@
 <section id="sidebar">
-    <h3>Statistiques</h3>
-    Travaux urgents : <span id="urgent_count"><?php echo $this->worksStats['urgent_works'] ?></span></br>
-    Moins de 10 jours restant : <span id="ten_days_or_less_count"><?php echo $this->worksStats['ten_days_or_less_works'] ?></span></br>
-    Travaux en retard : <span id="late_count"><?php echo $this->worksStats['late_works'] ?></span></br>
-    Affectation des travaux urgents : <span id="affectation_ratio_urgent"><?php echo $this->worksStats['affectation_ratio_urgent'] ?></span> %</br>
-    Affectation de l'ensemble : <span id="affectation_ratio"><?php echo $this->worksStats['affectation_ratio'] ?></span> %</br>
+    <div id="stats_container" class="ui message">
+        <h3>Statistiques</h3>
+        Travaux urgents : <span id="urgent_count"></span></br>
+        Moins de 10 jours restant : <span id="ten_days_or_less_count"></span></br>
+        Travaux en retard : <span id="late_count"></span></br>
+        Affectation des travaux urgents : <span id="affectation_ratio_urgent"></span> %</br>
+        Affectation de l'ensemble : <span id="affectation_ratio"></span> %</br>
+    </div>
 </section>
 <section id="content">
 

@@ -183,7 +183,6 @@ class TravauxController extends Zend_Controller_Action {
         } else if ('prios' == $mode || self::$DEFAULT_LIST_ACTION == $mode) {
             $this->view->viewMode = $viewDefaults->worksListMode = 'prios';
             $this->view->works = $travauxTable->getAllByPrios($userId);
-            $this->view->worksStats = $travauxTable->getWorksStats();
 
             /* Not usefull for now 
             $worksSoonScheduled = $travauxTable->getWorksSoonScheduled();

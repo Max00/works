@@ -397,6 +397,22 @@ function refreshStats() {
             $('#late_count').html(response.late_works);
             $('#affectation_ratio').html(response.affectation_ratio);
             $('#affectation_ratio_urgent').html(response.affectation_ratio_urgent);
+            if(response.ten_days_or_less_works > 10)
+                $('#ten_days_or_less_count').addClass('alert');
+            else
+                $('#ten_days_or_less_count').removeClass('alert');
+            if(response.late_count > 0)
+                $('#late_count').addClass('alert');
+            else
+                $('#late_count').removeClass('alert');
+            if(response.affectation_ratio <= 10)
+                $('#affectation_ratio').addClass('alert');
+            else
+                $('#affectation_ratio').removeClass('alert');
+            if(response.affectation_ratio_urgent < 100)
+                $('#affectation_ratio_urgent').addClass('alert');
+            else
+                $('#affectation_ratio_urgent').removeClass('alert');
         },
         error: function (response) {
             console.log('AJAX error: get works stats');
@@ -511,6 +527,7 @@ $(document).ready(function () {
     $('#noticesContainer .message').delay(3000).fadeOut();
 
     cleanIconsPrioList();
+    refreshStats();
 
     // +/- refresh
     $('.works_table tr').each(function(){
