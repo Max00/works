@@ -672,6 +672,22 @@ EOT;
         }
     }
     
+    public function getWorkDaysTo($workId) {
+        $queryStr=<<<EOT
+SELECT
+    CASE
+        WHEN w.date_last_done IS NULL THEN 0
+        WHEN w.frequency_weeks IS NOT NULL THEN 7*w.frequency_weeks-(DATEDIFF(CURDATE(),w.date_last_done))
+        WHEN w.frequency_days IS NOT NULL THEN w.frequency_days-(DATEDIFF(CURDATE(),w.date_last_done))
+    END AS `days_to`
+FROM `works` AS `w`
+WHERE `w`.`id` = $workId
+EOT;
+
+        $result = $this->_db->fetchAll($queryStr, array(), Zend_Db::FETCH_ASSOC);
+        return $result[0]['days_to'];
+    }
+
     /*
      * Définit le travail comme effectué
      */ 

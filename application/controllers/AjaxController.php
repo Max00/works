@@ -273,6 +273,40 @@ class AjaxController extends Zend_Controller_Action {
         echo json_encode(array('error' => 'token'));
         return;
     }
+
+    public function getWorkDaystoAction() {
+        $authNS = new Zend_Session_Namespace('authToken');
+        $hash;
+        $pageToken = $this->getRequest()->getParam('auth_token');
+        if(isset($authNS->authTokenSupervisor)) {
+            $hash = $authNS->authTokenSupervisor;
+        }
+        if ($hash == $pageToken) {
+            $workId = (int)$this->getRequest()->getParam('wid');
+            if(!empty($workId)) {
+                $travauxTable = new Application_Model_Travaux();
+                $workDaysto = $travauxTable->getWorkDaysTo($workId);
+                $workDaystoStr = '';
+                if($workDaysto > 0) {
+                    $workDaystoStr = 'J - ' . abs($workDaysto);
+                } elseif($workDaysto == 0) {
+                    $workDaystoStr = 'Aujourd\'hui !';
+                } else {
+                    $workDaystoStr = abs($workDaysto) . ' jours en retard';
+                }
+                echo json_encode(
+                    array(
+                        'days_to' => $workDaysto,
+                        'str' => $workDaystoStr
+                        ));
+            }
+            return;
+        }
+        
+        // Invalid token
+        echo json_encode(array('error' => 'token'));
+        return;
+    }
     
     public function changeWorkPrioAction() {
         $authNS = new Zend_Session_Namespace('authToken');

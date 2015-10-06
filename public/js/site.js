@@ -405,7 +405,26 @@ function refreshStats() {
 }
 
 function refreshWorkDays(wid) {
-    // @todo
+    $.ajax({
+        type: "GET",
+        url: '/index.php/ajax/get-work-daysto',
+        data: {
+            wid: wid,
+            auth_token: getPageToken()
+        },
+        success: function (response) {
+            var wr = $('tr[data-workid="' + wid + '"] .days_to');
+            if(response.days_to <= 3) {
+                wr.addClass('urgent');
+            } else {
+                wr.removeClass('urgent');
+            }
+            wr.html(response.str);
+        },
+        error: function () {
+            console.log('AJAX error: get work daysto');
+        }
+    });
 }
 
 function removeUList(wid, uid, context) {
@@ -536,6 +555,7 @@ $(document).ready(function () {
                 wm = $('tr[data-workid="' + wid + '"]').detach();
                 $('#works_1').append(wm);
                 wm.find('div.set_work_done_button').show();
+                refreshWorkDays(wid);
                 sortWList('#works_1');
                 setPrioButtons('#works_1', 2, 'down');
                 refreshStats();
@@ -562,6 +582,7 @@ $(document).ready(function () {
                 wm = $('tr[data-workid="' + wid + '"]').detach();
                 wm.find('div.set_work_done_button').show();
                 $('#works_2').append(wm);
+                refreshWorkDays(wid);
                 sortWList('#works_2');
                 setPrioButtons('#works_2', 1, 'up');
                 refreshStats();
@@ -589,6 +610,7 @@ $(document).ready(function () {
                 wm.find('.remove_ulist').hide();
                 wm.find('.pin').hide();
                 $('#works_3').append(wm);
+                refreshWorkDays(wid);
                 sortWList('#works_3');
                 setPrioButtons('#works_3', 2, 'up');
                 refreshStats();
@@ -621,6 +643,7 @@ $(document).ready(function () {
                                 wm = $('tr[data-workid="' + wid + '"]').detach();
                                 $('#works_3').append(wm);
                                 sortWList('#works_3');
+                                refreshWorkDays(wid);
                                 setPrioButtons('#works_3', 2, 'up');
                                 refreshStats();
                                 if($('#auth_token_supervisor').val()) { 
@@ -674,8 +697,6 @@ $(document).ready(function () {
     $('div.change_prio').click(function () {
         wid = $(this).parents('tr').attr('data-workid');
         prio = $(this).attr('data-prio');
-        console.log(wid);
-        console.log(prio);
         $.ajax({
             type: "GET",
             url: '/index.php/ajax/change-work-prio',
@@ -688,6 +709,7 @@ $(document).ready(function () {
                 wm = $('tr[data-workid="' + wid + '"]').detach();
                 $('#works_' + prio).append(wm);
                 sortWList('#works_' + prio);
+                refreshWorkDays(wid);
                 setPrioButtons('#works_1', 2, 'down');
                 setPrioButtons('#works_2', 1, 'up');
                 wm.hide().transition('pulse');
