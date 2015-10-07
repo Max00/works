@@ -14,8 +14,6 @@ a#setViewTypes {
     padding-right:1em;
 }
 section#container {
-    margin-right:20px;
-    margin-left:20px;
 }
 section#content {
     margin-left:20%;
@@ -47,7 +45,7 @@ table.works_table {
     width:20%;
 }
 .works_table th.work_title {
-    width:25%;
+    width:20%;
 }
 .works_table th.item:hover,
 .works_table th.oeuvre:hover,
@@ -86,13 +84,7 @@ table.works_table td.item .days_to.urgent {
     font-weight: bold !important;
     background-color: #D2FCCE !important;
 }
-.w_oeuvre::before {
-    background-color: #D2FCCE !important;
-}
 .w_oeuvre.diff_col {
-    background-color:#B9F1DE !important;
-}
-.w_oeuvre.diff_col::before {
     background-color:#B9F1DE !important;
 }
 .work_title {
@@ -105,6 +97,8 @@ table.works_table td.item .days_to.urgent {
 }
 #stats_container {
     margin-right: 20px;
+    font-size:0.9em;
+    position:fixed;
     z-index: 0;
 }
 #urgent_count {
@@ -356,6 +350,10 @@ dd#prio-element input {
     section#sidebar {
         display:block;
         width:100%;
+    }
+    #stats_container {
+        display:block;
+        position:relative;
     }
     section#content {
         display:block;
