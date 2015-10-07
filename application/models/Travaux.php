@@ -481,6 +481,7 @@ EOT;
                 $works[$workId]['date_creation'] = $curWork['date_creation'];
                 $works[$workId]['oeuvre_title']  = $curWork['oeuvre_title'];
                 $works[$workId]['oeuvre_numero'] = $curWork['oeuvre_numero'];
+                $works[$workId]['oeuvre_id']     = $curWork['oeuvre_id'];
                 $works[$workId]['coords_x']      = $curWork['coords_x'];
                 $works[$workId]['coords_y']      = $curWork['coords_y'];
                 $works[$workId]['days_to']       = $curWork['days_to'];
@@ -588,6 +589,7 @@ SELECT
     `t`.`id` AS `type_id`,
     `t`.`name` AS `type_name`,
     `t`.`color` AS `type_color`,
+    `o`.`id` AS `oeuvre_id`,
     `o`.`title` AS `oeuvre_title`,
     `o`.`numero` AS `oeuvre_numero`,
     `ww`.`date_added`,
@@ -607,7 +609,7 @@ LEFT JOIN `oeuvres` AS `o` ON o.id = w.oeuvre_id
 LEFT JOIN `works_workers` AS `ww` ON ww.work_id = w.id
 LEFT JOIN `users` AS `u` ON u.id = ww.user_id
 WHERE (w.prio = $prioId)
-ORDER BY days_to IS NOT NULL DESC, days_to, t.name
+ORDER BY o.id IS NULL ASC, o.id, days_to IS NOT NULL DESC, days_to, t.name
 
 EOT;
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
@@ -672,6 +674,7 @@ EOT;
         }
     }
     
+
     public function getWorkDaysTo($workId) {
         $queryStr=<<<EOT
 SELECT

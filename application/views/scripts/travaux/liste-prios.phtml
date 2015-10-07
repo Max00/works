@@ -15,7 +15,9 @@
         <?php echo $currentPrio['label_prio'] ?>
         <table class="ui table striped works_table" id="works_<?php echo $currentPrioId ?>">
             <tbody>
-                <?php foreach ($currentPrio['works'] as $workId => $curWork): 
+                <?php
+                $curOeuvreId = $prevOeuvreId = $diff_col = null;
+                foreach ($currentPrio['works'] as $workId => $curWork): 
                 $daysTo = null;
                 if(isset($curWork['days_to']))
                     $daysTo = (int)$curWork['days_to'];
@@ -50,6 +52,7 @@
                             echo '<i class="ui icon lock"></i>';
                             echo '<i class="ui icon warning sign"></i>';
                             
+                            // Jours restant
                             if(isset($daysTo)) {
                                 $class;
                                 if($daysTo <= 3) {
@@ -68,6 +71,22 @@
                                 echo '<span class="' . $class . '">' . $daysTo . '</span>';
                             }
                             echo '</td><td class="work_title">';
+
+                            // Oeuvre associée
+                            if (!empty($curWork['oeuvre_numero'])) {
+                                $curOeuvreId = $curWork['oeuvre_id'];
+                                echo ' <span class="ui tag label w_oeuvre';
+                                if($prevOeuvreId != $curOeuvreId) {
+                                    $diff_col = !$diff_col;
+                                }
+                                if($diff_col) {
+                                    echo ' diff_col';
+                                }
+                                echo '">#' . $curWork['oeuvre_numero'] . ' - ' . $curWork['oeuvre_title'] . '</span> ';
+                                $prevOeuvreId = $curOeuvreId;
+                            }
+
+                            // Types
                             if (!empty($curWork['types']) && count($curWork['types'])) {
                                 echo '<div class="work_types">';
                                 foreach ($curWork['types'] as $typeId => $typeAr) :
@@ -76,14 +95,13 @@
                                 echo '</div>';
                             }
                             
+                            // Nom du travail
                             if (!empty($curWork['title'])) {
                                 echo '<span class="title">' . $curWork['title'] . '</span>';
                             } else {
                                 echo '<span class="title">' . Application_Model_Travaux::$UNTITLED_WORK . '</span>';
                             }
-                            if (!empty($curWork['oeuvre_numero'])) {
-                                echo ' <span class="ui tag label w_oeuvre">#' . $curWork['oeuvre_numero'] . ' - ' . $curWork['oeuvre_title'] . '</span> ';
-                            }
+                            
                             echo '</td>';
                             ?>
                         <td class="options">

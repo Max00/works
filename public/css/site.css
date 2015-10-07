@@ -65,6 +65,12 @@ table.works_table td.item .days_to.urgent {
 .w_oeuvre::before {
     background-color: #D2FCCE !important;
 }
+.w_oeuvre.diff_col {
+    background-color:#B9F1DE !important;
+}
+.w_oeuvre.diff_col::before {
+    background-color:#B9F1DE !important;
+}
 .work_title {
 }
 .work_title .title {
