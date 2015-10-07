@@ -717,10 +717,11 @@ EOT;
         try {
             $wtype = $workData['worktype'];
             $data = array(
-                'date_creation' => date('Y-m-d'),
-                'date_update' => date('Y-m-d'),
-                'desc_emplact' => $workData['desc_emplacement'],
-                'prio' => $workData['prio'],
+                'date_creation'  => date('Y-m-d'),
+                'date_last_done' => date('Y-m-d'),
+                'date_update'    => date('Y-m-d'),
+                'desc_emplact'   => $workData['desc_emplacement'],
+                'prio'           => $workData['prio'],
             );
             if('normal' == $wtype) {
                 $data['title'] = $workData['title'];
