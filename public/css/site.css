@@ -42,6 +42,7 @@ table#usersList td {
 }
 table.works_table td.item .days_to {
     font-weight: bold;
+    font-size: 0.8em;
     margin-left: 5px;
 }
 table.works_table td.item .days_to.urgent {
@@ -58,8 +59,7 @@ table.works_table td.item .days_to.urgent {
     float:left;
 }
 .w_oeuvre {
-    font-weight: bold;
-    letter-spacing: 1px;
+    font-weight: bold !important;
     background-color: #D2FCCE !important;
 }
 .w_oeuvre::before {
@@ -81,6 +81,7 @@ table.works_table td.item .days_to.urgent {
 }
 #stats_container {
     margin-right: 20px;
+    z-index: 0;
 }
 #urgent_count {
     font-weight:bold;
@@ -118,6 +119,9 @@ table.works_table td.item {
 }
 table.works_table td.works_title {
     
+}
+table.works_table td.options {
+    width:200px;
 }
 table.works_table td.work_title:hover,
 table.works_table td.item:hover {
@@ -329,157 +333,20 @@ dd#worktype-element input,
 dd#prio-element input {
     margin-right: 6px;
 }
-/* END Form elements
-
-
-/*
- COLORPICKER DEFAULT 
-.colorpicker { background-color:#e1e6ff; }
-
- NOTICES 
-#noticesContainer dialog { position:fixed; border-radius: 0.5em; border-style: none; font-size: 80%;}
-#noticesContainer dialog.success { background-color:#cec; }
-#noticesContainer dialog.error { background-color:#d88; }
-#noticesContainer dialog.info { background-color:#eec; }
-
- GENERAL 
-a, a:visited, a:link, a:active {  }
-a:hover {  }
-.hide{ display: none; }
-// dd#types-element label { display:block; }
-.button-xsmall { font-size: 70%; }
-.button-small { font-size: 85%; }
-.button-large { font-size: 110%; }
-.button-xlarge { font-size: 125%; }
-.button-secondary { color: white; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); background: rgb(66, 184, 221); }
-.button-edit { color: white; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); background: #99dcf2; }
-
- USER TILE 
-section#user-tile { display:inline-block; position:absolute; right:0; top:0; text-align:right; margin:0.5em 0.5em 0 0; padding:0.5em; }
-section#user-tile span.user { font-size: 85%; }
-section#user-tile a.discon:hover { color:Grey; }
-
- MAIN MENU 
-section#main-menu { margin:2em 0 0.3em 5em; }
-section#main-menu a { margin-right: 0.1em; }
-
- WORKS CONTAINER 
-section#works-container { padding:0 5em; }
-
- LIST MODE 
-section#list-mode { margin-bottom:0.5em; }
-
- WORKS LIST 
-section#works-list { width:58%; background-color:#fafafa; display:inline-block; }
-section#works-list div.prio span.prio-name { font-family: 'Bevan', cursive; font-size: 160%; padding:0 5em 0 0.5em; }
-section#works-list div.prio-small span.prio-name { font-family: 'Bevan', cursive; font-size: 120%; padding:0 5em 0 0.5em; }
-
-section#works-list div.prio-1 span.prio-name { background-color:Red; color: White; }
-section#works-list div.prio-2 span.prio-name { background-color:#B3D6E4; color:White; }
-section#works-list div.prio-3 span.prio-name { background-color:#ccc; color:White; }
-section#works-list div.type {  }
-section#works-list div.prio-1 { border-left: solid 0.4em Red; }
-section#works-list p.type { margin: 0.5em 0 0 1em; font-weight:normal; font-size:120%; color:#6DB37D; }
-section#works-list p.type-big { margin: 0.5em 0 0.4em 1em; font-weight:bold; font-size:160%; color:#6DB37D; }
-section#works-list ul { padding-left:1em; }
-section#works-list li { list-style-type: none; padding-left:0.5em; }
-section#works-list li.added { color:#ccc; }
-section#works-list li span.in-cur-user-list { color:Red; }
-section#works-list li:hover { background-color:#f0f0f0; cursor: pointer; }
-section#works-list li div.title { display:inline-block; }
-section#works-list li div.location { display:inline-block; margin-left:2em; color:#8F9DDB; }
-section#works-list li.added div.location { color:#AFB4C9; }
-section#works-list li div.work-options { display:inline-block; }
-section#works-list a.move-up,
-section#works-list a.move-down,
-section#works-list a.set-done,
-section#works-list a.add-ulist,
-section#works-list a.remove-ulist,
-section#works-list a.remove { color:Black; }
-section#works-list a.move-up:hover,
-section#works-list a.move-down:hover,
-section#works-list a.set-done:hover,
-section#works-list a.add-ulist:hover,
-section#works-list a.remove-ulist:hover,
-section#works-list a.remove:hover { color:#3C4FA6; }
-section#works-list a.move-down { margin-left:2px; }
-
- SECTION MIDDLE 
-section#middle { width:3%; display:inline-block; }
-
- WORK VIEW 
-section#work-view { width:38%; background-color: #fafafa; display:inline-block; float:right; position:fixed; }
-section#work-view div#work-edit-container { text-align: right; float:right; }
-section#work-view div#work-view-map { width:100%; height:400px; margin:0 auto 0 auto; }
-section#work-view p#help { padding:2em; }
-section#work-view div#work-details { padding: 3em; }
-section#work-view p#work-wrapper { margin-top:0; }
-section#work-view span#user-add-label { padding-left:1em; color:#ccc; }
-section#work-view span#user-add { color:#ccc; }
-section#work-view span#work-title { font-weight: bold; }
-section#work-view div#work-prio-container { width:100px; text-align: right; float:right; }
-section#work-view div#work-prio-1, div#work-prio-2, div#work-prio-3 { text-align:right; font-weight: bold; }
-section#work-view div#work-prio-1 { color:Red; }
-section#work-view div#work-prio-2 { color:#666; }
-section#work-view div#work-prio-3 { color:#ccc; }
-section#work-view p#work-coords_x { display:inline-block; }
-section#work-view p#work-coords_y { display:inline-block; }
-section#work-view div#work-frequency div { display:inline-block; }
-section#work-view div#work-types { margin-bottom:1em; }
-section#work-view div#work-types div { font-weight: bold; font-size: 80%; padding: 0.3em; display: inline-block; padding: 0.2em 0.4em; margin-right:0.5em; border-radius:0.2em }
-section#work-view p#work-date_last_done-container { color: #ccc; font-size: 80%; }
-section#work-view div#additional-workers-label { width: 170px; float: left; }
-section#work-view div#additional-workers span { margin-left:5px; margin-right: 5px; }
-
- WORK SUGGEST 
-section#work-suggest { width:38%; background-color: #fafafa; display:inline-block; float:right; position:fixed; }
-
- ADD WORK 
-form.formWork input[type="text"], form.formWork input[type="textarea"] { padding:0.5em; }
-form.formWork ul.errors { padding-left:0; }
-form.formWork ul.errors li { color:#d88; font-size:80%; list-style-type: none; }
-form.formWork { width:60%; margin-left:5em; background-color:#fafafa; }
-form.formWork fieldset { border:none; }
-form.formWork legend { font-size:150%; }
-form.formWork input#title, form.formWork input#title_question { width:500px; }
-form.formWork textarea#description, form.formWork textarea#description_question { padding:0.5em; width:500px; }
-form.formWork textarea#tools { padding:0.5em; width:500px; height:100px; }
-form.formWork dd#types-element label { display:block; }
-form.formWork dd#types-element label input { margin-right: 0.3em; margin-bottom: 0.5em; }
-form.formWork #fieldset-titleDesc, form.formWork #fieldset-titleDescQuestion, form.formWork #fieldset-toolsG, form.formWork #fieldset-additional_workersG { float:left; clear:left; }
-form.formWork #fieldset-toolsG, #fieldset-additional_workersG { padding-top:0; }
-form.formWork #fieldset-toolsG dl, #fieldset-additional_workersG dl { margin-top:0; }
-form.formWork #fieldset-toolsG dl dt, #fieldset-additional_workersG dl dt { display:none; }
-form.formWork #fieldset-additional_workersG .additional_worker { display:block; width:500px; }
-form.formWork #fieldset-additional_workersG #add_additional_worker { margin-top:5px; }
-form.formWork dd#titleDescQuestion-element, form.formWork dd#titleDesc-element { margin: 0; }
-form.formWork dd#worktype-element, form.formWork dd#prio-element { display: block; width: 130px; }
-form.formWork dd#worktype-element input, form.formWork dd#prio-element input { margin-right: 0.3em; vertical-align: middle; }
-form.formWork dd#worktype-element label, form.formWork dd#prio-element label { line-height:2em; }
-form.formWork fieldset#fieldset-workType { float:left; }
-form.formWork dd#prio-element label:first-child { color:Red; font-weight: bold; }
-form.formWork dd#prio-element label:nth-child(3) { color:Black; font-weight: bold; }
-form.formWork dd#prio-element label:nth-child(5) { color:#ccc; font-weight: bold; }
-form.formWork dd#position-element { clear:both; }
-form.formWork fieldset#fieldset-position { clear:left; }
-form.formWork div#coords-wrapper {  }
-form.formWork dt#oeuvre_emplact-label { display:inline-block; }
-form.formWork dd#oeuvre_emplact-element { display:inline-block; margin-left:1em; }
-form.formWork dt#emplacement_coords_x-label,
-form.formWork dt#emplacement_coords_y-label { display:inline-block; font-size:80%; }
-form.formWork dd#emplacement_coords_x-element,
-form.formWork dd#emplacement_coords_y-element { display:inline-block; margin-left:0.3em; }
-form.formWork dd#emplacement_coords_x-element input,
-form.formWork dd#emplacement_coords_y-element input { width:100px; font-size: 80%; padding:0.1em; }
-form.formWork div#cell_coord_x, form.formWork div#cell_coord_y { display:table-row; }
-form.formWork dt#emplacement_coords_x-label, form.formWork dt#emplacement_coords_y-label { display:table-cell; }
-form.formWork dd#emplacement_coords_x-element, form.formWork dd#emplacement_coords_y-element { display:table-cell; }
-form.formWork textarea#desc_emplacement { width:500px; height:300px; margin:1em; float:left; }
-form.formWork #add-work-map { width:500px; height:300px; margin:1em;}
-form.formWork dt#frequency-label { float: left; line-height: 2em; margin-right: 1em; }
-form.formWork dd#frequency-element input { width:25px; float:left; }
-form.formWork dd#frequency_type-element { line-height: 2em; }
-form.formWork dd#frequency_type-element select { margin-left: 1em; }
-form.formWork dt#add_type_label-label { line-height: 2em; float: left; }
-form.formWork dd#add_type_label-element input { margin-left: 1em; float:left; }
-form.formWork button#add_type_color_btn { line-height: 2em; margin-left: 1em; }*/
+@media (max-width: 1000px) {
+    section#sidebar {
+        display:block;
+        width:100%;
+    }
+    section#content {
+        display:block;
+        width:100%;
+        margin:0;
+    }
+    table.works_table td.item {
+        width:100px;
+    }
+    table.works_table td.work_title .title {
+        float:right;
+    }
+}
