@@ -96,7 +96,7 @@ EOT;
 SELECT count(ws.id) AS `10days_or_less`
 FROM works ws
 WHERE CASE
-    WHEN ws.date_last_done IS NULL THEN 1
+    WHEN ws.date_last_done IS NULL THEN 0
     WHEN ws.frequency_weeks IS NOT NULL AND 7*ws.frequency_weeks-(DATEDIFF(CURDATE(),ws.date_last_done)) <= 10 THEN 1
     WHEN ws.frequency_days IS NOT NULL AND ws.frequency_days-(DATEDIFF(CURDATE(),ws.date_last_done)) <= 10 THEN 1
 END;
@@ -145,7 +145,10 @@ EOT;
         $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
         $totalCount = (int)$result['total'];
 
-        $affectationRatio = round((100*$affectedCount) / $totalCount);
+        if($totalCount > 0 && $affectedCount != 0)
+            $affectationRatio = round((100*$affectedCount) / $totalCount);
+        else
+            $affectationRatio = 100;
 
         // Attribués urgents
         $queryStr =<<<EOT
@@ -167,7 +170,10 @@ EOT;
         $result = $this->_db->fetchRow($queryStr, array(), Zend_Db::FETCH_ASSOC);
         $totalCountUrgent = (int)$result['total_urgent'];
 
-        $affectationRatioUrgent = round((100*$affectedCountUrgent) / $totalCountUrgent);
+        if($totalCountUrgent > 0)
+            $affectationRatioUrgent = round((100*$affectedCountUrgent) / $totalCountUrgent);
+        else
+            $affectationRatioUrgent = 100;
 
         return array(
             'urgent_works'             => $urgentsCount,

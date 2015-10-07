@@ -422,6 +422,7 @@ function refreshStats() {
                 $('#affectation_ratio_urgent').removeClass('alert');
         },
         error: function (response) {
+            console.log(response)
             console.log('AJAX error: get works stats');
         }
     });
