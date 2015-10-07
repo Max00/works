@@ -40,18 +40,23 @@ table#works_1 {
 
 .works_table th.item {
     width:100px;
+    color: #707070 !important;
 }
 .works_table th.oeuvre {
     width:150px;
+    color: #707070 !important;
 }
 .works_table th.types {
     width:120px;
+    color: #707070 !important;
 }
 .works_table th.work_title {
     width:380px;
+    color: #707070 !important;
 }
 .works_table th.options {
     width:200px;
+    color: #707070 !important;
 }
 .works_table th.item:hover,
 .works_table th.oeuvre:hover,
@@ -342,6 +347,12 @@ div.message {
     font-size: 80%;
 }
 
+.tablesorter-headerSortUp {
+    text-decoration: line-through !important;
+}
+.tablesorter-headerSortDown {
+    text-decoration: underline !important;
+}
 /* Conserver ? */
 form.formWork legend {
     padding-right: 15px; padding-left: 15px;
