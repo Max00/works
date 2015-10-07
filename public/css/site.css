@@ -165,10 +165,12 @@ table.works_table td.options .button:hover {
 dd {
     margin-left:0;
 }
+#content .prio,
 .liste_perso .prio {
     font-weight: bold;
     font-size: 16px;
 }
+#content .prio.urgent,
 .liste_perso .prio.urgent {
     color:Red;
 }

@@ -5,7 +5,7 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     protected $_dependentTables = array('Application_Model_TravauxTypes');
     
     public static $PRIORITIES = array(
-        'Urgent' => 1,
+        'Important' => 1,
         'Normal' => 2,
         'Déjà effectué' => 3
     );                                                                          // @todo Translate

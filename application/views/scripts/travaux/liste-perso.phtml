@@ -11,7 +11,7 @@
 <section id="content" class="liste_perso">
     <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): ?>
         <?php if (count($currentPrio['typesWorks'])) : ?>
-            <span class="prio<?php if($currentPrioId == Application_Model_Travaux::$PRIORITIES['Urgent']) echo ' urgent'; ?>"><?php echo $currentPrio['label_prio'] ?></span><br/><br/>
+            <span class="prio<?php if($currentPrioId == Application_Model_Travaux::$PRIORITIES['Important']) echo ' urgent'; ?>"><?php echo $currentPrio['label_prio'] ?></span><br/><br/>
             <?php foreach ($currentPrio['typesWorks'] as $currentType): ?>
                 <?php if (isset($currentType['type'])) : ?>
                     <div class="ui label" style="background-color:#<?php echo $currentType['type']['color'] ?>">
@@ -32,7 +32,7 @@
                                         echo '<span class="title">' . Application_Model_Travaux::$UNTITLED_WORK . '</span>';
                                     }
                                     if (!empty($currentWork['oeuvre_numero'])) {
-                                        echo ' <span class="ui tag label w_oeuvre">#' . $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title'] . '</span> ';
+                                        echo ' <span class="ui label w_oeuvre">#' . $currentWork['oeuvre_numero'] . ' - ' . $currentWork['oeuvre_title'] . '</span> ';
                                     }
                                     echo '</td>';
                                     ?>

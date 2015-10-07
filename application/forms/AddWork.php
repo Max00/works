@@ -13,6 +13,7 @@ class Application_Form_AddWork extends Zend_Form {
         $this->addElementPrefixPath('Vdf_Form_Decorator_', ROOT_PATH . 'Vdf/Form/Decorator/', 'decorator');
         
         $this->getElement('prio')->removeDecorator('Label')->removeDecorator('Errors');
+        $this->getElement('oeuvre_id')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('worktype')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('form_title')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('title')->removeDecorator('Label')->removeDecorator('Errors');

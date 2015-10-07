@@ -12,7 +12,7 @@
 
     <?php foreach ($this->works['prios'] as $currentPrioId => $currentPrio): 
         $curUserId = Zend_Auth::getInstance()->getIdentity()->id; ?>
-        <?php echo $currentPrio['label_prio'] ?>
+        <span class="prio<?php if($currentPrioId == Application_Model_Travaux::$PRIORITIES['Important']) echo ' urgent'; ?>"><?php echo $currentPrio['label_prio'] ?></span>
         <table class="ui table striped works_table" id="works_<?php echo $currentPrioId ?>">
             <thead> 
             <tr> 
@@ -53,7 +53,7 @@
                             echo 'free';
                         endif;
 ?>"<?php
-                        if(empty($curWork['user_id']) && $currentPrioId == Application_Model_Travaux::$PRIORITIES['Urgent'])
+                        if(empty($curWork['user_id']) && $currentPrioId == Application_Model_Travaux::$PRIORITIES['Important'])
                             echo ' data-alert="true"';
 
                         if(isset($curOeuvreNumero))

@@ -191,10 +191,10 @@ class TravauxController extends Zend_Controller_Action {
                 'normal' => array(),
             );
             foreach($worksSoonScheduled as $currentWorkScheduled) {
-                if($currentWorkScheduled['prio'] == Application_Model_Travaux::$PRIORITIES['Urgent']) {
+                if($currentWorkScheduled['prio'] == Application_Model_Travaux::$PRIORITIES['Important']) {
                     $worksSoonScheduledSpliced['normal'] []= $currentWorkScheduled;
                 } else {
-                    $worksSoonScheduledSpliced['urgent'] []= $currentWorkScheduled;
+                    $worksSoonScheduledSpliced['Important'] []= $currentWorkScheduled;
                 }
             }
             $this->view->worksSoonScheduled = $worksSoonScheduledSpliced;
