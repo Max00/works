@@ -14,9 +14,9 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
         1 => 'days'
     );
     public static $NOTYPE = 'Sans type';
-    public static $UNTITLED_WORK = 'Travail sans nom';
+    public static $UNTITLED_WORK = '(Voir les détails)';
 
-    public static $NEARBY_PERIMETER=  1000;                                     // Périmètre de proximité, en mètres
+    public static $NEARBY_PERIMETER = 400;                                     // Périmètre de proximité, en mètres
     /*
      * Renvoie un rowset de tous les travaux
      */

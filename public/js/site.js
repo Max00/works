@@ -1603,7 +1603,10 @@ function loadWorkView(workId, browse) {
                     ot = '';
                     if(this.oeuvre_title)
                         ot = '('+this.oeuvre_title+')';
-                    nbw.append('<li data-workid="'+this.id+'" class="ui tiny button">'+this.distance+' m : '+this.title+ot+'</li>');
+                    if(this.distance != 0)
+                        nbw.append('<li data-workid="'+this.id+'" class="ui tiny button">'+this.distance+' m : '+this.title+ot+'</li>');
+                    else
+                        nbw.append('<li data-workid="'+this.id+'" class="ui tiny button">Même endroit : '+this.title+ot+'</li>');
                 });
                 $('#wv_nearby_works li').click(function(){
                     wid = $(this).attr('data-workid');
