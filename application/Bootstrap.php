@@ -62,6 +62,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 ->headLink()->prependStylesheet('/semantic-ui/dist/semantic.min.css');
         $view->headScript()//->prependFile('/js/jquery-dateFormat-master/dist/dateFormat.min.js')
                 ->prependFile('/js/jquery-dateFormat-master/dist/jquery-dateFormat.min.js')
+                ->prependFile('/js/jquery.metadata.js')
+                ->prependFile('/js/jquery.tablesorter.pager.js')
                 ->prependFile('/js/colpick/js/colpick.js')
                 ->headScript()->prependFile('/js/site.js')
                 ->prependFile('/semantic-ui/dist/semantic.min.js'); // @todo change semantic ui installation -> dist on site folder

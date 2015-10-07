@@ -615,9 +615,10 @@ LEFT JOIN `oeuvres` AS `o` ON o.id = w.oeuvre_id
 LEFT JOIN `works_workers` AS `ww` ON ww.work_id = w.id
 LEFT JOIN `users` AS `u` ON u.id = ww.user_id
 WHERE (w.prio = $prioId)
-ORDER BY o.id IS NULL ASC, o.id, days_to IS NOT NULL DESC, days_to, t.name
+ORDER BY w.id;
 
 EOT;
+//ORDER BY o.id IS NULL ASC, o.id, days_to IS NOT NULL DESC, days_to, t.name
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
     }
     

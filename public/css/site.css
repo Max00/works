@@ -34,6 +34,30 @@ table#works_1 {
 table.works_table {
     min-width:800px;
 }
+.works_table td.item {
+    text-align: right;
+}
+.works_table th.item {
+    width:100px;
+}
+.works_table th.oeuvre {
+    width:25%;
+}
+.works_table th.types {
+    width:20%;
+}
+.works_table th.work_title {
+    width:25%;
+}
+.works_table th.item:hover,
+.works_table th.oeuvre:hover,
+.works_table th.types:hover,
+.works_table th.work_title:hover {
+    cursor:pointer;
+}
+.works_table th.options {
+    width:200px;
+}
 table.works_table td,
 table#usersList td {
     height: 3em;
@@ -113,17 +137,12 @@ table.works_table td.item .days_to.urgent {
 #affectation_ratio.alert {
     color:Red;
 }
-table.works_table td.item {
-    width:180px;
-    text-align: right;
-}
 table.works_table td.works_title {
     
 }
-table.works_table td.options {
-    width:200px;
-}
 table.works_table td.work_title:hover,
+table.works_table td.oeuvre:hover,
+table.works_table td.types:hover,
 table.works_table td.item:hover {
     cursor:pointer;
 }

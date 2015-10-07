@@ -14,13 +14,24 @@
         $curUserId = Zend_Auth::getInstance()->getIdentity()->id; ?>
         <?php echo $currentPrio['label_prio'] ?>
         <table class="ui table striped works_table" id="works_<?php echo $currentPrioId ?>">
+            <thead> 
+            <tr> 
+                <th class="item">Échéance</th>
+                <th class="oeuvre">Oeuvre</th>
+                <th class="types">Types</th>
+                <th class="work_title">Travail</th>
+                <th class="options">Options</th>
+            </tr> 
+            </thead> 
             <tbody>
                 <?php
-                $curOeuvreId = $prevOeuvreId = $diff_col = null;
+                $curOeuvreNumero = $prevOeuvreNumero = null;
                 foreach ($currentPrio['works'] as $workId => $curWork): 
-                $daysTo = null;
+                $daysTo = $curOeuvreNumero = $prevOeuvreNumero = null;
                 if(isset($curWork['days_to']))
                     $daysTo = (int)$curWork['days_to'];
+                if (!empty($curWork['oeuvre_numero']))
+                    $curOeuvreNumero = $curWork['oeuvre_numero'];
                 ?>
                     <tr data-workid="<?php echo $workId; ?>"<?php
                     /*if(!empty($curWork['user_id'])) {
@@ -44,6 +55,11 @@
 ?>"<?php
                         if(empty($curWork['user_id']) && $currentPrioId == Application_Model_Travaux::$PRIORITIES['Urgent'])
                             echo ' data-alert="true"';
+
+                        if(isset($curOeuvreNumero))
+                            echo ' data-oeuvrenumero="'.$curOeuvreNumero.'"';
+                        else
+                            echo ' data-oeuvrenumero="F"';
 ?>>
                         <td class="item">
                             <?php 
@@ -70,21 +86,14 @@
                                 
                                 echo '<span class="' . $class . '">' . $daysTo . '</span>';
                             }
-                            echo '</td><td class="work_title">';
+                            echo '</td><td class="oeuvre">';
 
                             // Oeuvre associée
-                            if (!empty($curWork['oeuvre_numero'])) {
-                                $curOeuvreId = $curWork['oeuvre_id'];
-                                echo ' <span class="ui tag label w_oeuvre';
-                                if($prevOeuvreId != $curOeuvreId) {
-                                    $diff_col = !$diff_col;
-                                }
-                                if($diff_col) {
-                                    echo ' diff_col';
-                                }
-                                echo '">#' . $curWork['oeuvre_numero'] . ' - ' . $curWork['oeuvre_title'] . '</span> ';
-                                $prevOeuvreId = $curOeuvreId;
+                            if (isset($curOeuvreNumero)) {
+                                echo ' <span class="ui tag label w_oeuvre">#' . $curWork['oeuvre_numero'] . ' - ' . $curWork['oeuvre_title'] . '</span> ';
+                                $prevOeuvreNumero = $curOeuvreNumero;
                             }
+                            echo '</td><td class="types">';
 
                             // Types
                             if (!empty($curWork['types']) && count($curWork['types'])) {
@@ -94,6 +103,7 @@
                                 endforeach;
                                 echo '</div>';
                             }
+                            echo '</td><td class="work_title">';
                             
                             // Nom du travail
                             if (!empty($curWork['title'])) {
@@ -104,7 +114,7 @@
                             
                             echo '</td>';
                             ?>
-                        <td class="options">
+                        <td class="options {sorter: false}">
                             <div class="icon ui buttons">
                                 <?php if (isset($this->changeWorkPrio) && $this->changeWorkPrio) : echo $this->ChangePrioButtons($currentPrioId); endif; ?>
                                 <?php if (isset($this->setWorkDone) && $this->setWorkDone) : echo $this->SetWorkDoneButton($workId); endif; ?>
