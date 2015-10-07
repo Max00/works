@@ -14,6 +14,7 @@ a#setViewTypes {
     padding-right:1em;
 }
 section#container {
+    margin-left: 20px;
 }
 section#content {
     margin-left:20%;
@@ -29,23 +30,27 @@ table#works_1 {
     border-left-color: #EB4747;
     border-left-width: thick;
 }
-table.works_table {
-    min-width:800px;
+.works_table {
+    min-width:1000px;
 }
 .works_table td.item {
     text-align: right;
 }
+
 .works_table th.item {
     width:100px;
 }
 .works_table th.oeuvre {
-    width:25%;
+    width:150px;
 }
 .works_table th.types {
-    width:20%;
+    width:120px;
 }
 .works_table th.work_title {
-    width:20%;
+    width:380px;
+}
+.works_table th.options {
+    width:200px;
 }
 .works_table th.item:hover,
 .works_table th.oeuvre:hover,
@@ -53,14 +58,15 @@ table.works_table {
 .works_table th.work_title:hover {
     cursor:pointer;
 }
-.works_table th.options {
-    width:200px;
-}
 table.works_table td,
 table#usersList td {
     height: 3em;
     padding-top:0 !important;
     padding-bottom:0 !important;
+}
+td.oeuvre span {
+    margin-top:5px !important;
+    margin-bottom:5px !important;
 }
 table.works_table td.item .days_to {
     font-weight: bold;
@@ -95,10 +101,13 @@ table.works_table td.item .days_to.urgent {
     margin-right:10px;
     display: inline-block;
 }
+.work_types div {
+    margin-top:5px !important;
+    margin-bottom: 5px !important;
+}
 #stats_container {
     margin-right: 20px;
     font-size:0.9em;
-    position:fixed;
     z-index: 0;
 }
 #urgent_count {
@@ -346,7 +355,7 @@ dd#worktype-element input,
 dd#prio-element input {
     margin-right: 6px;
 }
-@media (max-width: 1000px) {
+@media (max-width: 1400px) {
     section#sidebar {
         display:block;
         width:100%;
@@ -362,8 +371,5 @@ dd#prio-element input {
     }
     table.works_table td.item {
         width:100px;
-    }
-    table.works_table td.work_title .title {
-        float:right;
     }
 }
