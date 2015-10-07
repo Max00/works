@@ -538,6 +538,7 @@ class TravauxController extends Zend_Controller_Action {
                         'emplacement_coords_y' => $oeuvre['coords_y'],
                         'oeuvre_id' => $work['oeuvre_id'],
                     ));
+                    // Zend_Registry::get('logger')->log(var_export($editWorkForm->getElement('oeuvre_id'), true),6);
                     if (!empty($oeuvre['coords_x'])) {
                         $this->setFormElements($editWorkForm, array(
                             'maponload' => true,

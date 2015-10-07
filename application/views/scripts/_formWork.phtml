@@ -10,7 +10,7 @@
       id="<?php echo $f->getAttrib('id') ?>"
       action="<?php echo $f->getAction() ?>"
       method="<?php echo $f->getMethod() ?>">
-    <input type="hidden" name="oeuvre_id" id="oeuvre_id" />
+    <?php echo $f->oeuvre_id->render() ?>
     <h1><?php echo $f->form_title->render() ?></h1>
     <div class="ui two column relaxed fitted stackable grid">
         <div class="column" id="main_form">
