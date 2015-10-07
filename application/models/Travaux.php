@@ -148,7 +148,7 @@ EOT;
         if($totalCount > 0 && $affectedCount != 0)
             $affectationRatio = round((100*$affectedCount) / $totalCount);
         else
-            $affectationRatio = 100;
+            $affectationRatio = 0;
 
         // Attribués urgents
         $queryStr =<<<EOT

@@ -412,10 +412,6 @@ function refreshStats() {
                 $('#late_count').addClass('alert');
             else
                 $('#late_count').removeClass('alert');
-            if(response.affectation_ratio <= 10)
-                $('#affectation_ratio').addClass('alert');
-            else
-                $('#affectation_ratio').removeClass('alert');
             if(response.affectation_ratio_urgent < 100)
                 $('#affectation_ratio_urgent').addClass('alert');
             else
