@@ -2127,10 +2127,6 @@ $(document).ready(function () {
         $('#add_edit_work').click(function () {
             $('#formAddWork').submit();
         })
-        if ('question' === wt) {
-            $('#fieldset-titleDesc').addClass('hide');
-            $('#fieldset-titleDescQuestion').removeClass('hide');
-        }
         if (!isCoordX($('#emplacement_coords_x').val()) || !isCoordY($('#emplacement_coords_y').val())) {
             hideAddWMap();
         } else {
@@ -2325,15 +2321,7 @@ $(document).ready(function () {
         });
         $('input[name="worktype"]').change(function () {
             var wtype = $(this).val();
-            if ('question' == wtype) {
-                $('#title').addClass('hide');
-                $('#title_question').removeClass('hide');
-                $('#title-element .errors').remove();
-            } else if ('normal' == wtype || 'markup' == wtype) {
-                $('#title_question').addClass('hide');
-                $('#title').removeClass('hide');
-                $('#title_question-element .errors').remove();
-            }
+            $('#title').removeClass('hide');
         });
     }
 });

@@ -17,7 +17,6 @@ class Application_Form_EditWork extends Zend_Form {
         $this->getElement('worktype')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('form_title')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('title')->removeDecorator('Label')->removeDecorator('Errors');
-        $this->getElement('title_question')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('auth_token')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('description')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('additional_worker_template')->removeDecorator('Label')->removeDecorator('Errors');

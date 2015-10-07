@@ -15,9 +15,8 @@
     <div class="ui two column relaxed fitted stackable grid">
         <div class="column" id="main_form">
             <?php echo $f->auth_token->render() ?>
-            <div class="field<?php if($f->title->getErrors() || $f->title_question->getErrors()) echo ' error'?>">
+            <div class="field<?php if($f->title->getErrors()) echo ' error'?>">
                 <?php echo $f->title->render() ?>
-                <?php echo $f->title_question->render() ?>
             </div>
             <div class="field<?php if($f->description->getErrors()) echo ' error'?>">
                 <?php echo $f->description->render() ?>

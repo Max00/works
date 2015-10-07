@@ -189,7 +189,7 @@ EOT;
      */
     public function getWorkById($workId) {
         $select = $this->_db->select()
-                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.question', 'w.answer', 'w.frequency_weeks', 'w.frequency_days', 'date_last_done'))
+                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.frequency_weeks', 'w.frequency_days', 'date_last_done'))
                 ->where('w.id = ?', $workId);
         return $this->_db->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
     }
@@ -729,10 +729,6 @@ EOT;
                 $data['title'] = $workData['title'];
                 $data['description'] = $workData['description'];
                 $data['markup'] = true;
-            } else if('question' == $wtype) {
-                $data['title'] = $workData['title_question'];
-                $data['description'] = $workData['description_question'];
-                $data['question'] = true;
             }
             else
                 throw new Exception('Work type error');

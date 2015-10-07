@@ -307,14 +307,9 @@ class TravauxController extends Zend_Controller_Action {
                 $addWorkForm->populate($formData);
                 $formIsValid = $addWorkForm->isValid($formData);
                 $worktype = $this->_request->getParam('worktype');              // On vide les champs qui ne sont plus nécessaires
-                if ('question' != $worktype) {                                  // Travail classique ou balisage
-                    $addWorkForm->getElement('title_question')->setValue('');
-                    $addWorkForm->getElement('title_question')->removeDecorator('Errors'); // Errors reseting : UPDATE 2015-03-17 - TO TEST
-                } else {
-                    $addWorkForm->getElement('title')->setValue('');
-                    $addWorkForm->getElement('title')->removeDecorator('Errors');
-                    
-                }
+                $addWorkForm->getElement('title')->setValue('');
+                $addWorkForm->getElement('title')->removeDecorator('Errors');
+
                 if ($formIsValid) {                        // Form valide
                     $travauxTable = new Application_Model_Travaux();
                     $travauxTable->addWork($formData);
@@ -373,20 +368,9 @@ class TravauxController extends Zend_Controller_Action {
                     );
                     $worksTable = new Application_Model_Travaux();
                     // Récupération des valeurs du formulaire
-                    $isQuestion = false;
                     $title = $description = '';
-                    if ($this->hasParam('title_question') &&
-                            $this->getParam('title_question')) {
-                        $isQuestion = true;
-                        $workData['question'] = 1;
-                    }
-                    if ($isQuestion) {
-                        $title = $this->getParam('title_question');
-                        $description = $this->getParam('description_question');
-                    } else {
-                        $title = $this->getParam('title');
-                        $description = $this->getParam('description');
-                    }
+                    $title = $this->getParam('title');
+                    $description = $this->getParam('description');
                     $workData['title'] = $title;
                     $workData['description'] = $description;
 
@@ -446,17 +430,10 @@ class TravauxController extends Zend_Controller_Action {
                         switch ($this->getParam('worktype')) {
                             case 'normal': {
                                     $workData['markup'] = NULL;
-                                    $workData['question'] = NULL;
-                                    break;
-                                }
-                            case 'question': {
-                                    $workData['markup'] = NULL;
-                                    $workData['question'] = 1;
                                     break;
                                 }
                             case 'markup': {
                                     $workData['markup'] = 1;
-                                    $workData['question'] = NULL;
                                     break;
                                 }
                         }
@@ -509,8 +486,6 @@ class TravauxController extends Zend_Controller_Action {
                 $worktype;
                 if ($work['markup']) {
                     $worktype = 'markup';
-                } else if ($work['question']) {
-                    $worktype = 'question';
                 } else {
                     $worktype = 'normal';
                 }
@@ -518,14 +493,9 @@ class TravauxController extends Zend_Controller_Action {
                     'worktype' => $worktype,
                     'prio' => $work['prio'],
                 ));
-                // Normal / Question: different fields
-                if (!empty($work['question']) && $work['question']) {
-                    $this->setFormElements($editWorkForm, array('title_question' => $work['title']));
-                    $this->setFormElements($editWorkForm, array('description_question' => $work['description']));
-                } else {
-                    $this->setFormElements($editWorkForm, array('title' => $work['title']));
-                    $this->setFormElements($editWorkForm, array('description' => $work['description']));
-                }
+                
+                $this->setFormElements($editWorkForm, array('title' => $work['title']));
+                $this->setFormElements($editWorkForm, array('description' => $work['description']));
                 if (!empty($work['tools']) && $work['tools']) {
                     $this->setFormElements($editWorkForm, array('tools' => $work['tools']));
                 }

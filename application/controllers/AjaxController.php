@@ -182,7 +182,6 @@ class AjaxController extends Zend_Controller_Action {
                     'coords_y' => $work['coords_y'],
                     'prio' => $work['prio'],
                     'markup' => $work['markup'],
-                    'question' => $work['question'],
                     'answer' => $work['answer'],
                     'frequency_weeks' => $work['frequency_weeks'],
                     'frequency_days' => $work['frequency_days'],
