@@ -15,6 +15,7 @@ a#setViewTypes {
 }
 section#container {
     margin-left: 20px;
+    margin-right: 20px;
 }
 section#content {
     margin-left:20%;
@@ -106,9 +107,9 @@ table.works_table td.item .days_to.urgent {
     margin-bottom: 5px !important;
 }
 #stats_container {
-    margin-right: 20px;
+    margin-bottom: 10px;
     font-size:0.9em;
-    z-index: 0;
+    text-align: center;
 }
 #urgent_count {
     font-weight:bold;
@@ -357,14 +358,10 @@ dd#worktype-element input,
 dd#prio-element input {
     margin-right: 6px;
 }
-@media (max-width: 1400px) {
+/*@media (max-width: 1400px) {*/
     section#sidebar {
         display:block;
         width:100%;
-    }
-    #stats_container {
-        display:block;
-        position:relative;
     }
     section#content {
         display:block;
@@ -374,4 +371,4 @@ dd#prio-element input {
     table.works_table td.item {
         width:100px;
     }
-}
+/*}*/
