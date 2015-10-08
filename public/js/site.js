@@ -1447,7 +1447,7 @@ function initViewWorkMap(x, y, locationLabel) {
         var latlon = new google.maps.LatLng(y, x);
         var mapOptions = {
             center: latlon,
-            zoom: 15
+            zoom: 14
         };
         $('#wv_map').show();
         var map = new google.maps.Map(document.getElementById('wv_map'), mapOptions);
@@ -1914,7 +1914,7 @@ $(document).ready(function () {
                 wstate = wm.attr('data-workstate');
                 if(wstate == "free")
                     wm.find('.icon.warning.sign').show();
-                $('#works_1' + prio).trigger("update"); 
+                $('#works_1').trigger("update"); 
                 setPrioButtons('#works_1', 2, 'down');
                 refreshStats();
                 wm.find('.buttons').hide();

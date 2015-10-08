@@ -7,18 +7,31 @@
     </div>
     <div class="content">
         <div class="ui grid">
-            <div class="row three column">
-                <div class="four wide column" id="first">
+            <div class="row one column">
+                <div class="column">
+                    <div id="wv_oeuvre_container">
+                        Oeuvre à proximité : <div class="ui label" id="wv_oeuvre"></div>
+                    </div>
+                    <span id="wv_desc_emplact"></span>
+                    <div id="wv_nearby_works_container">
+                        <b>Autres travaux à proximité : </b><ul id="wv_nearby_works"></ul>
+                    </div>
+                    <div id="wv_map"></div>
+                    <div id="wv_coords"></div>
+                </div>
+            </div>
+            <div class="row two column">
+                <div class="column" id="first">
                     <?php if($this->roleId == Application_Model_Roles::$ROLE_SUPERVISOR) : ?>
                     <div class="ui tiny buttons">
-                        <button class="ui button" id="wv_set_urgent">Urgent</button>
-                        <button class="ui button" id="wv_set_normal">Normal</button>
-                        <button class="ui button" id="wv_set_done">Fait</button>
+                        <div class="ui button" id="wv_set_urgent">Urgent</div>
+                        <div class="ui button" id="wv_set_normal">Normal</div>
+                        <div class="ui button" id="wv_set_done">Fait</div>
                     </div>
                     <?php else : ?>
-                    <button class="ui button" id="wv_set_done">Fait</button>
-                    <button class="ui button" id="wv_add_to_ulist">Ajouter</button>
-                    <button class="ui button" id="wv_remove_from_ulist">Retirer</button>
+                    <div class="ui button" id="wv_set_done">Fait</div>
+                    <div class="ui button" id="wv_add_to_ulist">Ajouter</div>
+                    <div class="ui button" id="wv_remove_from_ulist">Retirer</div>
                     <?php endif; ?>
                     <div id="wv_frequency_container">
                         <i class="repeat icon"></i> Tous les
@@ -27,7 +40,7 @@
                     </div>
                     <div id="wv_types_container"></div>
                 </div>
-                <div class="six wide column" id="second">
+                <div class="column" id="second">
                     <div id="wv_title_inside"></div>
                     <div id="wv_user_add_container">
                         Dans la liste de 
@@ -40,17 +53,6 @@
                     <div id="wv_workers_container">
                         <b>Intervenants extérieurs : </b><ul><span id="wv_workers"></span></ul>
                     </div>
-                </div>
-                <div class="six wide column" id="third">
-                    <div id="wv_oeuvre_container">
-                        <b>Oeuvre à proximité : </b><span id="wv_oeuvre"></span>
-                    </div>
-                    <span id="wv_desc_emplact"></span>
-                    <div id="wv_nearby_works_container">
-                        <b>Autres travaux à proximité : </b><ul id="wv_nearby_works"></ul>
-                    </div>
-                    <div id="wv_map"></div>
-                    <div id="wv_coords"></div>
                 </div>
             </div>
         </div>  

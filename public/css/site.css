@@ -56,6 +56,7 @@ table#works_1 {
 }
 .works_table th.options {
     width:200px;
+    text-align: right !important;
     color: #707070 !important;
 }
 .works_table th.item:hover,
@@ -115,6 +116,7 @@ table.works_table td.item .days_to.urgent {
     margin-bottom: 10px;
     font-size:0.9em;
     text-align: center;
+    z-index: 0;
 }
 #urgent_count {
     font-weight:bold;
@@ -148,6 +150,9 @@ table.works_table td.item .days_to.urgent {
 }
 table.works_table td.works_title {
     
+}
+.button.active {
+    font-weight: bold !important;
 }
 table.works_table td.work_title:hover,
 table.works_table td.oeuvre:hover,
@@ -271,6 +276,11 @@ dd#role-element label input {
     margin-left:0;
     margin-bottom: 1em;
 }
+#wv_oeuvre {
+    font-weight: bold;
+    font-size: 120%;
+    display: inline-block;
+}
 
 /* BEGIN Form elements */
 #tools {
@@ -295,10 +305,10 @@ dt#types-label label {
 div.message {
     z-index:99;
 }
-
 #wv_set_urgent {
     color: Red;
     padding:0.8em;
+
 }
 
 #wv_set_normal {
@@ -334,10 +344,12 @@ div.message {
 #wv_user_add_container {
     padding-top:1em;
 }
-
+#wv_oeuvre_container {
+    margin-bottom: 1em;
+}
 #wv_map {
     margin-top:1em;
-    height:150px;
+    height:300px;
     width:100%;
 }
 
