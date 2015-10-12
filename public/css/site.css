@@ -251,6 +251,7 @@ div#noticesContainer .message {
 dd#role-element label input {
     margin:5px;
 }
+
 #formEditUser #submit {
     display: none;
 }
@@ -299,6 +300,10 @@ dt#types-label label {
     width:8em;
     display:inline;
 }
+#term {
+    display:inline;
+}
+#term,
 #frequency {
     width:3em;
 }

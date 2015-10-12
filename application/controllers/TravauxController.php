@@ -402,6 +402,14 @@ class TravauxController extends Zend_Controller_Action {
                     } else {
                         $workData['desc_emplact'] = NULL;
                     }
+                    if ($this->hasParam('term') && 
+                        $this->getParam('term')) {
+                        $workData['term'] = $this->getParam('term');
+                        $workData['term_set_on'] = date('Y-m-d');
+                    } else {
+                        $workData['term'] = NULL;
+                        $workData['term_set_on'] = NULL;
+                    }
                     if ($this->hasParam('frequency_type') &&
                             $this->getParam('frequency_type') &&
                             $this->hasParam('frequency') &&
@@ -538,6 +546,21 @@ class TravauxController extends Zend_Controller_Action {
                 $this->setFormElements($editWorkForm, array(
                     'types' => $checkedTypes,
                 ));
+                // Term date
+                // Nombre de jours restant : actualisé dans le formulaire seulement
+                // w.term = 8
+                // w.term_set_on = '2015-10-01'
+                // form.term = current_date - (w.term_set_on + w.term)
+                if(!empty($work['term'])) {
+                    $curDate = new DateTime('now');
+                    $limitDate = new DateTime($work['term_set_on']);
+                    $limitDate->modify('+' . $work['term'] . ' days');
+
+                    $diff = $limitDate->diff($curDate)->format("%a");
+                    $this->setFormElements($editWorkForm, array(
+                        'term' => $diff + 1,
+                    ));
+                }
                 // Frequence
                 $freqUnit = $freqNumber = '';
                 if (!empty($work['frequency_weeks'])) {

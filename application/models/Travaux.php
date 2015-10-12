@@ -97,6 +97,7 @@ SELECT count(ws.id) AS `10days_or_less`
 FROM works ws
 WHERE CASE
     WHEN ws.date_last_done IS NULL THEN 0
+    WHEN ws.term IS NOT NULL AND ws.term-(DATEDIFF(CURDATE(),ws.term_set_on)) <= 10 THEN 1
     WHEN ws.frequency_weeks IS NOT NULL AND 7*ws.frequency_weeks-(DATEDIFF(CURDATE(),ws.date_last_done)) <= 10 THEN 1
     WHEN ws.frequency_days IS NOT NULL AND ws.frequency_days-(DATEDIFF(CURDATE(),ws.date_last_done)) <= 10 THEN 1
 END;
@@ -119,6 +120,7 @@ SELECT count(ws.id) AS `late_count`
 FROM works ws
 WHERE CASE
     WHEN ws.date_last_done IS NULL THEN 0
+    WHEN ws.term IS NOT NULL AND ws.term-(DATEDIFF(CURDATE(),ws.term_set_on)) < 0 THEN 1
     WHEN ws.frequency_weeks IS NOT NULL AND 7*ws.frequency_weeks-(DATEDIFF(CURDATE(),ws.date_last_done)) < 0 THEN 1
     WHEN ws.frequency_days IS NOT NULL AND ws.frequency_days-(DATEDIFF(CURDATE(),ws.date_last_done)) < 0 THEN 1
 END;
@@ -189,7 +191,7 @@ EOT;
      */
     public function getWorkById($workId) {
         $select = $this->_db->select()
-                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.frequency_weeks', 'w.frequency_days', 'date_last_done'))
+                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.frequency_weeks', 'w.frequency_days', 'w.term', 'w.term_set_on', 'date_last_done'))
                 ->where('w.id = ?', $workId);
         return $this->_db->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
     }
@@ -592,6 +594,8 @@ SELECT
     `w`.`date_creation`,
     `w`.`coords_x`,
     `w`.`coords_y`,
+    `w`.`term`,
+    `w`.`term_set_on`,
     `t`.`id` AS `type_id`,
     `t`.`name` AS `type_name`,
     `t`.`color` AS `type_color`,
@@ -605,6 +609,7 @@ SELECT
     `u`.`lname` AS `user_lname`,
     CASE
         WHEN w.date_last_done IS NULL THEN NULL
+        WHEN w.term IS NOT NULL THEN w.term-(DATEDIFF(CURDATE(),w.term_set_on))
         WHEN w.frequency_weeks IS NOT NULL THEN 7*w.frequency_weeks-(DATEDIFF(CURDATE(),w.date_last_done))
         WHEN w.frequency_days IS NOT NULL THEN w.frequency_days-(DATEDIFF(CURDATE(),w.date_last_done))
     END AS `days_to`
@@ -619,6 +624,9 @@ ORDER BY w.id;
 
 EOT;
 //ORDER BY o.id IS NULL ASC, o.id, days_to IS NOT NULL DESC, days_to, t.name
+//
+// Nombre de jours restant, si w.term :
+// Jours restant jusqu'à w.term + w.term_set_on
         return $this->_db->fetchAll($req, array(), Zend_Db::FETCH_ASSOC);
     }
     
@@ -672,6 +680,8 @@ EOT;
                 array(
                     'prio' => $prio,
                     'date_last_done' => date('Y-m-d'),
+                    'term' => NULL,
+                    'term_set_on' => NULL,
                     ),
                     $this->_db->quoteInto('id = ?', $workId));
         } else {
@@ -687,6 +697,7 @@ EOT;
 SELECT
     CASE
         WHEN w.date_last_done IS NULL THEN 0
+        WHEN w.term IS NOT NULL THEN w.term-(DATEDIFF(CURDATE(),w.term_set_on))
         WHEN w.frequency_weeks IS NOT NULL THEN 7*w.frequency_weeks-(DATEDIFF(CURDATE(),w.date_last_done))
         WHEN w.frequency_days IS NOT NULL THEN w.frequency_days-(DATEDIFF(CURDATE(),w.date_last_done))
     END AS `days_to`
@@ -705,7 +716,9 @@ EOT;
         $this->update(
             array(
                 'date_last_done' => date('Y-m-d'),
-                'prio' => Application_Model_Travaux::$PRIORITIES['Déjà effectué']
+                'prio' => Application_Model_Travaux::$PRIORITIES['Déjà effectué'],
+                'term_set_on' => NULL,
+                'term' => NULL,
             ),
             $this->_db->quoteInto('id = ?', $workId));
     }
@@ -735,6 +748,10 @@ EOT;
                 throw new Exception('Work type error');
             if(!empty($workData['tools'])) {
                 $data['tools'] = $workData['tools'];
+            }
+            if(!empty($workData['term'])) {
+                $data['term'] = $workData['term'];
+                $data['term_set_on'] = date('Y-m-d');
             }
             if(!empty($workData['frequency'])) {
                 $freqTypeAr = explode('frequency_', $workData['frequency_type']);

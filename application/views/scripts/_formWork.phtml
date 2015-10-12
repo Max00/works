@@ -90,6 +90,14 @@
                     <?php echo $f->frequency_type->render() ?>
                 </div>
             </div>
+            <div class="ui divider"></div>
+            <div class="inline fields middle aligned"><label>A faire dans </label>
+                <div class="field<?php if($f->frequency->getErrors()) echo ' error'?>">
+                    <?php echo $f->term->render() ?>
+                </div>
+                <div class="field"> jours.</div>
+            </div>
+            <em>Ce paramètre annule et remplace la fréquence jusqu'à la prochaine exécution du travail</em>
             <div class="ui hidden divider"></div>
             <div class="ui big fluid primary button" id="add_edit_work">
             <?php if($this->mode == 'add') : ?>
