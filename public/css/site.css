@@ -40,6 +40,7 @@ table#works_1 {
 
 .works_table th.item {
     width:100px;
+    text-align:right !important;
     color: #707070 !important;
 }
 .works_table th.oeuvre {

@@ -22,7 +22,7 @@ defined('RESOURCES_PATH')
 
 // Define application environment
 defined('APPLICATION_ENV')
-    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
+    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 // Expiration de la notice, en secondes
 defined('NOTICE_EXPIRATION_SECS') || define('NOTICE_EXPIRATION_SECS', 60);
