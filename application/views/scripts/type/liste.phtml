@@ -1,0 +1,30 @@
+<div id="typesListContainer">
+	<table id="typesList" class="ui table">
+		<thead>
+			<tr>
+				<th colspan="2">
+					Gestion des types
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php foreach($this->types as $curType) : ?>
+			<tr style="background-color:#<?php echo $curType['color'] ?>">
+				<td class="type">
+				<?php
+					echo $curType['name']; 
+				?>
+				</td>
+				<td class="options">
+					<div class="ui tiny buttons">
+						<?php echo $this->RemoveTypeButton($curType['id']) ?>
+						<?php echo $this->EditTypeButton($curType['id']) ?>
+					</div>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+	<a href="/type/ajouter"><div class="ui small button" id="add_type_btn">Ajouter</div></a>
+</div>
+<?php echo $this->partial('modals.phtml'); ?>

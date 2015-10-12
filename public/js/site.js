@@ -2106,6 +2106,26 @@ $(document).ready(function () {
             $('#formAddUser').submit();
         });
     }
+    if ($('#formEditType').length > 0) {
+        $('#edit_type').click(function () {
+            $('#formEditType').submit();
+        })
+        $('#add_type_color_btn').colpick({onSubmit: function (hsb, hex, rgb, el) {
+            $(el).css('background-color', '#' + hex);
+            $(el).colpickHide();
+            $('#type_color').val(hex);
+        }});
+    }
+    if ($('#formAddType').length) {
+        $('#add_new_type').click(function(){
+            $('#formAddType').submit();
+        });
+        $('#add_type_color_btn').colpick({onSubmit: function (hsb, hex, rgb, el) {
+            $(el).css('background-color', '#' + hex);
+            $(el).colpickHide();
+            $('#type_color').val(hex);
+        }});
+    }
     if($('#usersList').length) {
         $('.delete_user_button').click(function() {
             $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
@@ -2118,6 +2138,21 @@ $(document).ready(function () {
                 .modal('show');
         });
         $('.edit_user_button').click(function() {
+            document.location.href=$(this).attr('data-href');
+        });
+    }
+    if($('#typesList').length) {
+        $('.delete_type_button').click(function() {
+            $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
+            $('#delete_type_modal')
+                .modal({
+                    onApprove: function () {
+                        document.location.href=$('input#waiting_action').attr('data-href');
+                    }
+                })
+                .modal('show');
+        });
+        $('.edit_type_button').click(function() {
             document.location.href=$(this).attr('data-href');
         });
     }
@@ -2277,7 +2312,7 @@ $(document).ready(function () {
                 url: "/index.php/ajax/create-on-fly-type",
                 data: {
                     name: $('#add_type_label').val(),
-                    color: rgb2hex($('#add_type_color_btn').css('background-color'), true),
+                   //** color: rgb2hex($('#add_type_color_btn').css('background-color'), true),
                     auth_token: getPageToken()
                 },
                 success: function (response) {

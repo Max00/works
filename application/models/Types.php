@@ -6,7 +6,7 @@ class Application_Model_Types extends Zend_Db_Table_Abstract {
     
     public function getAllTypes() {
         $select = $this->_db->select()
-                ->from(array('t'=>'types'), array('t.id', 't.name'))
+                ->from(array('t'=>'types'), array('t.id', 't.name', 't.color'))
                 ->order('name ASC');
         return $this->_db->fetchAll($select, array(), Zend_Db::FETCH_ASSOC);
     }
@@ -16,6 +16,13 @@ class Application_Model_Types extends Zend_Db_Table_Abstract {
             'color' => $color));
     }
     
+    public function getTypeBasics($typeId) {
+        $select = $this->select()
+                ->from($this, array('name', 'color'))
+                ->where('id = ?', $typeId);
+        return $this->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
+    }
+
     public function getTypeId($name) {
         $select = $this->_db->select()
                 ->from(array('t' => 'types'), array('t.id'))
@@ -26,5 +33,16 @@ class Application_Model_Types extends Zend_Db_Table_Abstract {
             return $sameNameRow['id'];
         }
         return false;
+    }
+
+    public function deleteById($id) {
+        try {
+            $where = $this->_db->quoteInto('id = ?', $id);
+            return $this->delete($where);
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+            echo $ex->getTraceAsString();
+            return false;
+        }
     }
 }

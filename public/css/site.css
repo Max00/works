@@ -219,10 +219,14 @@ div#noticesContainer .message {
 #usersListContainer {
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
-    min-width:900px;
-    max-width:900px;
+    width:900px;
 }
+#typesListContainer {
+    margin-left: auto;
+    margin-right: auto;
+    width:600px;
+}
+#add_type_btn,
 #add_user_btn {
     float:right;
 }
@@ -232,6 +236,10 @@ div#noticesContainer .message {
 #usersList .options {
     text-align:right;
 }
+#typesList .options {
+    text-align:center;
+    width:150px;
+}
 #formAddWork {
     margin-left: auto;
     margin-right: auto;
@@ -239,12 +247,14 @@ div#noticesContainer .message {
     min-width:900px;
     max-width:900px;
 }
-#formEditUser {
+#formEditUser,
+#formEditType {
     margin-left: auto;
     margin-right: auto;
     width: 400px;
 }
-#formAddUser {
+#formAddUser,
+#formAddType {
     margin-left: auto;
     margin-right: auto;
     width: 400px;

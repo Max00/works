@@ -6,6 +6,10 @@
    class="item<?php if(isset($this->page) && 'add-work' == $this->page) : echo ' active'; endif; ?>">
     <i class="plus icon"></i> Ajouter
 </a>
+<a href="<?php echo $this->url(array('controller' => 'type', 'action' => 'liste'), null, true) ?>"
+   class="item<?php if(isset($this->page) && 'type-list' == $this->page) : echo ' active'; endif; ?>">
+    <i class="tag icon"></i> Types
+</a>
 <a href="<?php echo $this->url(array('controller' => 'user', 'action' => 'liste'), null, true) ?>"
    class="item<?php if(isset($this->page) && 'users-list' == $this->page) : echo ' active'; endif; ?>">
     <i class="user icon"></i> Utilisateurs

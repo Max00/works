@@ -31,4 +31,9 @@ class Application_Model_TravauxTypes extends Zend_Db_Table_Abstract {
     public function removeWorkTypesByWork($workId) {
         $this->delete('work_id = '.$workId);
     }
+
+    public function removeWorkTypesByType($typeId) {
+        $this->delete('type_id = '.$typeId);
+
+    }
 }

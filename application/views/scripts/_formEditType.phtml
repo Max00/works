@@ -1,0 +1,16 @@
+<?php
+    $f = $this->element;
+?>
+<form class="<?php echo $f->getAttrib('class') ?>"
+      id="<?php echo $f->getAttrib('id') ?>"
+      action="<?php echo $f->getAction() ?>"
+      method="<?php echo $f->getMethod() ?>">
+    <h2 class="ui dividing header"><?php echo $f->form_title->render() ?></h2>
+    <input type="hidden" name="color" id="type_color" value="__COLOR__" />
+    <div class="field"><?php echo $f->label->render(); ?></div>
+    <div class="ui small icon button" id="add_type_color_btn" style="background-color: #__COLOR__"><i class="icon eyedropper"></i></div>
+    <div class="ui hidden divider"></div>
+    <div class="ui big fluid primary button" id="edit_type">
+        Éditer le type
+    </div>
+</form>
