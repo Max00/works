@@ -29,6 +29,12 @@ class Application_Plugin_Authentification extends Zend_Controller_Plugin_Abstrac
                 }
             }
         }
+
+        // Passage des travaux en mode "Normal" si leur date d'échéance passe en-dessous de 10 jours
+        $cronTable = new Application_Model_Cron();
+        if($cronTable->getLastAutoPriosUpdateDate() != date('Y-m-d')) {
+            $cronTable->SetAutoWorksPrios();
+        }
         
         parent::preDispatch($request);
     }

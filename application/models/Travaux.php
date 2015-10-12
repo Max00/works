@@ -17,6 +17,9 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
     public static $UNTITLED_WORK = '(Voir les détails)';
 
     public static $NEARBY_PERIMETER = 400;                                     // Périmètre de proximité, en mètres
+    
+    public static $DAYS_TO_AUTO_UPDATE = 10;
+
     /*
      * Renvoie un rowset de tous les travaux
      */
@@ -25,7 +28,32 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
                 array('w' => 'works'), array('w.id', 'w.title', 'w.prio', 'w.date_creation'));
         return $this->fetchAll($req);
     }
-    
+
+    public function SetAutoWorksPrios() {
+        $worksToUpdate = $this->getWorksIdsScheduledDaysTo(self::$DAYS_TO_AUTO_UPDATE);
+        foreach($worksToUpdate as $curWork) {
+            $this->changeWorkPrio($curWork['work_id'], self::$PRIORITIES['Normal']);
+        }
+    }
+
+    private function getWorksIdsScheduledDaysTo($daysTo) {
+        $queryStr =<<<EOT
+SELECT
+    `w`.`id` AS `work_id`,
+    CASE
+        WHEN w.date_last_done IS NULL THEN NULL
+        WHEN w.term IS NOT NULL THEN w.term-(DATEDIFF(CURDATE(),w.term_set_on))
+        WHEN w.frequency_weeks IS NOT NULL THEN 7*w.frequency_weeks-(DATEDIFF(CURDATE(),w.date_last_done))
+        WHEN w.frequency_days IS NOT NULL THEN w.frequency_days-(DATEDIFF(CURDATE(),w.date_last_done))
+    END AS `days_to`
+FROM `works` AS `w`
+HAVING `days_to` <= $daysTo
+ORDER BY w.id;
+EOT;
+        $result = $this->_db->fetchAll($queryStr);
+        return $result;
+    }
+
     /*
      * Renvoie les oeuvres et les travaux à proximité d'un point donné, dans un rayon de $perimeter mètres
      */
