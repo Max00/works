@@ -2126,6 +2126,16 @@ $(document).ready(function () {
             $('#type_color').val(hex);
         }});
     }
+    if ($('#formAddOeuvre').length) {
+        $('#add_new_oeuvre').click(function(){
+            $('#formAddOeuvre').submit();
+        });
+    }
+    if ($('#formEditOeuvre').length > 0) {
+        $('#edit_oeuvre').click(function () {
+            $('#formEditOeuvre').submit();
+        })
+    }
     if($('#usersList').length) {
         $('.delete_user_button').click(function() {
             $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
@@ -2138,6 +2148,21 @@ $(document).ready(function () {
                 .modal('show');
         });
         $('.edit_user_button').click(function() {
+            document.location.href=$(this).attr('data-href');
+        });
+    }
+    if($('#oeuvresList').length) {
+        $('.delete_oeuvre_button').click(function() {
+            $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
+            $('#delete_oeuvre_modal')
+                .modal({
+                    onApprove: function () {
+                        document.location.href=$('input#waiting_action').attr('data-href');
+                    }
+                })
+                .modal('show');
+        });
+        $('.edit_oeuvre_button').click(function() {
             document.location.href=$(this).attr('data-href');
         });
     }
@@ -2312,7 +2337,7 @@ $(document).ready(function () {
                 url: "/index.php/ajax/create-on-fly-type",
                 data: {
                     name: $('#add_type_label').val(),
-                   //** color: rgb2hex($('#add_type_color_btn').css('background-color'), true),
+                    color: rgb2hex($('#add_type_color_btn').css('background-color'), true),
                     auth_token: getPageToken()
                 },
                 success: function (response) {
@@ -2341,6 +2366,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (response) {
+                    console.log(response);
                     console.log('AJAX error');
                 }
             });

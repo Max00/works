@@ -3,7 +3,7 @@
 class UserController extends Zend_Controller_Action {
 
     public function init() {
-    $auth = Zend_Auth::getInstance();
+        $auth = Zend_Auth::getInstance();
         if ($auth->hasIdentity()) {
             $this->setIdentityInView();
             $this->view->supervisorRoleId = Application_Model_Roles::$ROLE_SUPERVISOR;
@@ -11,6 +11,10 @@ class UserController extends Zend_Controller_Action {
         }
     }
     
+    public function indexAction() {
+        $this->_redirect('user/liste/');
+    }
+
     protected function setIdentityInView() {
         $auth = Zend_Auth::getInstance();
         $rolesTable = new Application_Model_Roles();

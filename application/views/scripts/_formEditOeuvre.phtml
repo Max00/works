@@ -1,0 +1,18 @@
+<?php
+    $f = $this->element;
+?>
+<form class="<?php echo $f->getAttrib('class') ?>"
+      id="<?php echo $f->getAttrib('id') ?>"
+      action="<?php echo $f->getAction() ?>"
+      method="<?php echo $f->getMethod() ?>">
+    <h2 class="ui dividing header"><?php echo $f->form_title->render() ?></h2>
+    <div class="field"><?php echo $f->title->render(); ?></div>
+    <div class="field"><?php echo $f->numero->render(); ?></div>
+    <div class="field"><?php echo $f->artist->render(); ?></div>
+    <div class="field"><?php echo $f->coords_y->render(); ?></div>
+    <div class="field"><?php echo $f->coords_x->render(); ?></div>
+    <div class="ui hidden divider"></div>
+    <div class="ui big fluid primary button" id="edit_oeuvre">
+        Éditer l'oeuvre
+    </div>
+</form>

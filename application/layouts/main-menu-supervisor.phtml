@@ -14,3 +14,7 @@
    class="item<?php if(isset($this->page) && 'users-list' == $this->page) : echo ' active'; endif; ?>">
     <i class="user icon"></i> Utilisateurs
 </a>
+<a href="<?php echo $this->url(array('controller' => 'oeuvre', 'action' => 'liste'), null, true) ?>"
+   class="item<?php if(isset($this->page) && 'oeuvre-list' == $this->page) : echo ' active'; endif; ?>">
+    <i class="marker icon"></i> Oeuvres
+</a>

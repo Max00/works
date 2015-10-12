@@ -36,6 +36,18 @@ class Application_Model_Travaux extends Zend_Db_Table_Abstract {
         }
     }
 
+    public function removeAllWorksForOeuvre($oeuvreId) {
+        $queryStr =<<<EOT
+SELECT w.id
+FROM works w
+WHERE w.oeuvre_id = $oeuvreId;
+EOT;
+        $workIds = $this->_db->fetchAll($queryStr);
+        foreach($workIds as $workId) {
+            $this->deleteById($workId->id);
+        }
+    }
+
     private function getWorksIdsScheduledDaysTo($daysTo) {
         $queryStr =<<<EOT
 SELECT
@@ -815,6 +827,14 @@ EOT;
     
     public function deleteById($id) {
         try {
+            $intervenantsExterieursTable = new Application_Model_IntervenantsExterieurs();
+            $travauxTravailleursTable = new Application_Model_TravauxTravailleurs();
+            $travauxTypesTable = new Application_Model_TravauxTypes();
+
+            $intervenantsExterieursTable->removeAllByWork($id);
+            $travauxTravailleursTable->deleteWorksFromAllCurrentLists($id);
+            $travauxTypesTable->removeWorkTypesByWork($id);
+
             $where = $this->_db->quoteInto('id = ?', $id);
             return $this->delete($where);
         } catch (Exception $ex) {

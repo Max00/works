@@ -64,15 +64,15 @@ class AjaxController extends Zend_Controller_Action {
                 // On verifie si le type n'existe pas déjà
                 $sameNameId = $typesTable->getTypeId($name);
                 if ($sameNameId) {
-                    $notice = $this->view->render('types/notices/create-info-exists.phtml');
+                    $notice = $this->view->render('type/notices/create-info-exists.phtml');
                     $result = array('error' => true, 'typeId' => $sameNameId, 'notice' => $notice);
                 } else {
                     $typeId = $typesTable->createType($name, $color);
-                    $notice = $this->view->render('types/notices/create-success.phtml');
+                    $notice = $this->view->render('type/notices/create-success.phtml');
                     $result = array('success' => true, 'typeId' => $typeId, 'typeName' => $name, 'typeColor' => $color, 'notice' => $notice);
                 }
             } else {
-                $notice = $this->view->render('types/notices/create-error-form.phtml');
+                $notice = $this->view->render('type/notices/create-error-form.phtml');
                 $result = array('error' => true, 'notice' => $notice);
             }
             echo json_encode($result);
@@ -294,7 +294,8 @@ class AjaxController extends Zend_Controller_Action {
                 $travauxTable = new Application_Model_Travaux();
                 $workDaysto = $travauxTable->getWorkDaysTo($workId);
                 $workDaystoStr = '';
-                if($workDaysto > 0) {
+                if(!isset($workDaysto)) {
+                } elseif($workDaysto > 0) {
                     $workDaystoStr = 'J - ' . abs($workDaysto);
                 } elseif($workDaysto == 0) {
                     $workDaystoStr = 'Aujourd\'hui !';

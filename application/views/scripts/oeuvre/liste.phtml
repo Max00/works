@@ -1,0 +1,47 @@
+<div id="oeuvresListContainer">
+	<h3>
+		Gestion des oeuvres
+	</h3>
+	<table id="oeuvresList" class="ui table">
+		<thead>
+			<tr>
+				<th>
+					Numéro
+				</th>
+				<th>
+					Titre
+				</th>
+				<th>
+					Artiste
+				</th>
+				<th>
+					Options
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php foreach($this->oeuvres as $curOeuvre) : ?>
+			<tr>
+				<td>
+					#<?php echo $curOeuvre['numero'] ?>
+				</td>
+				<td>
+					<?php echo $curOeuvre['title'] ?>
+				</td>
+				<td>
+					<?php echo $curOeuvre['artist'] ?>
+				</td>
+				<td class="options">
+					<div class="ui tiny buttons">
+						<?php echo $this->RemoveOeuvreButton($curOeuvre['id']) ?>
+						<?php echo $this->EditOeuvreButton($curOeuvre['id']) ?>
+					</div>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+	<a href="/oeuvre/ajouter"><div class="ui small button" id="add_oeuvre_btn">Ajouter</div></a>
+</div>
+<br />
+<?php echo $this->partial('modals.phtml'); ?>

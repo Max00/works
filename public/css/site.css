@@ -216,6 +216,7 @@ div#noticesContainer .message {
     position:fixed;
     margin-left:35%;
 }
+#oeuvresListContainer,
 #usersListContainer {
     margin-left: auto;
     margin-right: auto;
@@ -227,6 +228,7 @@ div#noticesContainer .message {
     width:600px;
 }
 #add_type_btn,
+#add_oeuvre_btn,
 #add_user_btn {
     float:right;
 }
@@ -248,12 +250,14 @@ div#noticesContainer .message {
     max-width:900px;
 }
 #formEditUser,
+#formEditOeuvre,
 #formEditType {
     margin-left: auto;
     margin-right: auto;
     width: 400px;
 }
 #formAddUser,
+#formAddOeuvre,
 #formAddType {
     margin-left: auto;
     margin-right: auto;

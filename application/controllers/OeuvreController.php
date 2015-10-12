@@ -1,6 +1,6 @@
 <?php
 
-class TypeController extends Zend_Controller_Action {
+class OeuvreController extends Zend_Controller_Action {
 
     public function init() {
         $auth = Zend_Auth::getInstance();
@@ -30,7 +30,7 @@ class TypeController extends Zend_Controller_Action {
     }
 
     public function indexAction() {
-        $this->_redirect('type/liste/');
+        $this->_redirect('oeuvre/liste/');
     }
 
     public function listeAction() {
@@ -40,12 +40,12 @@ class TypeController extends Zend_Controller_Action {
             $this->_redirect('/travaux/index');
         }
         
-        $this->view->title = 'Types';
-        $this->view->page = 'type-list';
+        $this->view->title = 'Oeuvres';
+        $this->view->page = 'oeuvre-list';
 
-        $typesTable = new Application_Model_Types();
-        $types = $typesTable->getAllTypes();
-        $this->view->types = $types;
+        $oeuvresTable = new Application_Model_Oeuvres();
+        $oeuvres = $oeuvresTable->getAllOeuvres();
+        $this->view->oeuvres = $oeuvres;
 
         $this->setNotices();
     }
@@ -57,42 +57,42 @@ class TypeController extends Zend_Controller_Action {
             $this->_redirect('/travaux/index');
         }
         
-        $this->view->title = 'Ajouter un type';
-        $this->view->page = 'add-type';
-        $addTypeForm = new Application_Form_AddType();
+        $this->view->title = 'Ajouter une oeuvre';
+        $this->view->page = 'add-oeuvre';
+        $addOeuvreForm = new Application_Form_AddOeuvre();
     
         if ($this->_request->getPost()) {
 
             // Soumission du formulaire
             $formData = $this->_request->getPost();
-            if($addTypeForm->isValid($formData)) {
+            if($addOeuvreForm->isValid($formData)) {
 
                 // Formulaire valide
-                $typesTable = new Application_Model_Types();
-                $typeData['name'] = $formData['label'];
-                $typeData['color'] = $formData['color'];
+                $oeuvreTable = new Application_Model_Oeuvres();
+                $oeuvreData['title'] = $formData['title'];
+                $oeuvreData['artist'] = $formData['artist'];
+                $oeuvreData['numero'] = $formData['numero'];
+                $oeuvreData['coords_x'] = $formData['coords_x'];
+                $oeuvreData['coords_y'] = $formData['coords_y'];
 
-                $typesTable->insert($typeData);
+                $oeuvreTable->insert($oeuvreData);
 
-                $this->view->noticeTemplate = 'type/notices/type-added.phtml';
-                $this->_redirect('/type/liste');
+                $this->view->noticeTemplate = 'oeuvre/notices/oeuvre-added.phtml';
+                $this->_redirect('/oeuvre/liste');
             } else {
                 // Formulaire non valide
-                $this->view->addTypeForm = $addTypeForm;
-                if(!empty($formData['color'])) {
-                    $this->view->addTypeForm->setColor($formData['color']);
-                }
+                $this->view->addOeuvreForm = $addOeuvreForm;
             }
         } else {
             // Premier chargement
-            $this->view->addTypeForm = $addTypeForm;
+            $this->view->addOeuvreForm = $addOeuvreForm;
         }
 
         $this->setNotices();
     }
 
     /*
-    Edition d'un type
+    Edition d'une oeuvre
      */
     public function editerAction() {
         $auth = Zend_Auth::getInstance();
@@ -101,46 +101,52 @@ class TypeController extends Zend_Controller_Action {
             $this->_redirect('/travaux/index');
         }
         
-        $this->view->title = 'Éditer le type';
-        $this->view->page = 'type-edit';
-        $editTypeForm = new Application_Form_EditType();
+        $this->view->title = 'Éditer l\'oeuvre';
+        $this->view->page = 'oeuvre-edit';
+        $editOeuvreForm = new Application_Form_EditOeuvre();
         
-        $tid;
-        if ($this->_request->has('tid') && (int)$this->_request->getParam('tid')) {
-            $tid = (int)$this->_request->getParam('tid');
+        $oid;
+        if ($this->_request->has('oid') && (int)$this->_request->getParam('oid')) {
+            $oid = (int)$this->_request->getParam('oid');
         } else {
             $this->_redirect('travaux/index');
         }
         
-        if($this->_request->has('label')) {
+        if($this->_request->has('title')) {
 
             // Soumission de nouvelles valeurs
             $formData = $this->_request->getPost();
-            if($editTypeForm->isValid($formData)) {
+            if($editOeuvreForm->isValid($formData)) {
                 // Formulaire valide
-                $typesTable = new Application_Model_Types();
-                $typeData['name'] = $formData['label'];
-                $typeData['color'] = $formData['color'];
+                $oeuvresTable = new Application_Model_Oeuvres();
+                $oeuvreData = array();
+                $oeuvreData['title'] = $formData['title'];
+                $oeuvreData['artist'] = $formData['artist'];
+                $oeuvreData['numero'] = $formData['numero'];
+                $oeuvreData['coords_x'] = $formData['coords_x'];
+                $oeuvreData['coords_y'] = $formData['coords_y'];
 
-                $where = $typesTable->getAdapter()->quoteInto('id = ?', $tid);
-                $typesTable->update($typeData, $where);
+                $where = $oeuvresTable->getAdapter()->quoteInto('id = ?', $oid);
+                $oeuvresTable->update($oeuvreData, $where);
 
-                $this->view->noticeTemplate = 'type/notices/type-edited.phtml';
+                $this->view->noticeTemplate = 'oeuvre/notices/oeuvre-edited.phtml';
             } else {
                 // Formulaire non valide
             }
-            $this->view->editTypeForm = $editTypeForm;
-            $this->view->editTypeForm->setColor($formData['color']);
+            $this->view->editOeuvreForm = $editOeuvreForm;
         } else {
             // Ouverture pour modification
-            $typesTable = new Application_Model_Types();
-            $type = $typesTable->getTypeBasics($tid);
-            $this->setFormElements($editTypeForm, array(
-                'label' => $type['name'],
-                'tid' => $tid,
+            $oeuvresTable = new Application_Model_Oeuvres();
+            $oeuvre = $oeuvresTable->getOeuvreBasics($oid);
+            $this->setFormElements($editOeuvreForm, array(
+                'title' => $oeuvre['title'],
+                'numero' => $oeuvre['numero'],
+                'artist' => $oeuvre['artist'],
+                'coords_x' => $oeuvre['coords_x'],
+                'coords_y' => $oeuvre['coords_y'],
+                'oid' => $oid,
             ));
-            $this->view->editTypeForm = $editTypeForm;
-            $this->view->editTypeForm->setColor($type['color']);
+            $this->view->editOeuvreForm = $editOeuvreForm;
         }
 
         $this->setNotices();
@@ -155,21 +161,22 @@ class TypeController extends Zend_Controller_Action {
         
         try {
             $noticeSession = new Zend_Session_Namespace('notice');
-            $tid = (int) $this->_request->getParam('id');
-            $typesTable = new Application_Model_Types();
+            $oid = (int) $this->_request->getParam('id');
+            $oeuvresTable = new Application_Model_Oeuvres();
 
-            $travauxTypesTable = new Application_Model_TravauxTypes();
+            $travauxTable = new Application_Model_Travaux();
+            $travauxTable->removeAllWorksForOeuvre($oid);
 
-            $travauxTypesTable->removeWorkTypesByType($tid);
-            $typesTable->deleteById($tid);
+            $oeuvresTable->deleteById($oid);
+
             $noticeSession->noticeType = 'confirmation';
-            $noticeSession->confirmationType = 'remove_type';
+            $noticeSession->confirmationType = 'remove_oeuvre';
         } catch (Exception $e) {
             $noticeSession->noticeType = 'error';
-            $noticeSession->errorType = 'remove_type';
+            $noticeSession->errorType = 'remove_oeuvre';
         }
 
-        $this->_redirect('/type/liste');
+        $this->_redirect('/oeuvre/liste');
     }
 
 
@@ -179,8 +186,8 @@ class TypeController extends Zend_Controller_Action {
         if (isset($noticeSession->noticeType) && $noticeSession->noticeType == 'confirmation') {           // On confirme la réalisation d'une opération
             $confirmationType = $noticeSession->confirmationType;
             switch ($confirmationType) {
-                case 'remove_type': {
-                        $this->view->noticeTemplate = 'type/notices/confirmation-type-removed.phtml';
+                case 'remove_oeuvre': {
+                        $this->view->noticeTemplate = 'oeuvre/notices/confirmation-oeuvre-removed.phtml';
                         break;
                     }
                 default: {
@@ -192,8 +199,8 @@ class TypeController extends Zend_Controller_Action {
         } elseif(isset($noticeSession->noticeType) && $noticeSession->noticeType == 'error') {
             $errorType = $noticeSession->errorType;
             switch ($errorType) {
-                case 'remove_user': {
-                        $this->view->noticeTemplate = 'type/notices/error-remove-type.phtml';
+                case 'remove_oeuvre': {
+                        $this->view->noticeTemplate = 'oeuvre/notices/error-remove-oeuvre.phtml';
                         break;
                     }
                 default: {
