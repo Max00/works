@@ -285,6 +285,9 @@ dd#role-element label input {
 #right_column_form .second {
     padding-top:0;
 }
+#wv_options {
+    float:right;
+}
 #wv_nearby_works {
     padding-left:0;
 }
@@ -415,3 +418,11 @@ dd#prio-element input {
         width:100px;
     }
 /*}*/
+
+#work_view.printing * {
+    font-size: 16pt;
+    color:Black;
+}
+#work_view.printing #wv_title {
+    font-size: 30pt;
+}

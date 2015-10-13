@@ -1465,7 +1465,7 @@ function hideAddWMap() {
     $('#add-work-map').addClass('hide');
 }
 function addViewWorkType(id, name, color) {
-    $('#work-view #work-types').append('<div data-id="' + id + '">' + name + '</div>');
+    $('#work-view #work-types').append('<div data-id="' + id + '">' + name + '</div><br/>');
     $('#work-view #work-types div[data-id="' + id + '"]').css('background-color', '#' + color);
 }
 
@@ -1515,8 +1515,6 @@ function loadWorkView(workId, browse) {
         },
         success: function (response) {
             cleanWV();
-            console.log(response)
-            console.log(getPageToken());
             $('#wv_id').val(workId);
             $('#wv_title').html(response.title);
             $('#wv_title_inside').html(response.title);
@@ -1832,6 +1830,9 @@ $(document).ready(function () {
         sortList: [[0,0]]
     });
     $('.hide').hide();
+    if(isWorker()) {
+        $('#wv_options').hide();
+    }
     $('.ui.dropdown').dropdown({
         allowCategorySelection: true
     });
@@ -1885,6 +1886,41 @@ $(document).ready(function () {
 
     $('.delete_work_button').click(function () {
         $('input#waiting_action').attr('data-href', $(this).attr('data-href'));
+        $('#delete_work_modal')
+                .modal({
+                    onApprove: function () {
+                        document.location.href=$('input#waiting_action').attr('data-href');
+                    }
+                })
+                .modal('show');
+    });
+    $('#wv_print_work_button').click(function(){
+        $('#wv_map').hide();
+        $('.buttons').hide();
+        $('.actions').hide();
+        $('#work_view').addClass('printing');
+        html2canvas($('#work_view'), {
+            useCors: true,
+            onrendered: function(canvas) {
+               var myImage = canvas.toDataURL("image/png");
+               var tWindow = window.open(""); 
+                $(tWindow.document.body).html("<img id='Image' src=" + myImage + " style='width:100%;'></img>").ready(function () {
+                    tWindow.focus();
+                    tWindow.print();
+                    tWindow.close();
+                });
+            }
+        });
+        $('#work_view').removeClass('printing');
+        $('#wv_map').show();
+        $('.buttons').show();
+        $('.actions').show();
+    });
+    $('#wv_edit_work_button').click(function(){
+        document.location.href='/travaux/editer/id/'+$('#wv_id').val();
+    });
+    $('#wv_remove_work_button').click(function () {
+        $('input#waiting_action').attr('data-href', '/travaux/supprimer/id/' + $('#wv_id').val());
         $('#delete_work_modal')
                 .modal({
                     onApprove: function () {

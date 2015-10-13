@@ -54,6 +54,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view->jQuery()->uiEnable();
         
         $view->headLink()->prependStylesheet('/css/site.css')
+                ->headLink()->prependStylesheet('/css/print-site.css', 'print')
                 ->headLink()->prependStylesheet('/js/colpick/css/colpick.css')
         //        ->headLink()->prependStylesheet('http://fonts.googleapis.com/css?family=Open+Sans:400,700')
         //        ->headLink()->prependStylesheet('http://yui.yahooapis.com/pure/0.5.0/pure-min.css')
@@ -65,6 +66,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         //        ->prependFile('/js/jquery.metadata.js')
         //        ->prependFile('/js/jquery.tablesorter.pager.js')
                 ->prependFile('/js/colpick/js/colpick.js')
+                ->appendFile('/js/jquery.print.js')
+                ->prependFile('/js/html2canvas.js')
                 ->headScript()->prependFile('/js/site.js')
                 ->prependFile('/semantic-ui/dist/semantic.min.js'); // @todo change semantic ui installation -> dist on site folder
     }

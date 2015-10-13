@@ -1,4 +1,4 @@
-<div class="ui large modal" id="work_view">
+<article class="ui large modal" id="work_view">
     <input type="hidden" id="wv_id" />
     <input type="hidden" id="wv_state" />
     <i class="close icon"></i>
@@ -9,103 +9,104 @@
         <div class="ui grid">
             <div class="row one column">
                 <div class="column">
+                    <div id="wv_options" class="ui buttons">
+                        <div class="ui button" id="wv_print_work_button" data-href=""><i class="print icon"></i></div>
+                        <div class="ui button" id="wv_edit_work_button" data-href=""><i class="edit icon"></i></div>
+                        <div class="ui button" id="wv_delete_work_button" data-href=""><i class="remove icon"></i></div>
+                    </div>
                     <div id="wv_oeuvre_container">
                         Oeuvre à proximité : <div class="ui label" id="wv_oeuvre"></div>
                     </div>
                     <span id="wv_desc_emplact"></span>
                     <div id="wv_nearby_works_container">
-                        <b>Autres travaux à proximité : </b><ul id="wv_nearby_works"></ul>
-                    </div>
-                    <div id="wv_map"></div>
-                    <div id="wv_coords"></div>
+                    <b>Autres travaux à proximité : </b><ul id="wv_nearby_works"></ul>
                 </div>
+                <div id="wv_map"></div>
+                <div id="wv_coords"></div>
             </div>
-            <div class="row two column">
-                <div class="column" id="first">
-                    <?php if($this->roleId == Application_Model_Roles::$ROLE_SUPERVISOR) : ?>
-                    <div class="ui tiny buttons">
-                        <div class="ui button" id="wv_set_urgent">Urgent</div>
-                        <div class="ui button" id="wv_set_normal">Normal</div>
-                        <div class="ui button" id="wv_set_done">Fait</div>
-                    </div>
-                    <?php else : ?>
+        </div>
+        <div class="row two column">
+            <div class="column" id="first">
+                <?php if($this->roleId == Application_Model_Roles::$ROLE_SUPERVISOR) : ?>
+                <div class="ui tiny buttons" id="wv_prios_buttons">
+                    <div class="ui button" id="wv_set_urgent">Important</div>
+                    <div class="ui button" id="wv_set_normal">Normal</div>
                     <div class="ui button" id="wv_set_done">Fait</div>
-                    <div class="ui button" id="wv_add_to_ulist">Ajouter</div>
-                    <div class="ui button" id="wv_remove_from_ulist">Retirer</div>
-                    <?php endif; ?>
-                    <div id="wv_frequency_container">
-                        <i class="repeat icon"></i> Tous les
-                        <span id="wv_frequency_number"></span>
-                        <span id="wv_frequency_type"></span>
-                    </div>
-                    <div id="wv_types_container"></div>
                 </div>
-                <div class="column" id="second">
-                    <div id="wv_title_inside"></div>
-                    <div id="wv_user_add_container">
-                        Dans la liste de 
-                        <b><span id="wv_user_add"></span></b>
-                    </div>
-                    <div id="wv_description"></div>
-                    <div id="wv_tools_container">
-                        <b>Outils : </b><span id="wv_tools"></span>
-                    </div>
-                    <div id="wv_workers_container">
-                        <b>Intervenants extérieurs : </b><ul><span id="wv_workers"></span></ul>
-                    </div>
+                <?php else : ?>
+                <div class="ui button" id="wv_set_done">Fait</div>
+                <div class="ui button" id="wv_add_to_ulist">Ajouter</div>
+                <div class="ui button" id="wv_remove_from_ulist">Retirer</div>
+                <?php endif; ?>
+                <div id="wv_frequency_container">
+                    <i class="repeat icon"></i> Tous les
+                    <span id="wv_frequency_number"></span>
+                    <span id="wv_frequency_type"></span>
                 </div>
+                <div id="wv_types_container"></div>
             </div>
-        </div>  
-    </div>
-    <div class="actions">
-        <div class="ui button">OK</div>
+            <div class="column" id="second">
+                <div id="wv_title_inside"></div>
+                <div id="wv_user_add_container">
+                    Dans la liste de
+                    <b><span id="wv_user_add"></span></b>
+                </div>
+                <div id="wv_description"></div>
+                <div id="wv_tools_container">
+                    <b>Outils : </b><span id="wv_tools"></span>
+                </div>
+                <div id="wv_workers_container">
+                <b>Intervenants extérieurs : </b><ul><span id="wv_workers"></span></ul>
+            </div>
+        </div>
     </div>
 </div>
-
+</div>
+<div class="actions">
+<div class="ui button">OK</div>
+</div>
+</article>
 <?php goto end; ?>
-
 <section id="work-view">
-    <div id="work-edit-container">
-        <?php if (isset($this->editWork) && $this->editWork) : ?>
-            <input type="hidden" id="a_editWork_model" data-url="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'editer', 'id' => '__WID__'), null, true) ?>" />
-            <span class="pure-button button-small button-edit" id="a_editWork" data-url="">
-                <i class="fa fa-pencil"></i> </span>
-        <?php endif; ?>
-
-    </div>
-    <input type="hidden" id="work_id" />
-    <p id="help">Cliquez sur un travail pour plus d'informations</p>
-    <div id="work-details">
-        <div id="work-prio-container">
-            <div id="work-prio-1">Urgent</div>
-            <div id="work-prio-2">Normal</div>
-            <div id="work-prio-3">Déja effectué</div>
-        </div>
-        <p id="work-wrapper"><span id="work-title"></span><span id="user-add-label">Dans la liste de </span><span id="user-add"></span></p>
-        <div id="work-types"></div>
-        <p id="work-oeuvre-title-wrapper">
-            <span id="work-oeuvre-numero"></span> - <span id="work-oeuvre-title"></span>
-        </p>
-        <p id="work-desc_emplact"></p>
-        <p id="work-coords_x"></p>
-        <p id="work-coords_y"></p>
-        <p id="work-description"></p>
-        <p id="work-tools-wrapper">Outils: <span id="work-tools"></span></p>
-        <div id="additional-workers-label">Intervenants extérieurs: </div><div id="additional-workers"></div>
-        <p id="work-additional-workers"></p>
-        <div id="work-frequency">
-            Fréquence: 
-            <div id="work-frequency-number"></div>
-            <div id="work-frequency-weeks-many">semaines</div>
-            <div id="work-frequency-weeks-one">semaine</div>
-            <div id="work-frequency-days-many">jours</div>
-            <div id="work-frequency-days-one">jour</div>
-        </div>
-        <p id="work-date_last_done-container">Effectué le <span id="work-date_last_done"></span></p>
-    </div>
-    <div id="work-view-map" class="hide">
-    </div>
-    <div id="nearby-label">A proximité : </div><div id="nearby"></div>
+<div id="work-edit-container">
+<?php if (isset($this->editWork) && $this->editWork) : ?>
+<input type="hidden" id="a_editWork_model" data-url="<?php echo $this->url(array('controller' => 'travaux', 'action' => 'editer', 'id' => '__WID__'), null, true) ?>" />
+<span class="pure-button button-small button-edit" id="a_editWork" data-url="">
+<i class="fa fa-pencil"></i> </span>
+<?php endif; ?>
+</div>
+<input type="hidden" id="work_id" />
+<p id="help">Cliquez sur un travail pour plus d'informations</p>
+<div id="work-details">
+<div id="work-prio-container">
+    <div id="work-prio-1">Urgent</div>
+    <div id="work-prio-2">Normal</div>
+    <div id="work-prio-3">Déja effectué</div>
+</div>
+<p id="work-wrapper"><span id="work-title"></span><span id="user-add-label">Dans la liste de </span><span id="user-add"></span></p>
+<div id="work-types"></div>
+<p id="work-oeuvre-title-wrapper">
+<span id="work-oeuvre-numero"></span> - <span id="work-oeuvre-title"></span>
+</p>
+<p id="work-desc_emplact"></p>
+<p id="work-coords_x"></p>
+<p id="work-coords_y"></p>
+<p id="work-description"></p>
+<p id="work-tools-wrapper">Outils: <span id="work-tools"></span></p>
+<div id="additional-workers-label">Intervenants extérieurs: </div><div id="additional-workers"></div>
+<p id="work-additional-workers"></p>
+<div id="work-frequency">
+    Fréquence:
+    <div id="work-frequency-number"></div>
+    <div id="work-frequency-weeks-many">semaines</div>
+    <div id="work-frequency-weeks-one">semaine</div>
+    <div id="work-frequency-days-many">jours</div>
+    <div id="work-frequency-days-one">jour</div>
+</div>
+<p id="work-date_last_done-container">Effectué le <span id="work-date_last_done"></span></p>
+</div>
+<div id="work-view-map" class="hide">
+</div>
+<div id="nearby-label">A proximité : </div><div id="nearby"></div>
 </section>
-
 <?php end:  ?>
