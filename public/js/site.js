@@ -1443,22 +1443,24 @@ function initMap() {
     map.initialize;
 }
 function initViewWorkMap(x, y, locationLabel) {
-    if (isCoordX(x) && isCoordY(y) && google !== undefined) {
-        var latlon = new google.maps.LatLng(y, x);
-        var mapOptions = {
-            center: latlon,
-            zoom: 14
-        };
-        $('#wv_map').show();
-        var map = new google.maps.Map(document.getElementById('wv_map'), mapOptions);
-        var marker = new google.maps.Marker({
-            position: latlon,
-            map: map,
-            title: locationLabel
-        });
-        map.initialize;
-    } else {
-        $('#wv_map').hide();
+    if(typeof google !== 'undefined') {
+        if (isCoordX(x) && isCoordY(y)) {
+            var latlon = new google.maps.LatLng(y, x);
+            var mapOptions = {
+                center: latlon,
+                zoom: 14
+            };
+            $('#wv_map').show();
+            var map = new google.maps.Map(document.getElementById('wv_map'), mapOptions);
+            var marker = new google.maps.Marker({
+                position: latlon,
+                map: map,
+                title: locationLabel
+            });
+            map.initialize;
+        } else {
+            $('#wv_map').hide();
+        }
     }
 }
 function hideAddWMap() {
