@@ -7,6 +7,7 @@ class Application_Model_Oeuvres extends Zend_Db_Table_Abstract {
         $select = $this->_db->select()
                 ->from(array('o' => 'oeuvres'), array('o.id', 'o.numero', 'o.title'))
                 ->where('o.title like "%'.$needle.'%"', $needle)
+                ->orWhere('o.numero like "%'.$needle.'%"', $needle)
                 ->orWhere('o.artist like "%'.$needle.'%"', $needle);
         return $this->_db->fetchAll($select, array(), Zend_Db::FETCH_ASSOC);
     }
