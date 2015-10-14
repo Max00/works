@@ -1593,7 +1593,6 @@ function loadWorkView(workId, browse) {
                     $('#wv_map_y').val(response.coords_y);
                     $('#wv_map_label').val(response.oeuvre_title);
                 }
-                // initViewWorkMap(response.coords_x, response.coords_y, response.oeuvre_title);
             } else if (response.coords_x) {
                 if(typeof google !== 'undefined') {
                     $('#wv_map_show_btn').show();
@@ -1601,7 +1600,6 @@ function loadWorkView(workId, browse) {
                     $('#wv_map_y').val(response.coords_y);
                     $('#wv_map_label').val(response.title);
                 }
-                // initViewWorkMap(response.coords_x, response.coords_y, response.title);
             }
             if (response.desc_emplact) {
                 $('#wv_desc_emplact').html(response.desc_emplact);
@@ -1645,7 +1643,6 @@ function loadWorkView(workId, browse) {
                         $('#wv_map_y').val(response.coords_y);
                         $('#wv_map_label').val(response.title);
                     }
-                    // initViewWorkMap(response.coords_x, response.coords_y, response.title);
                 },
                 onHidden:function(){
                     cleanWV();
@@ -1932,7 +1929,17 @@ $(document).ready(function () {
         $('#wv_map_show_btn').hide();
     });
     $('#wv_print_work_button').click(function(){
-        $('#wv_map').hide();
+        var mapVisible = false;
+        var mapBtnVisible = false;
+        if($('#wv_map').is(':visible')) {
+            $('#wv_map').hide();
+            mapVisible = true;
+        }
+        if($('#wv_map_show_btn').is(':visible')) {
+            $('#wv_map_show_btn').hide();
+            mapBtnVisible = true;
+        }
+        
         $('.buttons').hide();
         $('.actions').hide();
         $('#work_view').addClass('printing');
@@ -1948,8 +1955,13 @@ $(document).ready(function () {
                 });
             }
         });
+        if(mapVisible) {
+            $('#wv_map').show();
+        }
+        if(mapBtnVisible) {
+            $('#wv_map_show_btn').show();
+        }
         $('#work_view').removeClass('printing');
-        $('#wv_map').show();
         $('.buttons').show();
         $('.actions').show();
     });

@@ -306,7 +306,6 @@ class TravauxController extends Zend_Controller_Action {
                 $addWorkForm = new Application_Form_AddWork();
                 $addWorkForm->populate($formData);
                 $formIsValid = $addWorkForm->isValid($formData);
-                $worktype = $this->_request->getParam('worktype');              // On vide les champs qui ne sont plus nécessaires
                 $addWorkForm->getElement('title')->setValue('');
                 $addWorkForm->getElement('title')->removeDecorator('Errors');
 
@@ -434,18 +433,6 @@ class TravauxController extends Zend_Controller_Action {
                         $workData['frequency_days'] = NULL;
                         $workData['frequency_weeks'] = NULL;
                     }
-                    if ($this->hasParam('worktype') && $this->getParam('worktype')) {
-                        switch ($this->getParam('worktype')) {
-                            case 'normal': {
-                                    $workData['markup'] = NULL;
-                                    break;
-                                }
-                            case 'markup': {
-                                    $workData['markup'] = 1;
-                                    break;
-                                }
-                        }
-                    }
                     if ($this->hasParam('date_last_done') && $this->getParam('date_last_done')) {
                         $workData['date_last_done'] = $this->getParam('date_last_done');
                     }
@@ -491,14 +478,7 @@ class TravauxController extends Zend_Controller_Action {
                 // Récupération des données du travail courant
                 $travauxTable = new Application_Model_Travaux();
                 $work = $travauxTable->getWorkById($workId);
-                $worktype;
-                if ($work['markup']) {
-                    $worktype = 'markup';
-                } else {
-                    $worktype = 'normal';
-                }
                 $this->setFormElements($editWorkForm, array(
-                    'worktype' => $worktype,
                     'prio' => $work['prio'],
                 ));
                 

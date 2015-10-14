@@ -231,7 +231,7 @@ EOT;
      */
     public function getWorkById($workId) {
         $select = $this->_db->select()
-                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.markup', 'w.desc_emplact', 'w.frequency_weeks', 'w.frequency_days', 'w.term', 'w.term_set_on', 'date_last_done'))
+                ->from(array('w' => 'works'), array('w.id', 'w.title', 'w.tools', 'w.prio', 'w.date_creation', 'w.oeuvre_id', 'w.description', 'w.coords_x', 'w.coords_y', 'w.desc_emplact', 'w.frequency_weeks', 'w.frequency_days', 'w.term', 'w.term_set_on', 'date_last_done'))
                 ->where('w.id = ?', $workId);
         return $this->_db->fetchRow($select, array(), Zend_Db::FETCH_ASSOC);
     }
@@ -768,7 +768,6 @@ EOT;
      */
     public function addWork($workData) {
         try {
-            $wtype = $workData['worktype'];
             $data = array(
                 'date_creation'  => date('Y-m-d'),
                 'date_last_done' => date('Y-m-d'),
@@ -776,16 +775,8 @@ EOT;
                 'desc_emplact'   => $workData['desc_emplacement'],
                 'prio'           => $workData['prio'],
             );
-            if('normal' == $wtype) {
-                $data['title'] = $workData['title'];
-                $data['description'] = $workData['description'];
-            } else if('markup' == $wtype) {
-                $data['title'] = $workData['title'];
-                $data['description'] = $workData['description'];
-                $data['markup'] = true;
-            }
-            else
-                throw new Exception('Work type error');
+            $data['title'] = $workData['title'];
+            $data['description'] = $workData['description'];
             if(!empty($workData['tools'])) {
                 $data['tools'] = $workData['tools'];
             }

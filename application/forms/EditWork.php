@@ -14,7 +14,6 @@ class Application_Form_EditWork extends Zend_Form {
         
         $this->getElement('prio')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('oeuvre_id')->removeDecorator('Label')->removeDecorator('Errors');
-        $this->getElement('worktype')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('term')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('form_title')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('title')->removeDecorator('Label')->removeDecorator('Errors');
@@ -27,7 +26,6 @@ class Application_Form_EditWork extends Zend_Form {
         $this->getElement('emplacement_coords_x')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('emplacement_coords_y')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('desc_emplacement')->removeDecorator('Label')->removeDecorator('Errors');
-        $this->getElement('worktype')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('prio')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('types')->removeDecorator('Label')->removeDecorator('Errors');
         $this->getElement('add_type_label')->removeDecorator('Label')->removeDecorator('Errors');
