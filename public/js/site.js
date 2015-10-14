@@ -1497,6 +1497,7 @@ function cleanWV() {
     $('#wv_types_container').html('');
     $('#wv_nearby_works_container').hide();
     $('#wv_workers').html('');
+    $('#wv_description').html('');
     $('#wv_desc_emplact').html('');
     $('#wv_coords').html('');
     $('#wv_nearby_works_container').hide();
@@ -1630,7 +1631,6 @@ function loadWorkView(workId, browse) {
                 onHidden:function(){
                     cleanWV();
                 },
-                transition:'vertical flip'
             }).modal('show');
         },
         error: function (response) {
