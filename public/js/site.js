@@ -1629,7 +1629,8 @@ function loadWorkView(workId, browse) {
                 },
                 onHidden:function(){
                     cleanWV();
-                }
+                },
+                transition:'vertical flip'
             }).modal('show');
         },
         error: function (response) {
