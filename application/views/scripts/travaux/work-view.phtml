@@ -1,6 +1,9 @@
 <article class="ui large modal" id="work_view">
     <input type="hidden" id="wv_id" />
     <input type="hidden" id="wv_state" />
+    <input type="hidden" id="wv_map_x" />
+    <input type="hidden" id="wv_map_y" />
+    <input type="hidden" id="wv_map_label" />
     <i class="close icon"></i>
     <div class="header">
         <span id="wv_title"></span>
@@ -18,6 +21,7 @@
                         Oeuvre à proximité : <div class="ui label" id="wv_oeuvre"></div>
                     </div>
                     <span id="wv_desc_emplact"></span>
+                    <div id="wv_map_show_btn" class="ui green button centered">Voir la carte</div>
                     <div id="wv_nearby_works_container">
                     <b>Autres travaux à proximité : </b><ul id="wv_nearby_works"></ul>
                 </div>

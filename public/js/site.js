@@ -1480,6 +1480,7 @@ function getPageToken() {
 }
 
 function cleanWV() {
+    $('#wv_map_show_btn').hide();
     $('#wv_set_urgent').removeClass('active');
     $('#wv_set_normal').removeClass('active');
     $('#wv_set_done').removeClass('active');
@@ -1586,9 +1587,21 @@ function loadWorkView(workId, browse) {
             if (response.oeuvre_title) {
                 $('#wv_oeuvre_container').show();
                 $('#wv_oeuvre').html(response.oeuvre_title);
-                initViewWorkMap(response.coords_x, response.coords_y, response.oeuvre_title);
+                if(typeof google !== 'undefined') {
+                    $('#wv_map_show_btn').show();
+                    $('#wv_map_x').val(response.coords_x);
+                    $('#wv_map_y').val(response.coords_y);
+                    $('#wv_map_label').val(response.oeuvre_title);
+                }
+                // initViewWorkMap(response.coords_x, response.coords_y, response.oeuvre_title);
             } else if (response.coords_x) {
-                initViewWorkMap(response.coords_x, response.coords_y, response.title);
+                if(typeof google !== 'undefined') {
+                    $('#wv_map_show_btn').show();
+                    $('#wv_map_x').val(response.coords_x);
+                    $('#wv_map_y').val(response.coords_y);
+                    $('#wv_map_label').val(response.title);
+                }
+                // initViewWorkMap(response.coords_x, response.coords_y, response.title);
             }
             if (response.desc_emplact) {
                 $('#wv_desc_emplact').html(response.desc_emplact);
@@ -1626,7 +1639,13 @@ function loadWorkView(workId, browse) {
             
             $('#work_view').modal({
                 onVisible:function(){
-                    initViewWorkMap(response.coords_x, response.coords_y, response.title);
+                    if(response.coords_x && typeof google !== 'undefined') {
+                        $('#wv_map_show_btn').show();
+                        $('#wv_map_x').val(response.coords_x);
+                        $('#wv_map_y').val(response.coords_y);
+                        $('#wv_map_label').val(response.title);
+                    }
+                    // initViewWorkMap(response.coords_x, response.coords_y, response.title);
                 },
                 onHidden:function(){
                     cleanWV();
@@ -1906,6 +1925,11 @@ $(document).ready(function () {
                     }
                 })
                 .modal('show');
+    });
+    $('#wv_map_show_btn').click(function(){
+        $('#wv_map').show();
+        initViewWorkMap($('#wv_map_x').val(), $('#wv_map_y').val(), $('#wv_map_label').val())
+        $('#wv_map_show_btn').hide();
     });
     $('#wv_print_work_button').click(function(){
         $('#wv_map').hide();
