@@ -1968,7 +1968,7 @@ $(document).ready(function () {
     $('#wv_edit_work_button').click(function(){
         document.location.href='/travaux/editer/id/'+$('#wv_id').val();
     });
-    $('#wv_remove_work_button').click(function () {
+    $('#wv_delete_work_button').click(function () {
         $('input#waiting_action').attr('data-href', '/travaux/supprimer/id/' + $('#wv_id').val());
         $('#delete_work_modal')
                 .modal({
