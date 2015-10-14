@@ -1484,6 +1484,7 @@ function cleanWV() {
     $('#wv_set_normal').removeClass('active');
     $('#wv_set_done').removeClass('active');
     $('#wv_frequency_container').hide();
+    $('#wv_days_to_container').hide();
     $('#wv_tools_container').hide();
     $('#wv_workers_container').hide();
     $('#wv_oeuvre_container').hide();
@@ -1590,6 +1591,14 @@ function loadWorkView(workId, browse) {
             }
             if (response.desc_emplact) {
                 $('#wv_desc_emplact').html(response.desc_emplact);
+            }
+            if (response.days_to_str) {
+                $('#wv_days_to_container').show();
+                $('#wv_days_to').html(response.days_to_str);
+                if(response.days_to < 3)
+                    $('#wv_days_to_container').addClass('urgent');
+                else
+                    $('#wv_days_to_container').removeClass('urgent');
             }
             if (!response.user_id && response.prio !== "3") {
                 $('#wv_add_to_ulist').show();

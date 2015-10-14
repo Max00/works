@@ -187,6 +187,21 @@ class AjaxController extends Zend_Controller_Action {
                     'frequency_days' => $work['frequency_days'],
                     'date_last_done' => $work['date_last_done'],
                 );
+                // Days_to
+                $travauxTable = new Application_Model_Travaux();
+                $workDaysto = $travauxTable->getWorkDaysTo($workId);
+                $workDaystoStr = '';
+                if(!isset($workDaysto)) {
+                } elseif($workDaysto > 0) {
+                    $workDaystoStr = 'J - ' . abs($workDaysto);
+                } elseif($workDaysto == 0) {
+                    $workDaystoStr = 'Aujourd\'hui !';
+                } else {
+                    $workDaystoStr = abs($workDaysto) . ' jours en retard';
+                }
+                $workAr['days_to'] = $workDaysto;
+                $workAr['days_to_str'] = $workDaystoStr;
+
                 if(!empty($work['oeuvre_id'])) {
                     $workAr['oeuvre_id'] = $work['oeuvre_id'];
                     $oeuvresTable = new Application_Model_Oeuvres();

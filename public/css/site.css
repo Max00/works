@@ -383,6 +383,14 @@ div.message {
     font-style: italic;
     font-size: 80%;
 }
+#wv_days_to_container{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+#wv_days_to_container.urgent {
+    font-weight: bold;
+    color:Red;
+}
 th.oeuvre.tablesorter-headerSortUp,
 th.work_title.tablesorter-headerSortUp,
 th.types.tablesorter-headerSortUp {
