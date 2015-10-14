@@ -34,6 +34,9 @@ table#works_1 {
 .works_table {
     min-width:1000px;
 }
+.works_table tr:hover td {
+    background-color: #DCEFF9 !important;
+}
 .works_table td.item {
     text-align: right;
 }
