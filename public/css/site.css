@@ -9,11 +9,17 @@ body {
     font-size:15px;
     min-width:1000px;
 }
+#mainMenu {
+    position:fixed;
+    width: 100%;
+    z-index: 999;
+}
 a#setViewPrios,
 a#setViewTypes {
     padding-right:1em;
 }
 section#container {
+    padding-top:60px;
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -326,7 +332,7 @@ dt#types-label label {
 }
 #term,
 #frequency {
-    width:3em;
+    width:5em;
 }
 div.message {
     z-index:99;
