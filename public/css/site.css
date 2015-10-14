@@ -373,7 +373,9 @@ div.message {
 #wv_map {
     margin-top:1em;
     height:300px;
-    width:100%;
+    width:60%;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 #wv_coords {
@@ -381,13 +383,35 @@ div.message {
     font-style: italic;
     font-size: 80%;
 }
+th.oeuvre.tablesorter-headerSortUp,
+th.work_title.tablesorter-headerSortUp,
+th.types.tablesorter-headerSortUp {
+    background-image: url('../img/caret_down.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: right top !important;
+}
+th.oeuvre.tablesorter-headerSortDown,
+th.work_title.tablesorter-headerSortDown,
+th.types.tablesorter-headerSortDown {
+    background-image: url('../img/caret_up.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: right top !important;
+}
 
-.tablesorter-headerSortUp {
-    text-decoration: line-through !important;
+th.item.tablesorter-headerSortUp,
+th.options.tablesorter-headerSortUp {
+    background-image: url('../img/caret_down.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: left top !important;
 }
-.tablesorter-headerSortDown {
-    text-decoration: underline !important;
+
+th.item.tablesorter-headerSortDown,
+th.options.tablesorter-headerSortDown {
+    background-image: url('../img/caret_up.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: left top !important;
 }
+
 /* Conserver ? */
 form.formWork legend {
     padding-right: 15px; padding-left: 15px;

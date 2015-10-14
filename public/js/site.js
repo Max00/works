@@ -1856,7 +1856,8 @@ $(document).ready(function () {
     },function(){
         $(this).find('.buttons').hide();
     });
-    
+    $('.works_table th .caret.down').hide();
+    $('.works_table th .caret.up').hide();
     $('.clickable_link').click(function () {
         document.location.href = $(this).attr('data-href');
     });
