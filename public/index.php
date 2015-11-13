@@ -45,10 +45,10 @@ set_include_path(implode(PATH_SEPARATOR, array(
 require_once 'Zend/Application.php';
 
 // Create application, bootstrap, and run
-$application = new Zend_Application(
+$application2 = new Zend_Application(
     APPLICATION_ENV,
-    APPLICATION_PATH . '/configs/application.ini'
+    APPLICATION_PATH . '/configs/new_file.ini'
 );
 
-$application->bootstrap()
+$application2->bootstrap()
             ->run();
